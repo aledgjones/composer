@@ -10,5 +10,3 @@ const root = createRoot(container);
 engine.listen(() => {
   root.render(<App />);
 });
-
-console.log(engine);

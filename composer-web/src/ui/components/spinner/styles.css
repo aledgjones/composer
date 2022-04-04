@@ -1,0 +1,45 @@
+@keyframes rotate {
+  0% {
+    transform: rotateZ(-90deg);
+  }
+  100% {
+    transform: rotateZ(270deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 5, 120.66;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 100, 25.66;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dasharray: 5, 120.66;
+    stroke-dashoffset: -125.66;
+  }
+}
+
+.ui-spinner {
+  position: relative;
+  transform: rotateZ(-90deg);
+}
+
+.ui-spinner__circle {
+  transform-origin: 50% 50%;
+  stroke-linecap: round;
+  stroke-width: 4px;
+  fill: none;
+  transition: stroke-dasharray 0.2s, stroke-dashoffset 0.2s, transform 0.2s;
+}
+
+.ui-spinner--animate {
+  animation: rotate 1.5s linear infinite;
+}
+
+.ui-spinner--animate .ui-spinner__circle {
+  animation: dash 1.5s infinite;
+  transition: none;
+}

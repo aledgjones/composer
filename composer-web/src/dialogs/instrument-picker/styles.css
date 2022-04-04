@@ -1,0 +1,37 @@
+.instrument-picker__sections {
+  display: flex;
+  height: calc(100% - 56px);
+}
+
+.instrument-picker__section {
+  padding: 8px;
+  border-right: 1px solid var(--background-200);
+  height: 100%;
+  overflow: auto;
+}
+
+.instrument-picker__section:nth-child(1) {
+  width: 30%;
+}
+
+.instrument-picker__section:nth-child(2) {
+  width: 40%;
+}
+
+.instrument-picker__section:nth-child(3) {
+  width: 30%;
+  border-right: none;
+}
+
+.instrument-picker__buttons {
+  height: 56px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--background-200);
+  padding: 0 12px;
+}
+
+.instrument-picker__spacer {
+  flex-grow: 1;
+}

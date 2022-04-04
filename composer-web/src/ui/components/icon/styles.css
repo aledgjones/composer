@@ -1,0 +1,77 @@
+.ui-icon {
+  position: relative;
+  color: inherit;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+
+.ui-icon:before,
+.ui-icon:after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  height: calc(100% + 6px);
+  width: calc(100% + 6px);
+}
+
+/* blob */
+.ui-icon:before {
+  z-index: 0;
+  background-color: currentColor;
+  opacity: 0;
+  border-radius: var(--border-radius);
+}
+
+.ui-icon--hover:hover:before {
+  opacity: 0.1;
+}
+
+/* outline */
+.ui-icon::after {
+  z-index: 2;
+  border: 1px solid currentColor;
+  visibility: hidden;
+}
+
+.ui-icon:focus-visible:after {
+  visibility: visible;
+}
+
+.ui-icon--toggleable:before,
+.ui-icon--toggleable:after {
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.ui-icon__svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.ui-icon__svg-path {
+  fill: currentColor;
+}
+
+.ui-icon--toggled:before {
+  opacity: 1 !important;
+  background-color: var(--primary-bg);
+}
+
+.ui-icon--toggled .ui-icon__svg-path {
+  fill: var(--primary-fg);
+  transition: fill 0.2s;
+}
+
+.ui-icon--hover {
+  cursor: pointer;
+}
+
+.ui-icon--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}

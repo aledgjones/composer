@@ -1,0 +1,17 @@
+.ui-tabs {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 48px;
+}
+
+.ui-tabs__bar {
+  position: absolute;
+  bottom: 8px;
+  transition: width 0.2s, left 0.2s;
+  z-index: 0;
+  background-color: var(--primary-bg);
+  height: calc(100% - 16px);
+  border-radius: var(--border-radius);
+}

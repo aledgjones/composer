@@ -1,0 +1,13 @@
+.ui-menu-bar {
+  position: relative;
+  height: 28px;
+  background-color: white;
+  width: 100%;
+  z-index: 999998;
+}
+
+.ui-menu-bar__content {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}

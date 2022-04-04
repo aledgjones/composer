@@ -1,0 +1,21 @@
+.ui-label {
+  display: block;
+}
+
+.ui-label p {
+  margin: 0;
+  color: inherit;
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+.ui-label p:first-of-type {
+  opacity: 1;
+  font-size: 1em;
+}
+
+.ui-label p.ui-label--clipped {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

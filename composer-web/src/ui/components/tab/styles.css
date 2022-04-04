@@ -1,0 +1,32 @@
+.ui-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  min-height: 32px;
+  z-index: 1;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  color: var(--foreground-500);
+  transition: color 0.2s;
+  border-radius: var(--border-radius);
+}
+
+.ui-tab:hover {
+  background-color: var(--background-800);
+}
+
+.ui-tab:focus-visible {
+  outline: 1px solid currentColor;
+  background-color: var(--background-800);
+}
+
+.ui-tab--selected {
+  transition: color 0.2s 0.1s;
+  color: var(--primary-fg);
+  background-color: transparent !important;
+}

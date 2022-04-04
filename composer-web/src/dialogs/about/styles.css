@@ -1,0 +1,67 @@
+.about {
+  overflow: auto;
+  max-height: calc(100vh - 80px);
+}
+
+.about__header {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 20px;
+}
+
+.about__logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px 20px 20px;
+}
+
+.about__logo-img {
+  height: 64px;
+  width: 64px;
+  margin-bottom: 20px;
+}
+
+.about__logo-text {
+  font-size: 24px;
+  line-height: 0.9em;
+  text-align: center;
+}
+
+.about__logo-text p:nth-child(2) {
+  font-size: 16px;
+}
+
+.about__content {
+  padding: 0 20px;
+}
+
+.about__version {
+  display: flex;
+  font-size: 14px;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.about__grow {
+  flex-grow: 1;
+}
+
+.about__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 20px;
+}
+
+.about__warning {
+  padding: 10px;
+  color: tomato;
+  border: tomato 1px solid;
+  background-color: rgb(255, 100, 50, 0.2);
+  text-align: center;
+  border-radius: var(--border-radius);
+}

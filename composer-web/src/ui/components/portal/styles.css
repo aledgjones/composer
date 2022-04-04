@@ -1,0 +1,5 @@
+.ui-portal {
+  position: fixed;
+  pointer-events: none;
+  z-index: 999999;
+}

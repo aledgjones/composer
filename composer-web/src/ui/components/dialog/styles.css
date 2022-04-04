@@ -1,0 +1,47 @@
+@keyframes dialog-in {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ui-dialog {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 2;
+  padding: 40px;
+}
+
+.ui-dialog__backdrop {
+  z-index: 1;
+}
+
+.ui-dialog__card {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  animation: dialog-in 0.4s;
+  animation-fill-mode: backwards;
+  transition: opacity 0.4s, transform 0.4s;
+  pointer-events: all;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.ui-dialog--hidden .ui-dialog__card {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(16px);
+}

@@ -1,0 +1,32 @@
+.ui-transition {
+  display: block;
+  animation-fill-mode: both;
+}
+
+@keyframes ui-transition__swipe-up {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ui-transition--swipe-up {
+  animation: ui-transition__swipe-up 0.4s;
+}
+
+@keyframes ui-transition__fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.ui-transition--fade-in {
+  animation: ui-transition__fade-in 0.4s;
+}

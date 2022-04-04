@@ -1,9 +1,18 @@
+mod components;
+mod entries;
 mod score;
 mod utils;
 
 use js_sys::{Date, Function};
 use score::Score;
+use utils::log;
 use wasm_bindgen::prelude::*;
+
+#[macro_use]
+extern crate maplit;
+
+#[macro_use]
+extern crate lazy_static;
 
 #[wasm_bindgen]
 pub struct Engine {
@@ -36,6 +45,7 @@ impl Engine {
             Some(listener) => {
                 let this = JsValue::NULL;
                 let _ = listener.call0(&this);
+                log(&format!("{:#?}", self.score));
             }
             None => (),
         };

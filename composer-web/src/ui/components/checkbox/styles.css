@@ -1,0 +1,34 @@
+.ui-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.ui-checkbox__inner {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid;
+  border-color: rgb(100, 100, 100);
+  cursor: pointer;
+}
+
+.ui-checkbox--active .ui-checkbox__inner {
+  border-color: var(--primary-bg);
+  background-color: var(--primary-bg);
+  color: var(--primary-fg);
+}
+
+.ui-checkbox__icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ui-checkbox__label {
+  flex-grow: 1;
+}
+
+.ui-checkbox--margin {
+  margin-bottom: 20px;
+}

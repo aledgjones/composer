@@ -1,0 +1,38 @@
+@keyframes ui-progress {
+  0% {
+    transform: translateX(-100%);
+    left: 0;
+  }
+  100% {
+    transform: translateX(0);
+    left: 100%;
+  }
+}
+
+.ui-progress {
+  position: relative;
+  height: 4px;
+  width: 100%;
+  transition: height 0.2s;
+  overflow: hidden;
+}
+
+.ui-progress__indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transition: width 0.2s;
+}
+
+.ui-progress--indeterminate .ui-progress__indicator {
+  animation-name: ui-progress;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  width: 25%;
+}
+
+.ui-progress--hidden {
+  height: 0;
+}

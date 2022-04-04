@@ -1,0 +1,35 @@
+.instrument-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 16px 0 12px;
+  line-height: 1em;
+  height: 48px;
+  margin-bottom: 8px;
+  background-color: var(--background-900);
+  border-radius: var(--border-radius);
+}
+
+.instrument-item--selected {
+  background-color: var(--white);
+  color: var(--primary-fg);
+}
+
+.instrument-item.ui-sortable-item--sorting {
+  transition: transform 0.2s;
+}
+
+.instrument-item.ui-sortable-item--active {
+  z-index: 100 !important;
+  transition: transform 0s;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.instrument-item__name {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  z-index: 1;
+  flex-grow: 1;
+}

@@ -1,0 +1,11 @@
+.ui-divider {
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin: 8px 0;
+  background-color: var(--background-200);
+}
+
+.ui-divider--compact {
+  margin: 0;
+}

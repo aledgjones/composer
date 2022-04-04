@@ -1,0 +1,30 @@
+.ui-dropzone {
+  position: relative;
+}
+
+.ui-dropzone__hover-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  padding: 40px;
+  z-index: 100;
+}
+
+.ui-dropzone__hover-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border: 4px dashed rgb(175, 175, 175);
+  pointer-events: none;
+}
+
+.ui-dropzone__hover-text {
+  color: rgb(150, 150, 150);
+  margin-top: 4px;
+}

@@ -1,0 +1,22 @@
+.ui-menu-bar-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0px 12px;
+  height: 100%;
+  cursor: pointer;
+}
+
+.ui-menu-bar-item:hover,
+.ui-menu-bar-item--selected {
+  background-color: rgb(235, 235, 235);
+}
+
+.ui-menu-bar-item__card {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  max-height: calc(100vh - 28px - 48px);
+  min-width: 200px;
+  overflow: auto;
+}

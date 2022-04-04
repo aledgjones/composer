@@ -1,0 +1,29 @@
+.ui-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+.ui-list-item--hover:hover {
+  background-color: var(--background-800);
+}
+
+.ui-list-item .ui-label {
+  flex-grow: 1;
+}
+
+.ui-list-item .ui-icon:first-child {
+  margin-right: 20px;
+}
+
+.ui-list-item .ui-icon:last-child {
+  margin-left: 20px;
+}
+
+.ui-list-item--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}

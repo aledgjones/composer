@@ -1,0 +1,19 @@
+.ui-avatar {
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  background-size: cover;
+  background-position: 50% 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ui-avatar__letter {
+  font-size: inherit;
+  color: inherit;
+  font-weight: 300;
+  text-transform: uppercase;
+  position: relative;
+}

@@ -1,0 +1,80 @@
+.ui-select {
+  padding-bottom: 0;
+}
+
+.ui-select__container {
+  cursor: pointer;
+}
+
+.ui-select__icon {
+  margin-right: 12px;
+}
+
+.ui-select__card {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  transform: translateZ(0);
+  z-index: 10;
+  overflow: auto;
+  padding: 8px 0;
+  touch-action: pan-y;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.2s, opacity 0.2s;
+  pointer-events: none;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  border-radius: var(--border-radius);
+}
+
+.ui-select__card::-webkit-scrollbar {
+  /* WebKit */
+  width: 0;
+  height: 0;
+}
+
+.ui-select__card--up {
+  top: initial;
+  bottom: 100%;
+}
+
+.ui-select__card--open {
+  opacity: 1;
+  max-height: 140px;
+  pointer-events: all;
+}
+
+.ui-select__card * {
+  touch-action: pan-y;
+}
+
+.ui-select__item {
+  display: flex;
+  align-items: center;
+  user-select: none;
+  padding: 12px 16px;
+  min-height: 40px;
+  cursor: pointer;
+  background-color: transparent;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  text-align: left;
+  border: 0;
+  width: 100%;
+}
+
+.ui-select__item:hover {
+  background-color: var(--background-800);
+}
+
+.ui-select__item:focus {
+  outline: none;
+  border: none;
+}
+
+.ui-select__item:focus-visible {
+  outline: 1px solid currentColor;
+}

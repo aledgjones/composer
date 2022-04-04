@@ -1,6 +1,6 @@
 [package]
 name = "composer-engine"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Aled Jones <aledjones.viola@gmail.com>"]
 edition = "2018"
 
@@ -13,7 +13,12 @@ default = ["console_error_panic_hook"]
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+rand = "0.8.5"
+getrandom = { version = "0.2", features = ["js"] }
 js-sys = "0.3.56"
+maplit = "1.0.2"
+lazy_static = "1.4.0"
+roman = "0.1.6"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires

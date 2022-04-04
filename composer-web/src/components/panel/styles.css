@@ -1,0 +1,17 @@
+.panel {
+  display: flex;
+  background-color: var(--background-500);
+}
+
+.panel__content {
+  width: 350px;
+}
+
+.panel__collapse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  background-color: var(--background-200);
+  cursor: pointer;
+}

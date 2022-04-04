@@ -1,0 +1,139 @@
+import { FC, useRef } from "react";
+import {
+  mdiAccount,
+  mdiAccountGroup,
+  mdiChevronDown,
+  mdiChevronUp,
+  mdiDeleteOutline,
+  mdiPlus,
+} from "@mdi/js";
+import merge from "classnames";
+
+import { ui } from "../../../store";
+import { SelectionType } from "../../../store/defs";
+import { engine } from "../../../engine";
+import { PlayerType } from "composer-engine";
+
+import { Icon } from "../../../ui/components/icon";
+import { SortableContainer } from "../../../ui/components/sortable-container";
+import { SortableItem } from "../../../ui/components/sortable-item";
+import { Text } from "../../../components/text";
+import { noop } from "../../../ui/utils/noop";
+
+import { InstrumentItem } from "../instrument-item";
+
+import "./styles.css";
+
+const getIcon = (playerType: PlayerType) => {
+  switch (playerType) {
+    case PlayerType.Solo:
+      return mdiAccount;
+    default:
+      return mdiAccountGroup;
+  }
+};
+
+interface Props {
+  index: number;
+  playerKey: string;
+  onAddInstrument: (playerKey: string) => void;
+}
+
+export const PlayerItem: FC<Props> = ({
+  index,
+  playerKey,
+  onAddInstrument,
+}) => {
+  const handle = useRef<HTMLDivElement>(null);
+  const expanded = ui.useState((s) => s.setup.expanded[playerKey], [playerKey]);
+  const selected = ui.useState(
+    (s) => s.setup.selected?.key === playerKey,
+    [playerKey]
+  );
+
+  const onSelect = () => {
+    ui.update((s) => {
+      if (!selected) {
+        s.setup.selected = { key: playerKey, type: SelectionType.Player };
+      }
+    });
+  };
+
+  const name: string = engine.get_player_name(playerKey);
+  const type: PlayerType = engine.get_player_type(playerKey);
+  const instruments: string[] = engine.get_player_instruments(playerKey);
+
+  return (
+    <SortableItem
+      index={index}
+      handle={handle}
+      className={merge("player-item", {
+        "player-item--selected": selected,
+      })}
+      onClick={onSelect}
+    >
+      <div className="player-item__header">
+        <div onPointerDown={onSelect} ref={handle}>
+          <Icon style={{ marginRight: 16 }} path={getIcon(type)} size={24} />
+        </div>
+
+        <p className="player-item__name">
+          <Text content={name} />
+        </p>
+
+        {selected && (
+          <>
+            <Icon
+              style={{ marginLeft: 12 }}
+              size={24}
+              path={mdiDeleteOutline}
+              onClick={noop}
+            />
+            {(instruments.length === 0 || type === PlayerType.Solo) && (
+              <Icon
+                style={{ marginLeft: 12 }}
+                path={mdiPlus}
+                size={24}
+                onClick={() => onAddInstrument(playerKey)}
+              />
+            )}
+          </>
+        )}
+        <Icon
+          style={{ marginLeft: 12 }}
+          path={expanded ? mdiChevronUp : mdiChevronDown}
+          size={24}
+          onClick={(e) => {
+            e.stopPropagation();
+            ui.update((s) => {
+              if (expanded) {
+                delete s.setup.expanded[playerKey];
+              } else {
+                s.setup.expanded[playerKey] = true;
+              }
+            });
+          }}
+        />
+      </div>
+      {expanded && (
+        <SortableContainer
+          direction="y"
+          className="player-item__list"
+          onEnd={noop}
+        >
+          {instruments.map((instruemntKey, i) => {
+            return (
+              <InstrumentItem
+                index={i}
+                playerKey={playerKey}
+                instrumentKey={instruemntKey}
+                selected={selected}
+                onSelect={onSelect}
+              />
+            );
+          })}
+        </SortableContainer>
+      )}
+    </SortableItem>
+  );
+};

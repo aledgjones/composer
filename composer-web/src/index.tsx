@@ -1,12 +1,13 @@
 import { createRoot } from "react-dom/client";
-import { Engine } from "composer-engine";
-import { App } from "./components/app/app";
+import { Root } from "./states/root/root";
+import { engine } from "./engine";
 
-export const engine = new Engine();
+import "./fonts/fonts.css";
+import "./ui";
 
 const container = document.querySelector("#app");
 const root = createRoot(container);
 
 engine.listen(() => {
-  root.render(<App />);
+  root.render(<Root />);
 });

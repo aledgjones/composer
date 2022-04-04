@@ -1,0 +1,65 @@
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:after {
+  content: attr(data-tooltip);
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-200);
+  color: var(--foreground-200);
+  padding: 0 8px;
+  font-size: 10px;
+  position: absolute;
+  transition: opacity 0.2s, transform 0.2s;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+[data-tooltip]:hover:after {
+  opacity: 1;
+  transition: opacity 0.2s 0.5s, transform 0.2s 0.5s;
+}
+
+[data-tooltip-direction="down"]:after {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, -8px) scale(0.9);
+}
+
+[data-tooltip-direction="down"]:hover:after {
+  transform: translate(-50%, 0) scale(1);
+}
+
+[data-tooltip-direction="up"]:after {
+  bottom: initial;
+  bottom: 100%;
+  transform: translate(-50%, 8px) scale(0.9);
+}
+
+[data-tooltip-direction="up"]:hover:after {
+  transform: translate(-50%, 0) scale(1);
+}
+
+[data-tooltip-direction="right"]:after {
+  top: 50%;
+  left: 100%;
+  transform: translate(8px, -50%) scale(0.9);
+}
+
+[data-tooltip-direction="right"]:hover:after {
+  transform: translate(0, -50%) scale(1);
+}
+
+[data-tooltip-direction="left"]:after {
+  top: 50%;
+  right: 100%;
+  transform: translate(-8px, -50%) scale(0.9);
+}
+
+[data-tooltip-direction="left"]:hover:after {
+  transform: translate(0, -50%) scale(1);
+}

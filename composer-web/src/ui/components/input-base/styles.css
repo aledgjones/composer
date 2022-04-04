@@ -1,0 +1,74 @@
+@keyframes error__in {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ui-input {
+  position: relative;
+  padding-bottom: 20px;
+  display: block;
+  color: inherit;
+}
+
+.ui-input__container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: var(--background-800);
+  border: 1px solid var(--background-200);
+  font-family: Roboto, sans-serif;
+  min-height: 32px;
+  z-index: 1;
+  border-radius: var(--border-radius);
+}
+
+.ui-input--focus .ui-input__container {
+  border: 1px solid var(--primary-bg);
+}
+
+.ui-input--error .ui-input__container {
+  border: 1px dashed var(--error);
+}
+
+.ui-input__display {
+  display: flex;
+  align-items: center;
+  background-color: transparent !important;
+  font-size: inherit;
+  padding: 0 16px;
+  min-height: 40px;
+  border: none;
+  outline: none;
+  z-index: 2;
+  font-family: inherit;
+  resize: none;
+  flex-grow: 1;
+  color: var(--foreground-800);
+}
+
+.ui-input__error-text {
+  position: absolute;
+  left: 12px;
+  bottom: 4px;
+  font-size: 10px;
+  color: var(--error);
+  animation: error__in 0.2s;
+}
+
+.ui-input--margin {
+  margin-bottom: 20px;
+}
+
+.ui-input--disabled {
+  pointer-events: none;
+}
+
+.ui-input--disabled .ui-input__display {
+  border: 1px dashed currentColor;
+}

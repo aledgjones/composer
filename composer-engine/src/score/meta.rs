@@ -1,8 +1,10 @@
 use crate::Engine;
 use js_sys::Date;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::wasm_bindgen;
 
+#[derive(Debug)]
 pub struct Meta {
+    application_version: String,
     title: String,
     subtitle: String,
     composer: String,
@@ -14,8 +16,9 @@ pub struct Meta {
 }
 
 impl Meta {
-    pub fn new() -> Meta {
+    pub fn new() -> Self {
         Meta {
+            application_version: String::from("1.0.0"),
             title: String::from(""),
             subtitle: String::from(""),
             composer: String::from(""),
@@ -30,6 +33,18 @@ impl Meta {
 
 #[wasm_bindgen]
 impl Engine {
+    #[wasm_bindgen(getter)]
+    pub fn application_version(&self) -> String {
+        self.score.meta.application_version.clone()
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_application_version(&mut self, value: String) {
+        self.score.meta.application_version = value;
+        self.modify();
+        self.emit();
+    }
+
     #[wasm_bindgen(getter)]
     pub fn title(&self) -> String {
         self.score.meta.title.clone()

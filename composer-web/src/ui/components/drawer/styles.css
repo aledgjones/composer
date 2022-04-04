@@ -1,0 +1,12 @@
+.ui-drawer {
+  height: 100vh;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  z-index: 1;
+  overflow: auto;
+  transition: transform 0.4s;
+  pointer-events: all;
+  width: calc(100vw - 40px);
+}

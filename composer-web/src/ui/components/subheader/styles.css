@@ -1,0 +1,16 @@
+.ui-subheader {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.ui-subheader--subtle {
+  text-transform: none;
+  margin-bottom: 8px;
+  font-weight: normal;
+}
+
+.ui-subheader--compact {
+  margin-bottom: 0;
+}

@@ -1,0 +1,23 @@
+.player-type-selector {
+  display: flex;
+  justify-content: space-between;
+}
+
+.player-type-selector__box {
+  padding: 20px;
+  width: calc(50% - 8px);
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--background-800);
+  color: var(--foreground-800);
+  border-radius: 3px;
+}
+
+.player-type-selector__icon {
+  margin: 0 auto 8px auto;
+}
+
+.player-type-selector__box--selected {
+  background-color: var(--primary-bg);
+  color: var(--primary-fg);
+}

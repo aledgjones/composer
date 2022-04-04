@@ -1,4 +1,5 @@
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
 
 module.exports = {
@@ -9,6 +10,18 @@ module.exports = {
         test: /\.tsx?$/,
         use: "ts-loader",
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        use: [
+          {
+            loader: "file-loader",
+          },
+        ],
       },
     ],
   },
@@ -21,7 +34,15 @@ module.exports = {
   },
   mode: "development",
   plugins: [
-    new CopyWebpackPlugin({ patterns: [{ from: "./src/index.html" }] }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "./static/**/*",
+          to: "[name][ext]",
+        },
+      ],
+    }),
+    new MiniCssExtractPlugin(),
   ],
   experiments: {
     asyncWebAssembly: true,

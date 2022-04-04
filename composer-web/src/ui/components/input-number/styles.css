@@ -1,0 +1,15 @@
+.ui-input-number__units {
+  padding-right: 12px;
+  color: rgb(150, 150, 150);
+}
+
+.ui-input-number__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 9px;
+  border-left: 1px solid var(--background-200);
+  overflow: hidden;
+}

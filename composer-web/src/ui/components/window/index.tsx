@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from "react";
 import { createPortal } from "react-dom";
 
 interface Props {
-  styles: string;
+  styles?: string;
 }
 
 /**
@@ -13,7 +13,11 @@ export const Window: FC<Props> = ({ children, styles }) => {
 
   // init
   useEffect(() => {
-    const view = window.open("", "ui-console", "menubar=no,toolbar=no,location=no,titlebar=no,status=no");
+    const view = window.open(
+      "",
+      "ui-console",
+      "menubar=no,toolbar=no,location=no,titlebar=no,status=no"
+    );
     if (view) {
       view.document.body.innerHTML = "";
       const element = view.document.createElement("div");

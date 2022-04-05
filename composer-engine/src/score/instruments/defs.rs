@@ -46,7 +46,7 @@ lazy_static! {
                 long_name: "Bass Trombone",
                 short_name: "B. Tbn.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -63,7 +63,7 @@ lazy_static! {
                 long_name: "Horn in F",
                 short_name: "F Hn.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -84,7 +84,7 @@ lazy_static! {
                 long_name: "Trombone",
                 short_name: "Tbn.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -103,7 +103,7 @@ lazy_static! {
                 long_name: "Trumpet in B${flat}",
                 short_name: "B${flat} Tpt.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -124,7 +124,7 @@ lazy_static! {
                 long_name: "Trumpet in C",
                 short_name: "C Tpt.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -145,7 +145,7 @@ lazy_static! {
                 long_name: "Tuba",
                 short_name: "Tba.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -164,7 +164,7 @@ lazy_static! {
                 long_name: "Acoustic Guitar",
                 short_name: "A. Gtr.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -181,7 +181,7 @@ lazy_static! {
                 long_name: "Bass Guitar",
                 short_name: "B. Gtr.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -198,7 +198,7 @@ lazy_static! {
                 long_name: "Distortion Guitar",
                 short_name: "Gtr.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -283,7 +283,7 @@ lazy_static! {
                 long_name: "Glokenspiel",
                 short_name: "Glock.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -301,11 +301,11 @@ lazy_static! {
                 short_name: "Hrp.",
                 staves: vec![
                     StaveDef {
-                        lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        lines: vec![1, 1, 1, 1, 1],
                         clef: Clef::new(0, 67, -2, ClefDrawType::G),
                     },
                     StaveDef {
-                        lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        lines: vec![1, 1, 1, 1, 1],
                         clef: Clef::new(0, 53, 2, ClefDrawType::F),
                     },
                 ],
@@ -324,11 +324,11 @@ lazy_static! {
                 short_name: "Mrm.",
                 staves: vec![
                     StaveDef {
-                        lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        lines: vec![1, 1, 1, 1, 1],
                         clef: Clef::new(0, 67, -2, ClefDrawType::G),
                     },
                     StaveDef {
-                        lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        lines: vec![1, 1, 1, 1, 1],
                         clef: Clef::new(0, 53, 2, ClefDrawType::F),
                     },
                 ],
@@ -346,7 +346,7 @@ lazy_static! {
                 long_name: "Timpani",
                 short_name: "Timp.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -365,7 +365,7 @@ lazy_static! {
                 long_name: "Vibraphone",
                 short_name: "Vib.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -382,7 +382,7 @@ lazy_static! {
                 long_name: "Xylophone",
                 short_name: "Xyl.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 79, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -400,11 +400,11 @@ lazy_static! {
                 short_name: "Cel.",
                 staves: vec![
                     StaveDef {
-                        lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        lines: vec![1, 1, 1, 1, 1],
                         clef: Clef::new(0, 79, -2, ClefDrawType::G),
                     },
                     StaveDef {
-                        lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        lines: vec![1, 1, 1, 1, 1],
                         clef: Clef::new(0, 65, 2, ClefDrawType::F),
                     },
                 ],
@@ -423,11 +423,11 @@ lazy_static! {
                 short_name: "Pno.",
                 staves: vec![
                     StaveDef {
-                        lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        lines: vec![1, 1, 1, 1, 1],
                         clef: Clef::new(0, 67, -2, ClefDrawType::G),
                     },
                     StaveDef {
-                        lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                        lines: vec![1, 1, 1, 1, 1],
                         clef: Clef::new(0, 53, 2, ClefDrawType::F),
                     },
                 ],
@@ -445,7 +445,7 @@ lazy_static! {
                 long_name: "Contrabass",
                 short_name: "Cb.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 41, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -466,7 +466,7 @@ lazy_static! {
                 long_name: "Viola",
                 short_name: "Vla.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 60, 0, ClefDrawType::C),
                 }],
                 solo_patches: hashmap! {
@@ -487,7 +487,7 @@ lazy_static! {
                 long_name: "Violin",
                 short_name: "Vln.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -510,7 +510,7 @@ lazy_static! {
                 long_name: "Violoncello",
                 short_name: "Vc.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -531,7 +531,7 @@ lazy_static! {
                 long_name: "Alto Flute",
                 short_name: "A. Fl.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -548,7 +548,7 @@ lazy_static! {
                 long_name: "Alto Saxophone",
                 short_name: "A. Sax.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -567,7 +567,7 @@ lazy_static! {
                 long_name: "Bassoon",
                 short_name: "Bsn.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -586,7 +586,7 @@ lazy_static! {
                 long_name: "Bass Clarinet",
                 short_name: "B. Cl.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -605,7 +605,7 @@ lazy_static! {
                 long_name: "Clarinet in A",
                 short_name: "A Cl.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -624,7 +624,7 @@ lazy_static! {
                 long_name: "Clarinet in B${flat}",
                 short_name: "B${flat} Cl.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -643,7 +643,7 @@ lazy_static! {
                 long_name: "Contrabasson",
                 short_name: "Cbsn.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 53, 2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
@@ -660,7 +660,7 @@ lazy_static! {
                 long_name: "English Horn",
                 short_name: "E Hn.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -679,7 +679,7 @@ lazy_static! {
                 long_name: "Flute",
                 short_name: "Fl.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -698,7 +698,7 @@ lazy_static! {
                 long_name: "Oboe",
                 short_name: "Ob.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 67, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
@@ -717,7 +717,7 @@ lazy_static! {
                 long_name: "Piccolo",
                 short_name: "Pc.",
                 staves: vec![StaveDef {
-                    lines: vec![1, 0, 1, 0, 1, 0, 1, 0, 1],
+                    lines: vec![1, 1, 1, 1, 1],
                     clef: Clef::new(0, 79, -2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {

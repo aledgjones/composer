@@ -34,6 +34,11 @@ impl Engine {
         self.listener = Some(cb);
         self.emit();
     }
+
+    #[wasm_bindgen(getter)]
+    pub fn state(&self) -> String {
+        format!("{:#?}", self.score)
+    }
 }
 
 impl Engine {
@@ -45,7 +50,6 @@ impl Engine {
             Some(listener) => {
                 let this = JsValue::NULL;
                 let _ = listener.call0(&this);
-                log(&format!("{:#?}", self.score));
             }
             None => (),
         };

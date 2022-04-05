@@ -1,0 +1,8 @@
+.layout-list {
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.layout-list__label {
+  flex-grow: 1;
+}

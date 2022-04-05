@@ -3,6 +3,7 @@ use crate::components::pitch::{Accidental, Pitch};
 use crate::utils::shortid;
 use wasm_bindgen::prelude::*;
 
+#[derive(Debug, Clone)]
 #[wasm_bindgen]
 pub enum ClefDrawType {
     Hidden,
@@ -12,6 +13,7 @@ pub enum ClefDrawType {
     Percussion,
 }
 
+#[derive(Debug)]
 pub struct Clef {
     pub key: String,
     pub tick: u32,

@@ -2,6 +2,7 @@ pub mod clef;
 
 use clef::Clef;
 
+#[derive(Debug)]
 pub enum Entry {
     Clef(Clef),
 }

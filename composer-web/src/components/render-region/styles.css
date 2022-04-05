@@ -1,0 +1,10 @@
+.render-region {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  background-image: url("./background.png");
+  background-blend-mode: screen;
+  background-attachment: fixed;
+  background-color: var(--background-800);
+}

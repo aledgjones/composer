@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { mdiCogOutline, mdiPlus } from "@mdi/js";
 
 import { engine } from "../../../engine";
@@ -10,6 +10,8 @@ import { PanelHeader } from "../../../components/panel-header";
 import { PlayerItem } from "../player-list-item";
 import { SortableContainer } from "../../../ui/components/sortable-container";
 
+import { PlayerSettings } from "../../../dialogs/player-settings";
+
 import "./styles.css";
 
 interface Props {
@@ -19,6 +21,7 @@ interface Props {
 
 export const PlayerList: FC<Props> = ({ onCreatePlayer, onAddInstrument }) => {
   const open = ui.useState((s) => s.setup.panels.players);
+  const [settings, setSettings] = useState(false);
 
   return (
     <>
@@ -38,7 +41,7 @@ export const PlayerList: FC<Props> = ({ onCreatePlayer, onAddInstrument }) => {
             style={{ marginRight: 12 }}
             size={24}
             path={mdiCogOutline}
-            // onClick={() => setSettings(true)}
+            onClick={() => setSettings(true)}
           />
           <Icon size={24} path={mdiPlus} onClick={onCreatePlayer} />
         </PanelHeader>
@@ -59,6 +62,11 @@ export const PlayerList: FC<Props> = ({ onCreatePlayer, onAddInstrument }) => {
           })}
         </SortableContainer>
       </Panel>
+      <PlayerSettings
+        width={900}
+        open={settings}
+        onClose={() => setSettings(false)}
+      />
     </>
   );
 };

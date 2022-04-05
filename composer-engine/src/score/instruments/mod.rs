@@ -1,16 +1,13 @@
 pub mod defs;
 pub mod utils;
 
-use std::collections::HashMap;
-
+use super::config::AutoCountStyle;
 use crate::score::players::PlayerType;
 use crate::utils::shortid;
 use crate::Engine;
 use defs::{get_def, InstrumentType};
-
+use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
-
-use super::config::AutoCountStyle;
 
 #[derive(Debug)]
 pub struct Instrument {

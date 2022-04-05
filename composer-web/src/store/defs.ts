@@ -11,3 +11,7 @@ export const enum SelectionType {
   Flow,
   Layout,
 }
+
+export const enum PlayerPage {
+  AutoNumbering,
+}

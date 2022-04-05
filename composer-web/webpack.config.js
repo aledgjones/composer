@@ -1,8 +1,10 @@
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const path = require("path");
 
-module.exports = {
+const config = {
+  mode: process.env.NODE_ENV,
   entry: "./src/bootstrap.ts",
   module: {
     rules: [
@@ -32,7 +34,6 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "./bootstrap.js",
   },
-  mode: "development",
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
@@ -48,3 +49,11 @@ module.exports = {
     asyncWebAssembly: true,
   },
 };
+
+if (process.env.NODE_ENV === "production") {
+  config.optimization = {
+    minimizer: [`...`, new CssMinimizerPlugin()],
+  };
+}
+
+module.exports = config;

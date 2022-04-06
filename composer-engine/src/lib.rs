@@ -24,10 +24,14 @@ pub struct Engine {
 impl Engine {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        Engine {
+        let mut engine = Engine {
             listener: None,
             score: Score::new(),
-        }
+        };
+
+        engine.create_flow();
+
+        engine
     }
 
     pub fn listen(&mut self, cb: Function) {

@@ -54,58 +54,23 @@ impl Flow {
 impl Engine {
     pub fn create_flow(&mut self) -> String {
         let master = Track::new();
-        let mut flow = Flow::new(&master);
-
+        let flow = Flow::new(&master);
         self.score.tracks.insert(master.key.clone(), master);
 
-        // add all the player keys into the new flow
-        for player_key in &self.score.players.order {
-            flow.players.insert(player_key.clone());
-        }
-
-        // add stave / tracks for each instrument in the score
-        // we do this for every player so we can loop the instruments directly
-        for (_, instrument) in &mut self.score.instruments {
-            let def = get_def(&instrument.id).unwrap();
-            for (i, stave_key) in instrument.staves.iter().enumerate() {
-                let stave_def = def.staves.get(i).unwrap();
-                let mut stave = Stave::new(stave_key.clone(), &def.staves[i]);
-
-                let mut master = Track::new_with_key(&stave.master);
-                let clef = Entry::Clef(Clef::new(
-                    0,
-                    stave_def.clef.pitch.int,
-                    stave_def.clef.offset,
-                    stave_def.clef.draw_as.clone(),
-                ));
-                master.insert(clef);
-                self.score.tracks.insert(master.key.clone(), master);
-
-                let track = Track::new();
-                stave.tracks.push(track.key.clone());
-                self.score.tracks.insert(track.key.clone(), track);
-
-                flow.staves.insert(stave.key.clone(), stave);
-            }
-        }
-
-        let flow_key = flow.key.clone(); // return value
+        let flow_key = flow.key.clone();
 
         self.score.flows.order.push(flow.key.clone());
         self.score.flows.by_key.insert(flow.key.clone(), flow);
 
-        self.modify();
+        // add all the player keys into the new flow
+        let players = self.score.players.order.clone();
+        for player_key in players {
+            self.assign_player_to_flow(&flow_key, &player_key);
+        }
+
         self.emit();
 
         flow_key
-    }
-
-    pub fn reorder_flow(&mut self, old_index: usize, new_index: usize) {
-        let removed = self.score.flows.order.remove(old_index);
-        self.score.flows.order.insert(new_index, removed);
-
-        self.modify();
-        self.emit();
     }
 
     pub fn remove_flow(&mut self, flow_key: &str) {
@@ -128,7 +93,13 @@ impl Engine {
             }
         }
 
-        self.modify();
+        self.emit();
+    }
+
+    pub fn reorder_flow(&mut self, old_index: usize, new_index: usize) {
+        let removed = self.score.flows.order.remove(old_index);
+        self.score.flows.order.insert(new_index, removed);
+
         self.emit();
     }
 
@@ -136,7 +107,6 @@ impl Engine {
         let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
         flow.title = String::from(name);
 
-        self.modify();
         self.emit();
     }
 
@@ -144,7 +114,6 @@ impl Engine {
         let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
         flow.length = length;
 
-        self.modify();
         self.emit();
     }
 
@@ -156,36 +125,46 @@ impl Engine {
         let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
         flow.players.insert(String::from(player_key));
 
-        let player = self.score.players.by_key.get(player_key).unwrap();
-
         // add staves and tracks to this flow
-        for instrument_key in &player.instruments {
-            let instrument = self.score.instruments.get(instrument_key).unwrap();
-            let def = get_def(&instrument.id).unwrap();
-            for (i, stave_key) in instrument.staves.iter().enumerate() {
-                let stave_def = def.staves.get(i).unwrap();
-                let mut stave = Stave::new(stave_key.clone(), &def.staves[i]);
-
-                let mut master = Track::new_with_key(&stave.master);
-                let clef = Entry::Clef(Clef::new(
-                    0,
-                    stave_def.clef.pitch.int,
-                    stave_def.clef.offset,
-                    stave_def.clef.draw_as.clone(),
-                ));
-                master.insert(clef);
-                self.score.tracks.insert(master.key.clone(), master);
-
-                let track = Track::new();
-                stave.tracks.push(track.key.clone());
-                self.score.tracks.insert(track.key.clone(), track);
-
-                flow.staves.insert(stave.key.clone(), stave);
-            }
+        let player = self.score.players.by_key.get(player_key).unwrap();
+        let instruments = player.instruments.clone();
+        for instrument_key in instruments {
+            self.assign_instrument_to_flow(flow_key, &instrument_key)
         }
 
-        self.modify();
         self.emit();
+    }
+
+    /**
+     * Assign instrument to flow
+     */
+    pub fn assign_instrument_to_flow(&mut self, flow_key: &str, instrument_key: &str) {
+        let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
+
+        let instrument = self.score.instruments.get(instrument_key).unwrap();
+        let def = get_def(&instrument.id).unwrap();
+        for (i, stave_key) in instrument.staves.iter().enumerate() {
+            let stave_def = def.staves.get(i).unwrap();
+
+            let mut master = Track::new();
+            let clef = Entry::Clef(Clef::new(
+                0,
+                stave_def.clef.pitch.int,
+                stave_def.clef.offset,
+                stave_def.clef.draw_as.clone(),
+            ));
+            master.insert(clef);
+
+            let track = Track::new();
+
+            let mut stave = Stave::new(stave_key.clone(), &def.staves[i], &master);
+            stave.tracks.push(track.key.clone());
+
+            self.score.tracks.insert(track.key.clone(), track);
+            self.score.tracks.insert(master.key.clone(), master);
+
+            flow.staves.insert(stave.key.clone(), stave);
+        }
     }
 
     pub fn unassign_player_from_flow(&mut self, flow_key: &str, player_key: &str) {
@@ -193,22 +172,26 @@ impl Engine {
         flow.players.remove(player_key);
 
         let player = self.score.players.by_key.get(player_key).unwrap();
-
-        // delete staves and tracks in this flow
-        for instrument_key in &player.instruments {
-            let instrument = self.score.instruments.get(instrument_key).unwrap();
-            for stave_key in &instrument.staves {
-                let stave = flow.staves.get(stave_key).unwrap();
-                self.score.tracks.remove(&stave.master);
-                for track_key in &stave.tracks {
-                    self.score.tracks.remove(track_key);
-                }
-                flow.staves.remove(stave_key);
-            }
+        let instruments = player.instruments.clone();
+        for instrument_key in instruments {
+            self.unassign_instrument_from_flow(&flow_key, &instrument_key);
         }
 
-        self.modify();
         self.emit();
+    }
+
+    pub fn unassign_instrument_from_flow(&mut self, flow_key: &str, instrument_key: &str) {
+        let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
+
+        let instrument = self.score.instruments.get(instrument_key).unwrap();
+        for stave_key in &instrument.staves {
+            let stave = flow.staves.get(stave_key).unwrap();
+            self.score.tracks.remove(&stave.master);
+            for track_key in &stave.tracks {
+                self.score.tracks.remove(track_key);
+            }
+            flow.staves.remove(stave_key);
+        }
     }
 
     #[wasm_bindgen(getter)]

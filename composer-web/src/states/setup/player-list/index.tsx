@@ -3,6 +3,7 @@ import { mdiCogOutline, mdiPlus } from "@mdi/js";
 
 import { engine } from "../../../engine";
 import { ui } from "../../../store";
+import { SelectionType } from "../../../store/defs";
 
 import { Icon } from "../../../ui/components/icon";
 import { CollpaseDirection, Panel } from "../../../components/panel";
@@ -17,9 +18,16 @@ import "./styles.css";
 interface Props {
   onCreatePlayer: () => void;
   onAddInstrument: (playerKey: string) => void;
+  onSelect: (key: string, type: SelectionType) => void;
+  onClear: () => void;
 }
 
-export const PlayerList: FC<Props> = ({ onCreatePlayer, onAddInstrument }) => {
+export const PlayerList: FC<Props> = ({
+  onCreatePlayer,
+  onAddInstrument,
+  onSelect,
+  onClear,
+}) => {
   const open = ui.useState((s) => s.setup.panels.players);
   const [settings, setSettings] = useState(false);
 
@@ -57,6 +65,8 @@ export const PlayerList: FC<Props> = ({ onCreatePlayer, onAddInstrument }) => {
                 key={playerKey}
                 playerKey={playerKey}
                 onAddInstrument={onAddInstrument}
+                onSelect={onSelect}
+                onClear={onClear}
               />
             );
           })}

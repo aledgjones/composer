@@ -27,14 +27,17 @@ pub struct Instrument {
 impl Engine {
     /// Create an instrument
     pub fn create_instrument(&mut self, id: &str) -> String {
+        let key = shortid();
+
         let def = get_def(id).unwrap();
         let staves = def
             .staves
             .iter()
             .map(|_| shortid())
             .collect::<Vec<String>>();
+
         let instrument = Instrument {
-            key: shortid(),
+            key: key.clone(),
             id: String::from(id),
             instrument_type: def.instrument_type.clone(),
             long_name: String::from(def.long_name),
@@ -46,15 +49,19 @@ impl Engine {
             mute: false,
         };
 
-        let key = instrument.key.clone();
         self.score
             .instruments
             .insert(instrument.key.clone(), instrument);
 
-        self.modify();
         self.emit();
 
         key
+    }
+
+    pub fn remove_instrument(&mut self, instrument_key: &str) {
+        self.score.instruments.remove(instrument_key);
+
+        self.emit();
     }
 
     pub fn get_instrument_name(&self, player_key: &str, instrument_key: &str) -> String {

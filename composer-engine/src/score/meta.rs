@@ -11,7 +11,6 @@ pub struct Meta {
     arranger: String,
     lyricist: String,
     copyright: String,
-    pub modified: f64,
     created: f64,
 }
 
@@ -25,7 +24,6 @@ impl Meta {
             arranger: String::from(""),
             lyricist: String::from(""),
             copyright: String::from(""),
-            modified: Date::now(),
             created: Date::now(),
         }
     }
@@ -41,7 +39,6 @@ impl Engine {
     #[wasm_bindgen(setter)]
     pub fn set_application_version(&mut self, value: String) {
         self.score.meta.application_version = value;
-        self.modify();
         self.emit();
     }
 
@@ -53,7 +50,6 @@ impl Engine {
     #[wasm_bindgen(setter)]
     pub fn set_title(&mut self, value: String) {
         self.score.meta.title = value;
-        self.modify();
         self.emit();
     }
 
@@ -65,7 +61,6 @@ impl Engine {
     #[wasm_bindgen(setter)]
     pub fn set_subtitle(&mut self, value: String) {
         self.score.meta.subtitle = value;
-        self.modify();
         self.emit();
     }
 
@@ -77,7 +72,6 @@ impl Engine {
     #[wasm_bindgen(setter)]
     pub fn set_composer(&mut self, value: String) {
         self.score.meta.composer = value;
-        self.modify();
         self.emit();
     }
 
@@ -89,7 +83,6 @@ impl Engine {
     #[wasm_bindgen(setter)]
     pub fn set_arranger(&mut self, value: String) {
         self.score.meta.arranger = value;
-        self.modify();
         self.emit();
     }
 
@@ -101,7 +94,6 @@ impl Engine {
     #[wasm_bindgen(setter)]
     pub fn set_lyricist(&mut self, value: String) {
         self.score.meta.lyricist = value;
-        self.modify();
         self.emit();
     }
 
@@ -113,19 +105,6 @@ impl Engine {
     #[wasm_bindgen(setter)]
     pub fn set_copyright(&mut self, value: String) {
         self.score.meta.copyright = value;
-        self.modify();
-        self.emit();
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn modified(&self) -> f64 {
-        self.score.meta.modified
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_modified(&mut self, value: f64) {
-        self.score.meta.modified = value;
-        self.modify();
         self.emit();
     }
 
@@ -137,7 +116,6 @@ impl Engine {
     #[wasm_bindgen(setter)]
     pub fn set_created(&mut self, value: f64) {
         self.score.meta.created = value;
-        self.modify();
         self.emit();
     }
 }

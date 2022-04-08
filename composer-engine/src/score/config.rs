@@ -48,7 +48,6 @@ impl Engine {
         self.score.config.auto_count.solo = value;
 
         self.calculate_counts();
-        self.modify();
         self.emit();
     }
 
@@ -62,7 +61,6 @@ impl Engine {
         self.score.config.auto_count.section = value;
 
         self.calculate_counts();
-        self.modify();
         self.emit();
     }
 }

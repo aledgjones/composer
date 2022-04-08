@@ -45,34 +45,41 @@ impl Players {
 
 #[wasm_bindgen]
 impl Engine {
-    pub fn add_player(&mut self, player_type: PlayerType) -> String {
+    pub fn create_player(&mut self, player_type: PlayerType) -> String {
         let key = shortid();
         let player = Player::new(key.clone(), player_type);
 
         self.score.players.order.push(player.key.clone());
         self.score.players.by_key.insert(player.key.clone(), player);
 
-        self.modify();
+        let flows = self.score.flows.order.clone();
+        for flow_key in flows {
+            self.assign_player_to_flow(&flow_key, &key.clone());
+        }
+
         self.emit();
 
         key
     }
 
-    pub fn assign_instrument(&mut self, player_key: &str, instrument_key: &str) {
-        let player_key = String::from(player_key);
-        let instrument_key = String::from(instrument_key);
+    pub fn remove_player(&mut self, player_key: &str) {
+        let flows = self.score.flows.order.clone();
+        for flow_key in flows {
+            self.unassign_player_from_flow(&flow_key, &player_key.clone());
+        }
 
-        let player = self.score.players.by_key.get_mut(&player_key).unwrap();
-        player.instruments.push(instrument_key.clone());
+        let player = self.score.players.by_key.get(player_key).unwrap();
+        let instruments = player.instruments.clone();
+        for instrument_key in instruments {
+            self.unassign_instrument_from_player(player_key, &instrument_key);
+            self.remove_instrument(&instrument_key);
+        }
+
+        self.score.players.order.retain(|item| item != player_key);
+        self.score.players.by_key.remove(player_key);
 
         self.calculate_counts();
-        self.modify();
         self.emit();
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn players(&self) -> JsValue {
-        JsValue::from_serde(&self.score.players.order).unwrap()
     }
 
     pub fn reorder_players(&mut self, from: usize, to: usize) {
@@ -80,8 +87,54 @@ impl Engine {
         self.score.players.order.insert(to, mover);
 
         self.calculate_counts();
-        self.modify();
         self.emit();
+    }
+
+    pub fn assign_instrument_to_player(&mut self, player_key: &str, instrument_key: &str) {
+        let player = self.score.players.by_key.get_mut(player_key).unwrap();
+        player.instruments.push(String::from(instrument_key));
+
+        let flows = self.score.flows.order.clone();
+        for flow_key in flows {
+            let flow = self.score.flows.by_key.get(&flow_key).unwrap();
+            if flow.players.contains(player_key) {
+                self.assign_instrument_to_flow(&flow_key, instrument_key);
+            }
+        }
+
+        self.calculate_counts();
+        self.emit();
+    }
+
+    pub fn unassign_instrument_from_player(&mut self, player_key: &str, instrument_key: &str) {
+        let player = self.score.players.by_key.get_mut(player_key).unwrap();
+        player.instruments.retain(|e| e != instrument_key);
+
+        let flows = self.score.flows.order.clone();
+        for flow_key in flows {
+            let flow = self.score.flows.by_key.get(&flow_key).unwrap();
+            if flow.players.contains(player_key) {
+                self.unassign_instrument_from_flow(&flow_key, instrument_key);
+            }
+        }
+
+        self.calculate_counts();
+        self.emit();
+    }
+
+    pub fn reorder_player_instruments(&mut self, player_key: &str, from: usize, to: usize) {
+        let player = self.score.players.by_key.get_mut(player_key).unwrap();
+
+        let mover = player.instruments.remove(from);
+        player.instruments.insert(to, mover);
+
+        self.calculate_counts();
+        self.emit();
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn players(&self) -> JsValue {
+        JsValue::from_serde(&self.score.players.order).unwrap()
     }
 
     pub fn get_player_type(&self, player_key: &str) -> PlayerType {

@@ -14,14 +14,13 @@ import { FlowItem } from "../flow-item";
 
 import "./styles.css";
 
-export const FlowList: FC = () => {
-  const width = `calc(${100 / engine.flows.length}% - 8px)`;
+interface Props {
+  onSelect: (key: string, type: SelectionType) => void;
+  onClear: () => void;
+}
 
-  const onSelect = (key: string) => {
-    ui.update((s) => {
-      s.setup.selected = { key, type: SelectionType.Flow };
-    });
-  };
+export const FlowList: FC<Props> = ({ onSelect, onClear }) => {
+  const width = `calc(${100 / engine.flows.length}% - 8px)`;
 
   return (
     <Panel className="flow-list">
@@ -32,7 +31,7 @@ export const FlowList: FC = () => {
           path={mdiPlus}
           onClick={() => {
             const key = engine.create_flow();
-            onSelect(key);
+            onSelect(key, SelectionType.Flow);
           }}
         />
       </PanelHeader>
@@ -41,7 +40,6 @@ export const FlowList: FC = () => {
           direction="x"
           className="flow-list__content"
           onEnd={(from: number, to: number) => {
-            console.log(from, to);
             engine.reorder_flow(from, to);
           }}
         >
@@ -51,6 +49,8 @@ export const FlowList: FC = () => {
               key={flowKey}
               flowKey={flowKey}
               style={{ width }}
+              onSelect={onSelect}
+              onClear={onClear}
             />
           ))}
         </SortableContainer>

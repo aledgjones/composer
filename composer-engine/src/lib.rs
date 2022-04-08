@@ -5,7 +5,6 @@ mod utils;
 
 use js_sys::{Date, Function};
 use score::Score;
-use utils::log;
 use wasm_bindgen::prelude::*;
 
 #[macro_use]
@@ -46,9 +45,6 @@ impl Engine {
 }
 
 impl Engine {
-    fn modify(&mut self) {
-        self.score.meta.modified = Date::now();
-    }
     fn emit(&self) {
         match &self.listener {
             Some(listener) => {

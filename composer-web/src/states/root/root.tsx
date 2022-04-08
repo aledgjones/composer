@@ -3,15 +3,12 @@ import { mdiRedo, mdiUndo } from "@mdi/js";
 
 import { ui } from "../../store";
 import { View } from "../../store/defs";
-import { engine } from "../../engine";
 
 import { File } from "../../components/file";
 import { Icon } from "../../ui/components/icon";
 import { Loading } from "../../components/loading";
 import { Tab } from "../../ui/components/tab";
 import { Tabs } from "../../ui/components/tabs";
-
-import { Window } from "../../ui/components/window";
 
 import "./root.css";
 
@@ -22,9 +19,6 @@ export const Root: FC = () => {
 
   return (
     <div className="root">
-      <Window>
-        <pre>{engine.state}</pre>
-      </Window>
       <div className="root__title-bar">
         <File />
         <Tabs

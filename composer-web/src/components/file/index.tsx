@@ -22,7 +22,7 @@ import "./styles.css";
 
 export const File: FC = () => {
   const title = engine.title;
-  const modified = engine.modified;
+  const created = engine.created;
 
   const update = false;
 
@@ -65,7 +65,7 @@ export const File: FC = () => {
                   <Text content={title || "Untitled Project"} />
                 </p>
                 <p>
-                  Updated <Duration when={modified} />
+                  Created <Duration when={created} />
                 </p>
               </Label>
               <Icon

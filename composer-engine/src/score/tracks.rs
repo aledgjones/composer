@@ -25,16 +25,6 @@ impl Track {
         }
     }
 
-    pub fn new_with_key(key: &String) -> Track {
-        Track {
-            key: key.clone(),
-            entries: Entries {
-                by_tick: HashMap::new(),
-                by_key: HashMap::new(),
-            },
-        }
-    }
-
     /// Insert and entry into the track
     pub fn insert(&mut self, entry: Entry) {
         let tick = self

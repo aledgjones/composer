@@ -18,7 +18,6 @@ import { Icon } from "../../../ui/components/icon";
 import { SortableContainer } from "../../../ui/components/sortable-container";
 import { SortableItem } from "../../../ui/components/sortable-item";
 import { Text } from "../../../components/text";
-import { noop } from "../../../ui/utils/noop";
 
 import { InstrumentItem } from "../instrument-item";
 
@@ -37,12 +36,16 @@ interface Props {
   index: number;
   playerKey: string;
   onAddInstrument: (playerKey: string) => void;
+  onSelect: (key: string, type: SelectionType) => void;
+  onClear: () => void;
 }
 
 export const PlayerItem: FC<Props> = ({
   index,
   playerKey,
   onAddInstrument,
+  onSelect,
+  onClear,
 }) => {
   const handle = useRef<HTMLDivElement>(null);
   const expanded = ui.useState((s) => s.setup.expanded[playerKey], [playerKey]);
@@ -50,14 +53,6 @@ export const PlayerItem: FC<Props> = ({
     (s) => s.setup.selected?.key === playerKey,
     [playerKey]
   );
-
-  const onSelect = () => {
-    ui.update((s) => {
-      if (!selected) {
-        s.setup.selected = { key: playerKey, type: SelectionType.Player };
-      }
-    });
-  };
 
   const name: string = engine.get_player_name(playerKey);
   const type: PlayerType = engine.get_player_type(playerKey);
@@ -70,10 +65,13 @@ export const PlayerItem: FC<Props> = ({
       className={merge("player-item", {
         "player-item--selected": selected,
       })}
-      onClick={onSelect}
+      onClick={() => onSelect(playerKey, SelectionType.Player)}
     >
       <div className="player-item__header">
-        <div onPointerDown={onSelect} ref={handle}>
+        <div
+          onPointerDown={() => onSelect(playerKey, SelectionType.Player)}
+          ref={handle}
+        >
           <Icon style={{ marginRight: 16 }} path={getIcon(type)} size={24} />
         </div>
 
@@ -87,7 +85,11 @@ export const PlayerItem: FC<Props> = ({
               style={{ marginLeft: 12 }}
               size={24}
               path={mdiDeleteOutline}
-              onClick={noop}
+              onClick={(e) => {
+                e.stopPropagation();
+                engine.remove_player(playerKey);
+                onClear();
+              }}
             />
             {(instruments.length === 0 || type === PlayerType.Solo) && (
               <Icon
@@ -119,16 +121,19 @@ export const PlayerItem: FC<Props> = ({
         <SortableContainer
           direction="y"
           className="player-item__list"
-          onEnd={noop}
+          onEnd={(from, to) =>
+            engine.reorder_player_instruments(playerKey, from, to)
+          }
         >
           {instruments.map((instruemntKey, i) => {
             return (
               <InstrumentItem
+                key={instruemntKey}
                 index={i}
                 playerKey={playerKey}
                 instrumentKey={instruemntKey}
                 selected={selected}
-                onSelect={onSelect}
+                onSelect={() => onSelect(playerKey, SelectionType.Player)}
               />
             );
           })}

@@ -20,9 +20,17 @@ interface Props {
   index: number;
   flowKey: string;
   style: CSSProperties;
+  onSelect: (key: string, type: SelectionType) => void;
+  onClear: () => void;
 }
 
-export const FlowItem: FC<Props> = ({ index, flowKey, style }) => {
+export const FlowItem: FC<Props> = ({
+  index,
+  flowKey,
+  style,
+  onSelect,
+  onClear,
+}) => {
   const handle = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
 
@@ -35,16 +43,6 @@ export const FlowItem: FC<Props> = ({ index, flowKey, style }) => {
   const active = selection
     ? engine.flow_contains_player(flowKey, selection.key)
     : false;
-
-  const onSelect = (key: string) => {
-    ui.update((s) => {
-      if (key) {
-        s.setup.selected = { key, type: SelectionType.Flow };
-      } else {
-        s.setup.selected = null;
-      }
-    });
-  };
 
   const onCheckboxChange = (value: boolean) => {
     if (selection) {
@@ -60,7 +58,7 @@ export const FlowItem: FC<Props> = ({ index, flowKey, style }) => {
   const onRemove = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     engine.remove_flow(flowKey);
-    onSelect(null);
+    onClear();
   };
 
   const onEdit = () => {
@@ -99,10 +97,13 @@ export const FlowItem: FC<Props> = ({ index, flowKey, style }) => {
         "flow-item--active": active,
       })}
       style={style}
-      onClick={() => onSelect(flowKey)}
+      onClick={() => onSelect(flowKey, SelectionType.Flow)}
     >
       <div className="flow-item__header">
-        <div onPointerDown={() => onSelect(flowKey)} ref={handle}>
+        <div
+          onPointerDown={() => onSelect(flowKey, SelectionType.Flow)}
+          ref={handle}
+        >
           <Icon
             style={{ marginRight: 12 }}
             path={mdiFileDocumentOutline}

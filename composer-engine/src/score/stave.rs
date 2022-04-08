@@ -1,5 +1,5 @@
 use super::instruments::defs::StaveDef;
-use crate::utils::shortid;
+use super::Track;
 
 #[derive(Debug)]
 pub struct Stave {
@@ -10,11 +10,11 @@ pub struct Stave {
 }
 
 impl Stave {
-    pub fn new(key: String, stave_def: &StaveDef) -> Stave {
+    pub fn new(key: String, stave_def: &StaveDef, master: &Track) -> Stave {
         Stave {
             key,
             lines: stave_def.lines.clone(),
-            master: shortid(),
+            master: master.key.clone(),
             tracks: Vec::new(),
         }
     }

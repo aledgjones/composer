@@ -1,11 +1,14 @@
-pub struct MM(pub f32);
+use serde::Serialize;
 
-pub struct Spaces(pub f32);
+use super::units::Unit;
 
 pub struct BoundingBox {
-    pub width: Spaces,
-    pub height: Spaces,
-    pub padding: Padding<Spaces>,
+    pub width: Unit,
+    pub height: Unit,
+    pub padding: Padding,
 }
 
-pub struct Padding<T>(pub T, pub T, pub T, pub T);
+pub struct Padding(pub Unit, pub Unit, pub Unit, pub Unit);
+
+#[derive(Serialize)]
+pub struct Point(pub f32, pub f32);

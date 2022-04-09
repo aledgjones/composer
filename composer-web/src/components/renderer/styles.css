@@ -1,0 +1,33 @@
+.renderer {
+  position: relative;
+  display: inline-block;
+}
+
+.renderer__flow-name {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 12px;
+  background-color: var(--primary-bg);
+  color: var(--primary-fg);
+  border-radius: var(--border-radius);
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.renderer__container {
+  position: relative;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  background-color: rgb(255, 255, 255);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.renderer__canvas {
+  z-index: 1;
+  display: block;
+}

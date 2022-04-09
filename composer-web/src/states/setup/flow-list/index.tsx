@@ -3,7 +3,6 @@ import { mdiPlus } from "@mdi/js";
 
 import { engine } from "../../../engine";
 import { SelectionType } from "../../../store/defs";
-import { ui } from "../../../store";
 
 import { Panel } from "../../../components/panel";
 import { PanelHeader } from "../../../components/panel-header";

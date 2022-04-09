@@ -1,6 +1,7 @@
 import { PlayerType } from "composer-engine";
 import { FC, useState } from "react";
 import { RenderRegion } from "../../components/render-region";
+import { Renderer } from "../../components/renderer";
 import { InstrumentPicker } from "../../dialogs/instrument-picker";
 import { PlayerTypePicker } from "../../dialogs/player-type-picker";
 import { engine } from "../../engine";
@@ -68,7 +69,11 @@ const Setup: FC = () => {
         />
 
         <div className="setup__middle">
-          <RenderRegion className="setup__view"></RenderRegion>
+          <RenderRegion className="setup__view">
+            {engine.flows.map((flowKey: string) => (
+              <Renderer key={flowKey} flowKey={flowKey} />
+            ))}
+          </RenderRegion>
           <FlowList onSelect={onSelect} onClear={onClear} />
         </div>
 

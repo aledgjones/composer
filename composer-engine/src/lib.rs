@@ -1,9 +1,10 @@
 mod components;
 mod entries;
+mod render;
 mod score;
 mod utils;
 
-use js_sys::{Date, Function};
+use js_sys::Function;
 use score::Score;
 use wasm_bindgen::prelude::*;
 

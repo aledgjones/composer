@@ -5,7 +5,6 @@ import merge from "classnames";
 import { engine } from "../../../engine";
 
 import { Icon } from "../../../ui/components/icon";
-import { noop } from "../../../ui/utils/noop";
 import { SortableItem } from "../../../ui/components/sortable-item";
 import { Text } from "../../../components/text";
 

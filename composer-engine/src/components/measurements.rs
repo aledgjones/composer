@@ -8,6 +8,7 @@ pub struct BoundingBox {
     pub padding: Padding,
 }
 
+#[derive(Debug)]
 pub struct Padding(pub Unit, pub Unit, pub Unit, pub Unit);
 
 #[derive(Serialize)]

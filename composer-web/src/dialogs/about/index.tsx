@@ -6,7 +6,8 @@ import { Icon } from "../../ui/components/icon";
 import { Label } from "../../ui/components/label";
 import { Subheader } from "../../ui/components/subheader";
 
-import logo from "./logo-silo.svg";
+import logo from "../../assets/icon-192x192-maskable.png";
+import pkg from "../../../package.json";
 
 import "./styles.css";
 
@@ -36,12 +37,8 @@ export const About = Dialog<Props>(({ onClose }) => {
       <Content className="about__versions">
         <Subheader>Versions</Subheader>
         <p className="about__version">
-          <span className="about__grow">Application UI</span>
-          <span>0.50.0</span>
-        </p>
-        <p className="about__version">
-          <span className="about__grow">Application Engine</span>
-          <span>0.50.0</span>
+          <span className="about__grow">Application</span>
+          <span>{pkg.version}</span>
         </p>
         <p className="about__version">
           <span className="about__grow">Audio Engine</span>
@@ -49,7 +46,7 @@ export const About = Dialog<Props>(({ onClose }) => {
         </p>
         <p className="about__version">
           <span className="about__grow">Rendering Engine</span>
-          <span>18.0.0</span>
+          <span>{pkg.dependencies.react}</span>
         </p>
       </Content>
     </div>

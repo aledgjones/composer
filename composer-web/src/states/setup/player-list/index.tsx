@@ -1,9 +1,9 @@
 import { FC, useState } from "react";
 import { mdiCogOutline, mdiPlus } from "@mdi/js";
+import { useSnapshot } from "valtio";
 
-import { engine } from "../../../engine";
-import { ui } from "../../../store";
-import { SelectionType } from "../../../store/defs";
+import { engine, ui } from "../../../data";
+import { SelectionType } from "../../../data/defs";
 
 import { Icon } from "../../../ui/components/icon";
 import { CollpaseDirection, Panel } from "../../../components/panel";

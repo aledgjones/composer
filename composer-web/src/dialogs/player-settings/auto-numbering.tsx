@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { engine } from "../../engine";
+import { engine } from "../../data";
 import { AutoCountStyle } from "composer-engine";
 
 import { Option } from "../../ui/components/option";

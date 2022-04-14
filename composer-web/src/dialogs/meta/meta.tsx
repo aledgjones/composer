@@ -1,4 +1,4 @@
-import { engine } from "../../engine";
+import { engine } from "../../data";
 
 import { Button } from "../../ui/components/button";
 import { Dialog } from "../../ui/components/dialog";

@@ -6,9 +6,8 @@ import {
 } from "@mdi/js";
 import merge from "classnames";
 
-import { engine } from "../../../engine";
-import { ui } from "../../../store";
-import { SelectionType } from "../../../store/defs";
+import { engine, ui } from "../../../data";
+import { SelectionType } from "../../../data/defs";
 
 import { SortableItem } from "../../../ui/components/sortable-item";
 import { Icon } from "../../../ui/components/icon";

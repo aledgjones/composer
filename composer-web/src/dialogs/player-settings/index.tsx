@@ -1,5 +1,5 @@
-import { ui } from "../../store";
-import { PlayerPage } from "../../store/defs";
+import { ui } from "../../data";
+import { PlayerPage } from "../../data/defs";
 
 import { MenuItem } from "../../components/menu-item";
 import { Dialog } from "../../ui/components/dialog";

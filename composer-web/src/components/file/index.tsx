@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { mdiMenu, mdiOpenInNew, mdiPencilOutline } from "@mdi/js";
 import merge from "classnames";
 
-import { engine } from "../../engine";
+import { engine } from "../../data";
 
 import { About } from "../../dialogs/about";
 import { Card } from "../../ui/components/card";

@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { mdiPlus } from "@mdi/js";
 
-import { engine } from "../../../engine";
-import { SelectionType } from "../../../store/defs";
+import { engine } from "../../../data";
+import { SelectionType } from "../../../data/defs";
 
 import { Panel } from "../../../components/panel";
 import { PanelHeader } from "../../../components/panel-header";

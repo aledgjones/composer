@@ -1,4 +1,4 @@
-import { engine } from "../../engine";
+import { engine } from "../../data";
 
 export const variables: Map<string, () => string> = new Map([
   // generated

@@ -9,9 +9,8 @@ import {
 } from "@mdi/js";
 import merge from "classnames";
 
-import { ui } from "../../../store";
-import { SelectionType } from "../../../store/defs";
-import { engine } from "../../../engine";
+import { SelectionType } from "../../../data/defs";
+import { engine, ui } from "../../../data";
 import { PlayerType } from "composer-engine";
 
 import { Icon } from "../../../ui/components/icon";

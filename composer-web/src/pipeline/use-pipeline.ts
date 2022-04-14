@@ -1,5 +1,5 @@
 import { MutableRefObject, useLayoutEffect } from "react";
-import { engine } from "../engine";
+import { engine } from "../data";
 import { drawBox } from "../render/draw-box";
 import { drawCircle } from "../render/draw-circle";
 import { drawCurve } from "../render/draw-curve";

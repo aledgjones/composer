@@ -4,9 +4,8 @@ import { RenderRegion } from "../../components/render-region";
 import { Renderer } from "../../components/renderer";
 import { InstrumentPicker } from "../../dialogs/instrument-picker";
 import { PlayerTypePicker } from "../../dialogs/player-type-picker";
-import { engine } from "../../engine";
-import { ui } from "../../store";
-import { SelectionType } from "../../store/defs";
+import { engine, ui } from "../../data";
+import { SelectionType } from "../../data/defs";
 
 import { useTitle } from "../../ui/hooks/use-title";
 import { FlowList } from "./flow-list";

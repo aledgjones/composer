@@ -1,8 +1,8 @@
 import { FC, Suspense, lazy } from "react";
 import { mdiRedo, mdiUndo } from "@mdi/js";
 
-import { ui } from "../../store";
-import { View } from "../../store/defs";
+import { ui } from "../../data";
+import { View } from "../../data/defs";
 
 import { File } from "../../components/file";
 import { Icon } from "../../ui/components/icon";

@@ -1,8 +1,6 @@
 import { FC } from "react";
 import { mdiCogOutline, mdiPlus } from "@mdi/js";
 
-import { ui } from "../../../store";
-
 import { CollpaseDirection, Panel } from "../../../components/panel";
 import { PanelHeader } from "../../../components/panel-header";
 import { Icon } from "../../../ui/components/icon";
@@ -10,6 +8,7 @@ import { Icon } from "../../../ui/components/icon";
 import "./styles.css";
 
 import { noop } from "../../../ui/utils/noop";
+import { ui } from "../../../data";
 
 export const LayoutList: FC = () => {
   const open = ui.useState((s) => s.setup.panels.layouts);

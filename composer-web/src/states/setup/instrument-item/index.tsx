@@ -2,7 +2,7 @@ import { FC, useRef } from "react";
 import { mdiDeleteOutline, mdiDrag } from "@mdi/js";
 import merge from "classnames";
 
-import { engine } from "../../../engine";
+import { engine } from "../../../data";
 
 import { Icon } from "../../../ui/components/icon";
 import { SortableItem } from "../../../ui/components/sortable-item";

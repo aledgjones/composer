@@ -63,7 +63,7 @@ pub struct Engrave {
     pub layout_type: LayoutType,
     pub display_name: String,
 
-    pub space: f32,
+    pub space: Unit,
 
     pub frame_padding: Padding,
     pub instrument_spacing: Unit,
@@ -89,12 +89,12 @@ impl Engrave {
             layout_type,
             display_name,
 
-            space: 1.75,
+            space: Unit::Mm(2.0),
 
             frame_padding: Padding(
-                Unit::Mm(40.0),
+                Unit::Mm(35.0),
                 Unit::Mm(25.0),
-                Unit::Mm(40.0),
+                Unit::Mm(35.0),
                 Unit::Mm(25.0),
             ),
             instrument_spacing: Unit::Space(8.0),

@@ -1,6 +1,6 @@
 mod components;
 mod entries;
-mod render;
+mod parse;
 mod score;
 mod utils;
 

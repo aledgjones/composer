@@ -23,7 +23,7 @@ export interface State {
       players: PlayerPage;
     };
     expanded: { [key: string]: boolean };
-    selected?: { key: string; type: SelectionType };
+    selected: { key: string; type: SelectionType } | null;
     panels: {
       players: boolean;
       layouts: boolean;

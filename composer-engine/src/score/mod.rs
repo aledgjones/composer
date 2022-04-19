@@ -1,11 +1,11 @@
 mod config;
 pub mod engrave;
-mod flows;
-mod instruments;
+pub mod flows;
+pub mod instruments;
 mod meta;
-mod players;
-mod stave;
-mod tracks;
+pub mod players;
+pub mod stave;
+pub mod tracks;
 
 use config::Config;
 use engrave::Engraves;

@@ -6,8 +6,9 @@ import "./fonts/fonts.css";
 import "./ui";
 
 const container = document.querySelector("#app");
-const root = createRoot(container);
-
-engine.listen(() => {
-  root.render(<Root />);
-});
+if (container) {
+  const root = createRoot(container);
+  engine.listen(() => {
+    root.render(<Root />);
+  });
+}

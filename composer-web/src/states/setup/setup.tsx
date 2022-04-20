@@ -17,7 +17,7 @@ import "./setup.css";
 const Setup: FC = () => {
   useTitle("Solo Composer | Setup");
 
-  const [playerKey, setPlayerKey] = useState(null);
+  const [playerKey, setPlayerKey] = useState<string | null>(null);
   const [showPlayerPicker, setShowPlayerPicker] = useState(false);
   const [showInstrumentPicker, setShowInstrumentPicker] = useState(false);
 
@@ -41,7 +41,7 @@ const Setup: FC = () => {
   const onInstrumentPicked = (def: string) => {
     setShowInstrumentPicker(false);
     const instrumentKey = engine.create_instrument(def);
-    engine.assign_instrument_to_player(playerKey, instrumentKey);
+    engine.assign_instrument_to_player(playerKey as string, instrumentKey);
   };
 
   const onSelect = (key: string, type: SelectionType) => {

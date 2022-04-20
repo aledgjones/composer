@@ -1,4 +1,5 @@
-use super::{measurements::Padding, units::Unit};
+use super::measurements::Padding;
+use super::units::Unit;
 
 #[derive(Debug)]
 pub enum Justify {
@@ -8,11 +9,11 @@ pub enum Justify {
 }
 
 impl Justify {
-    fn to_string(&self) -> String {
+    pub fn as_string(&self) -> String {
         match self {
-            Justify::Start => String::from("flex-start"),
+            Justify::Start => String::from("left"),
             Justify::Middle => String::from("center"),
-            Justify::End => String::from("flex-end"),
+            Justify::End => String::from("right"),
         }
     }
 }
@@ -25,11 +26,11 @@ pub enum Align {
 }
 
 impl Align {
-    fn to_string(&self) -> String {
+    pub fn as_string(&self) -> String {
         match self {
-            Align::Top => String::from("flex-start"),
-            Align::Middle => String::from("center"),
-            Align::Bottom => String::from("flex-end"),
+            Align::Top => String::from("top"),
+            Align::Middle => String::from("middle"),
+            Align::Bottom => String::from("bottom"),
         }
     }
 }
@@ -38,6 +39,7 @@ impl Align {
 pub struct Font {
     pub size: Unit,
     pub font: String,
-    pub align: Justify,
+    pub justify: Justify,
+    pub align: Align,
     pub padding: Padding,
 }

@@ -1,5 +1,5 @@
 use crate::components::measurements::Padding;
-use crate::components::text::{Font, Justify};
+use crate::components::text::{Align, Font, Justify};
 use crate::components::units::Unit;
 use crate::utils::shortid;
 use std::collections::HashMap;
@@ -104,7 +104,8 @@ impl Engrave {
             instrument_name: Font {
                 size: Unit::Space(1.75),
                 font: String::from("Libre Baskerville"),
-                align: Justify::End,
+                justify: Justify::End,
+                align: Align::Middle,
                 padding: Padding(
                     Unit::Space(0.0),
                     Unit::Space(2.0),
@@ -115,7 +116,8 @@ impl Engrave {
             tempo_text: Font {
                 size: Unit::Space(1.75),
                 font: String::from("Libre Baskerville"),
-                align: Justify::Start,
+                justify: Justify::Start,
+                align: Align::Middle,
                 padding: Padding(
                     Unit::Space(0.0),
                     Unit::Space(0.0),

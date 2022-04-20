@@ -95,6 +95,6 @@ impl Pitch {
 
     pub fn to_frequency(&self) -> f64 {
         let a: f64 = 440.0;
-        (a / 32.0) * ((2.0 as f64).powf((self.int as f64 - 9.0) / 12.0))
+        (a / 32.0) * (2.0_f64.powf((self.int as f64 - 9.0) / 12.0))
     }
 }

@@ -31,7 +31,7 @@ impl VerticalSpacing {
 impl Engine {
     pub fn measure_vertical_spacing(
         &self,
-        instruments: &Vec<&Instrument>,
+        instruments: &[&Instrument],
         staves: &HashMap<String, Stave>,
         engrave: &Engrave,
     ) -> VerticalSpacing {
@@ -39,7 +39,7 @@ impl Engine {
 
         for (i, instrument) in instruments.iter().enumerate() {
             if i > 0 {
-                output.height = output.height + engrave.instrument_spacing;
+                output.height = &output.height + &engrave.instrument_spacing;
             }
 
             let mut instrument_entry = VerticalPosition {
@@ -51,17 +51,17 @@ impl Engine {
                 let stave = staves.get(stave_key).unwrap();
 
                 if 1 > 0 && ii > 0 {
-                    output.height = output.height + engrave.stave_spacing;
-                    instrument_entry.height = instrument_entry.height + engrave.stave_spacing;
+                    output.height = &output.height + &engrave.stave_spacing;
+                    instrument_entry.height = &instrument_entry.height + &engrave.stave_spacing;
                 }
 
                 let stave_entry = VerticalPosition {
-                    y: output.height + Unit::Space(((stave.lines.len() - 1) / 2) as f32),
+                    y: output.height + &Unit::Space(((stave.lines.len() - 1) / 2) as f32),
                     height: Unit::Space((stave.lines.len() - 1) as f32),
                 };
 
-                output.height = output.height + stave_entry.height;
-                instrument_entry.height = instrument_entry.height + stave_entry.height;
+                output.height = output.height + &stave_entry.height;
+                instrument_entry.height = instrument_entry.height + &stave_entry.height;
 
                 output.staves.insert(stave_key.clone(), stave_entry);
             }

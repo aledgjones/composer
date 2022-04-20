@@ -117,9 +117,8 @@ impl Engine {
         for (_, instrument_keys) in instruments_solo {
             if instrument_keys.len() > 1 {
                 for (i, instrument_key) in instrument_keys.iter().enumerate() {
-                    match self.score.instruments.get_mut(instrument_key) {
-                        Some(instrument) => instrument.count = Some(i as u8 + 1),
-                        None => (),
+                    if let Some(instrument) = self.score.instruments.get_mut(instrument_key) {
+                        instrument.count = Some(i as u8 + 1)
                     };
                 }
             }
@@ -128,9 +127,8 @@ impl Engine {
         for (_, instrument_keys) in instruments_section {
             if instrument_keys.len() > 1 {
                 for (i, instrument_key) in instrument_keys.iter().enumerate() {
-                    match self.score.instruments.get_mut(instrument_key) {
-                        Some(instrument) => instrument.count = Some(i as u8 + 1),
-                        None => (),
+                    if let Some(instrument) = self.score.instruments.get_mut(instrument_key) {
+                        instrument.count = Some(i as u8 + 1)
                     };
                 }
             }

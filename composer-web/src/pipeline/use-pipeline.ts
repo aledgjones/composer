@@ -15,7 +15,6 @@ export function usePipeline(
   flowKey: string,
   timings: boolean
 ) {
-  // ensure we render when canvas is ready
   const mm = useMM();
 
   useLayoutEffect(() => {

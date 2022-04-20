@@ -174,7 +174,7 @@ impl Engine {
         let player = self.score.players.by_key.get(player_key).unwrap();
         let instruments = player.instruments.clone();
         for instrument_key in instruments {
-            self.unassign_instrument_from_flow(&flow_key, &instrument_key);
+            self.unassign_instrument_from_flow(flow_key, &instrument_key);
         }
 
         self.emit();

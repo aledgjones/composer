@@ -1,6 +1,8 @@
+mod draw_names;
 mod draw_staves;
 mod get_flow_players;
 mod measure_instrument_names;
+mod measure_text;
 mod measure_vertical_spacing;
 
 use crate::components::measurements::Point;
@@ -20,9 +22,28 @@ pub struct Line {
 }
 
 #[derive(Serialize)]
+pub struct Text {
+    pub x: f32,
+    pub y: f32,
+    pub value: String,
+    pub color: String,
+    pub font: String,
+    pub size: f32,
+    pub justify: String,
+    pub align: String,
+}
+
+#[derive(Serialize)]
 #[serde(tag = "type")]
 pub enum Instruction {
     Line(Line),
+    Text(Text),
+}
+
+impl Instruction {
+    fn to_jsvalue(&self) -> JsValue {
+        JsValue::from_serde(&self).unwrap()
+    }
 }
 
 #[wasm_bindgen]
@@ -43,7 +64,7 @@ impl Engine {
             .get_engrave_by_type(LayoutType::Score)
             .unwrap();
 
-        let converter = Converter::new(px_per_mm as f32, engrave.space.to_f32());
+        let converter = Converter::new(px_per_mm as f32, engrave.space.as_f32());
 
         let padding_top = converter.to_spaces(&engrave.frame_padding.0);
         let padding_bottom = converter.to_spaces(&engrave.frame_padding.2);
@@ -54,36 +75,46 @@ impl Engine {
 
         let (flow, players, instruments, staves) = self.get_flow_players(flow_key);
 
-        let vertical_spacing = self.measure_vertical_spacing(&instruments, &flow.staves, &engrave);
+        let vertical_spacing = self.measure_vertical_spacing(&instruments, &flow.staves, engrave);
         let instrument_name_width =
             self.measure_instrument_names(&players, engrave, &converter, measure);
 
-        let x = padding_left + instrument_name_width + instrument_name_gap;
-        let y = padding_top;
-
         let content_width = Unit::Space(20.0);
 
-        let width = x + content_width + padding_right;
-        let height = y + vertical_spacing.height + padding_bottom;
+        let width = &padding_left
+            + &instrument_name_width
+            + &instrument_name_gap
+            + &content_width
+            + &padding_right;
+        let height = &padding_top + &vertical_spacing.height + &padding_bottom;
 
         self.draw_staves(
             &staves,
-            x,
-            y,
-            content_width,
+            &(&padding_left + &instrument_name_width + &instrument_name_gap),
+            &padding_top,
+            &content_width,
             &vertical_spacing,
+            &converter,
+            &mut instructions,
+        );
+        self.draw_names(
+            &players,
+            &(&padding_left + &instrument_name_width),
+            &padding_top,
+            &vertical_spacing,
+            engrave,
             &converter,
             &mut instructions,
         );
 
         let _ = setup.call2(
             &JsValue::NULL,
-            &JsValue::from(converter.to_px(&height).to_f32()),
-            &JsValue::from(converter.to_px(&width).to_f32()),
+            &converter.to_px(&height).as_jsvalue(),
+            &converter.to_px(&width).as_jsvalue(),
         );
 
         for instruction in instructions {
-            let _ = render.call1(&JsValue::NULL, &JsValue::from_serde(&instruction).unwrap());
+            let _ = render.call1(&JsValue::NULL, &instruction.to_jsvalue());
         }
     }
 }

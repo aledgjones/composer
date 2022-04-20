@@ -65,7 +65,7 @@ impl Engine {
     pub fn remove_player(&mut self, player_key: &str) {
         let flows = self.score.flows.order.clone();
         for flow_key in flows {
-            self.unassign_player_from_flow(&flow_key, &player_key.clone());
+            self.unassign_player_from_flow(&flow_key, player_key);
         }
 
         let player = self.score.players.by_key.get(player_key).unwrap();

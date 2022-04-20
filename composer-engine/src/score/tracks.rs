@@ -40,7 +40,7 @@ impl Track {
     pub fn _shift(&mut self, key: &str, new_tick: u32) {
         let entry = match self.entries.by_key.get_mut(key) {
             Some(entry) => entry,
-            None => return (),
+            None => return,
         };
 
         let old_tick = entry.tick();
@@ -49,11 +49,8 @@ impl Track {
         if old_tick != new_tick {
             entry.set_tick(new_tick);
             // move the entry key to the new tick
-            match self.entries.by_tick.get_mut(&old_tick) {
-                Some(keys) => {
-                    keys.retain(|item| item != key);
-                }
-                None => (),
+            if let Some(keys) = self.entries.by_tick.get_mut(&old_tick) {
+                keys.retain(|item| item != key);
             };
             let tick = self.entries.by_tick.entry(new_tick).or_insert(Vec::new());
             tick.push(String::from(key));
@@ -67,12 +64,10 @@ impl Track {
             None => return None,
         };
 
-        match self.entries.by_tick.get_mut(&entry.tick()) {
-            Some(keys) => {
-                keys.retain(|item| item != key);
-            }
-            None => (),
+        if let Some(keys) = self.entries.by_tick.get_mut(&entry.tick()) {
+            keys.retain(|item| item != key);
         };
+
         self.entries.by_key.remove(key)
     }
 }

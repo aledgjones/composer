@@ -15,7 +15,7 @@ import "./styles.css";
 
 interface Props {
   onCancel: () => void;
-  onSelect: (type?: PlayerType) => void;
+  onSelect: (type: PlayerType) => void;
 }
 
 export const PlayerTypePicker = Dialog<Props>(({ onCancel, onSelect }) => {

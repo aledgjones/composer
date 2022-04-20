@@ -16,7 +16,7 @@ export const RenderRegion: FC<Props> = ({ children, className }) => {
       y
       className={merge("render-region", className)}
     >
-      {children}
+      <div className="render-region__padding">{children}</div>
     </DragScroll>
   );
 };

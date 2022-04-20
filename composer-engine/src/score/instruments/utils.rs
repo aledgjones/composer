@@ -16,7 +16,7 @@ pub fn get_full_path_from_partial(selection: &JsValue) -> JsValue {
 
     let def = INSTRUMENT_DEFS.iter().find(|&def| {
         for (i, step) in selection.iter().enumerate() {
-            if String::from(step) != def.path[i] {
+            if *step != def.path[i] {
                 return false; // we have a mismatched path -- this isn't what we're looking for
             }
         }
@@ -46,7 +46,7 @@ pub fn def_tree(selection: &JsValue) -> JsValue {
                 if !tree[i].contains(step) {
                     tree[i].push(step);
                 }
-                if step.to_string() != selection[i] {
+                if *step != selection[i] {
                     ignore.insert(def.id);
                 }
             }

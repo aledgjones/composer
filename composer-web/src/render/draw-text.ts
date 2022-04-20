@@ -1,38 +1,14 @@
-import { Align, Justify, TextInstruction } from "./text";
-
-export function justifyToTextAlign(input: Justify) {
-  switch (input) {
-    case Justify.Middle:
-      return "center";
-    case Justify.End:
-      return "right";
-    default:
-    case Justify.Start:
-      return "left";
-  }
-}
-
-export function alignToBasline(input: Align) {
-  switch (input) {
-    case Align.Bottom:
-      return "bottom";
-    case Align.Top:
-      return "top";
-    case Align.Middle:
-      return "middle";
-    default:
-  }
-}
+import { TextInstruction } from "./text";
 
 export function drawText(
   ctx: CanvasRenderingContext2D,
   instruction: TextInstruction,
-  space: number
+  dpi: number
 ) {
-  ctx.fillStyle = instruction.styles.color;
-  ctx.font = `${instruction.styles.size * space}px ${instruction.styles.font}`;
-  ctx.textAlign = justifyToTextAlign(instruction.styles.justify);
-  ctx.textBaseline = alignToBasline(instruction.styles.align);
+  ctx.fillStyle = instruction.color;
+  ctx.font = `${instruction.size * dpi}px ${instruction.font}`;
+  ctx.textAlign = instruction.justify;
+  ctx.textBaseline = instruction.align;
 
-  ctx.fillText(instruction.value, instruction.x * space, instruction.y * space);
+  ctx.fillText(instruction.value, instruction.x * dpi, instruction.y * dpi);
 }

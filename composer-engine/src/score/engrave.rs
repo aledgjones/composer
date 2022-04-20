@@ -1,6 +1,6 @@
-use crate::components::measurements::Padding;
+use crate::components::measurements::{PaddingMm, PaddingSpaces};
 use crate::components::text::{Align, Font, Justify};
-use crate::components::units::Unit;
+use crate::components::units::{Mm, Space};
 use crate::utils::shortid;
 use std::collections::HashMap;
 
@@ -63,12 +63,12 @@ pub struct Engrave {
     pub layout_type: LayoutType,
     pub display_name: String,
 
-    pub space: Unit,
+    pub space: Mm,
 
-    pub frame_padding: Padding,
-    pub instrument_spacing: Unit,
-    pub stave_spacing: Unit,
-    pub system_start_padding: Unit,
+    pub frame_padding: PaddingMm,
+    pub instrument_spacing: Space,
+    pub stave_spacing: Space,
+    pub system_start_padding: Space,
 
     pub instrument_name: Font,
     pub tempo_text: Font,
@@ -79,7 +79,7 @@ pub struct Engrave {
     pub bracket_single_staves: bool,
     pub sub_bracket: bool,
 
-    pub minimum_note_spacing: Unit,
+    pub minimum_note_spacing: Space,
 }
 
 impl Engrave {
@@ -89,41 +89,26 @@ impl Engrave {
             layout_type,
             display_name,
 
-            space: Unit::Mm(2.0),
+            space: 2.0,
 
-            frame_padding: Padding(
-                Unit::Mm(35.0),
-                Unit::Mm(25.0),
-                Unit::Mm(35.0),
-                Unit::Mm(25.0),
-            ),
-            instrument_spacing: Unit::Space(8.0),
-            stave_spacing: Unit::Space(6.0),
-            system_start_padding: Unit::Space(0.75),
+            frame_padding: PaddingMm::new(35.0, 25.0, 35.0, 25.0),
+            instrument_spacing: 8.0,
+            stave_spacing: 6.0,
+            system_start_padding: 0.75,
 
             instrument_name: Font {
-                size: Unit::Space(1.75),
+                size: 1.75,
                 font: String::from("Libre Baskerville"),
                 justify: Justify::End,
                 align: Align::Middle,
-                padding: Padding(
-                    Unit::Space(0.0),
-                    Unit::Space(2.0),
-                    Unit::Space(0.0),
-                    Unit::Space(0.0),
-                ),
+                padding: PaddingSpaces::new(0.0, 2.0, 0.0, 0.0),
             },
             tempo_text: Font {
-                size: Unit::Space(1.75),
+                size: 1.75,
                 font: String::from("Libre Baskerville"),
                 justify: Justify::Start,
                 align: Align::Middle,
-                padding: Padding(
-                    Unit::Space(0.0),
-                    Unit::Space(0.0),
-                    Unit::Space(2.0),
-                    Unit::Space(0.0),
-                ),
+                padding: PaddingSpaces::new(0.0, 0.0, 2.0, 0.0),
             },
 
             systemic_barline_single_instrument_system: false,
@@ -132,7 +117,7 @@ impl Engrave {
             bracket_single_staves: false,
             sub_bracket: true,
 
-            minimum_note_spacing: Unit::Space(1.6),
+            minimum_note_spacing: 1.6,
         }
     }
 }

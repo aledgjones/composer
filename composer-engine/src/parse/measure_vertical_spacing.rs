@@ -1,4 +1,4 @@
-use crate::components::units::Unit;
+use crate::components::units::Space;
 use crate::score::engrave::Engrave;
 use crate::score::instruments::Instrument;
 use crate::score::stave::Stave;
@@ -7,13 +7,13 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct VerticalPosition {
-    pub y: Unit,
-    pub height: Unit,
+    pub y: Space,
+    pub height: Space,
 }
 
 #[derive(Debug)]
 pub struct VerticalSpacing {
-    pub height: Unit,
+    pub height: Space,
     pub instruments: HashMap<String, VerticalPosition>,
     pub staves: HashMap<String, VerticalPosition>,
 }
@@ -21,7 +21,7 @@ pub struct VerticalSpacing {
 impl VerticalSpacing {
     fn new() -> Self {
         Self {
-            height: Unit::Space(0.0),
+            height: 0.0,
             instruments: HashMap::new(),
             staves: HashMap::new(),
         }
@@ -39,12 +39,12 @@ impl Engine {
 
         for (i, instrument) in instruments.iter().enumerate() {
             if i > 0 {
-                output.height = &output.height + &engrave.instrument_spacing;
+                output.height = output.height + engrave.instrument_spacing;
             }
 
             let mut instrument_entry = VerticalPosition {
                 y: output.height,
-                height: Unit::Space(0.0),
+                height: 0.0,
             };
 
             for (ii, stave_key) in instrument.staves.iter().enumerate() {
@@ -56,8 +56,8 @@ impl Engine {
                 }
 
                 let stave_entry = VerticalPosition {
-                    y: output.height + &Unit::Space(((stave.lines.len() - 1) / 2) as f32),
-                    height: Unit::Space((stave.lines.len() - 1) as f32),
+                    y: output.height + ((stave.lines.len() - 1) / 2) as Space,
+                    height: (stave.lines.len() - 1) as Space,
                 };
 
                 output.height = output.height + &stave_entry.height;

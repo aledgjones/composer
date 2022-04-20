@@ -6,8 +6,7 @@ mod measure_text;
 mod measure_vertical_spacing;
 
 use crate::components::measurements::Point;
-use crate::components::units::Converter;
-use crate::components::units::Unit;
+use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
 use crate::Engine;
 use js_sys::Function;
@@ -64,14 +63,14 @@ impl Engine {
             .get_engrave_by_type(LayoutType::Score)
             .unwrap();
 
-        let converter = Converter::new(px_per_mm as f32, engrave.space.as_f32());
+        let converter = Converter::new(px_per_mm as f32, engrave.space);
 
-        let padding_top = converter.to_spaces(&engrave.frame_padding.0);
-        let padding_bottom = converter.to_spaces(&engrave.frame_padding.2);
-        let padding_left = converter.to_spaces(&engrave.frame_padding.3);
-        let padding_right = converter.to_spaces(&engrave.frame_padding.1);
+        let padding_top: Space = converter.mm_to_spaces(&engrave.frame_padding.top);
+        let padding_bottom: Space = converter.mm_to_spaces(&engrave.frame_padding.bottom);
+        let padding_left: Space = converter.mm_to_spaces(&engrave.frame_padding.left);
+        let padding_right: Space = converter.mm_to_spaces(&engrave.frame_padding.right);
 
-        let instrument_name_gap = engrave.instrument_name.padding.1;
+        let instrument_name_gap: Space = engrave.instrument_name.padding.right;
 
         let (flow, players, instruments, staves) = self.get_flow_players(flow_key);
 
@@ -79,18 +78,18 @@ impl Engine {
         let instrument_name_width =
             self.measure_instrument_names(&players, engrave, &converter, measure);
 
-        let content_width = Unit::Space(20.0);
+        let content_width: Space = 20.0;
 
-        let width = &padding_left
-            + &instrument_name_width
-            + &instrument_name_gap
-            + &content_width
-            + &padding_right;
-        let height = &padding_top + &vertical_spacing.height + &padding_bottom;
+        let width: Space = padding_left
+            + instrument_name_width
+            + instrument_name_gap
+            + content_width
+            + padding_right;
+        let height: Space = padding_top + vertical_spacing.height + padding_bottom;
 
         self.draw_staves(
             &staves,
-            &(&padding_left + &instrument_name_width + &instrument_name_gap),
+            &(padding_left + instrument_name_width + instrument_name_gap),
             &padding_top,
             &content_width,
             &vertical_spacing,
@@ -99,7 +98,7 @@ impl Engine {
         );
         self.draw_names(
             &players,
-            &(&padding_left + &instrument_name_width),
+            &(padding_left + instrument_name_width),
             &padding_top,
             &vertical_spacing,
             engrave,
@@ -109,8 +108,8 @@ impl Engine {
 
         let _ = setup.call2(
             &JsValue::NULL,
-            &converter.to_px(&height).as_jsvalue(),
-            &converter.to_px(&width).as_jsvalue(),
+            &JsValue::from_f64(converter.spaces_to_px(&height) as f64),
+            &JsValue::from_f64(converter.spaces_to_px(&width) as f64),
         );
 
         for instruction in instructions {

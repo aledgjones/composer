@@ -3,7 +3,7 @@ use super::Instruction;
 use super::Line;
 use crate::components::measurements::Point;
 use crate::components::units::Converter;
-use crate::components::units::Unit;
+use crate::components::units::Space;
 use crate::score::stave::Stave;
 use crate::Engine;
 
@@ -11,9 +11,9 @@ impl Engine {
     pub fn draw_staves(
         &self,
         staves: &[&Stave],
-        x: &Unit,
-        y: &Unit,
-        width: &Unit,
+        x: &Space,
+        y: &Space,
+        width: &Space,
         vertical_spacing: &VerticalSpacing,
         converter: &Converter,
         instructions: &mut Vec<Instruction>,
@@ -21,19 +21,18 @@ impl Engine {
         for stave in staves {
             for (i, line) in stave.lines.iter().enumerate() {
                 if line == &1 {
-                    let top = y
-                        + &(&vertical_spacing.staves[&stave.key].y
-                            - &(&vertical_spacing.staves[&stave.key].height / 2))
-                        + &Unit::Space(i as f32);
+                    let top = y + vertical_spacing.staves[&stave.key].y
+                        - (vertical_spacing.staves[&stave.key].height / 2.0)
+                        + i as Space;
 
                     instructions.push(Instruction::Line(Line {
                         color: String::from("#000"),
-                        width: converter.to_px(&Unit::Space(0.125)).as_f32(),
+                        width: converter.spaces_to_px(&0.125),
                         points: vec![
-                            Point(converter.to_px(&x).as_f32(), converter.to_px(&top).as_f32()),
+                            Point(converter.spaces_to_px(&x), converter.spaces_to_px(&top)),
                             Point(
-                                converter.to_px(&(x + width)).as_f32(),
-                                converter.to_px(&top).as_f32(),
+                                converter.spaces_to_px(&(x + width)),
+                                converter.spaces_to_px(&top),
                             ),
                         ],
                     }));

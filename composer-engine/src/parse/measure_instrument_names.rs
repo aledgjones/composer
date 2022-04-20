@@ -1,4 +1,4 @@
-use crate::components::units::{Converter, Unit};
+use crate::components::units::{Converter, Px, Space};
 use crate::score::engrave::Engrave;
 use crate::score::players::Player;
 use crate::Engine;
@@ -11,8 +11,8 @@ impl Engine {
         engrave: &Engrave,
         converter: &Converter,
         measure: &Function,
-    ) -> Unit {
-        let mut max: f32 = 0.0;
+    ) -> Space {
+        let mut max: Px = 0.0;
 
         for player in players {
             for instrument_key in &player.instruments {
@@ -30,6 +30,6 @@ impl Engine {
             }
         }
 
-        converter.to_spaces(&Unit::Px(max))
+        converter.px_to_spaces(&max)
     }
 }

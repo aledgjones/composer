@@ -1,5 +1,4 @@
-use super::measurements::Padding;
-use super::units::Unit;
+use super::{measurements::PaddingSpaces, units::Space};
 
 #[derive(Debug)]
 pub enum Justify {
@@ -37,9 +36,9 @@ impl Align {
 
 #[derive(Debug)]
 pub struct Font {
-    pub size: Unit,
+    pub size: Space,
     pub font: String,
     pub justify: Justify,
     pub align: Align,
-    pub padding: Padding,
+    pub padding: PaddingSpaces,
 }

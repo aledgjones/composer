@@ -1,6 +1,5 @@
-use crate::components::measurements::{BoundingBox, Padding};
+use crate::components::measurements::{BoundingBox, PaddingSpaces};
 use crate::components::pitch::{Accidental, Pitch};
-use crate::components::units::Unit;
 use crate::utils::shortid;
 use wasm_bindgen::prelude::*;
 
@@ -36,14 +35,9 @@ impl Clef {
 
     fn metrics(&self) -> BoundingBox {
         BoundingBox {
-            width: Unit::Space(2.8),
-            height: Unit::Space(4.0),
-            padding: Padding(
-                Unit::Space(0.0),
-                Unit::Space(1.0),
-                Unit::Space(0.0),
-                Unit::Space(0.0),
-            ),
+            width: 2.8,
+            height: 4.0,
+            padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
         }
     }
 }

@@ -1,7 +1,7 @@
 use js_sys::Function;
 use wasm_bindgen::JsValue;
 
-use crate::components::units::{Converter, Unit};
+use crate::components::units::{Converter, Px, Space};
 use crate::Engine;
 
 impl Engine {
@@ -9,18 +9,18 @@ impl Engine {
         &self,
         measure: &Function,
         text: &str,
-        size: &Unit,
+        size: &Space,
         font: &str,
         converter: &Converter,
-    ) -> f32 {
+    ) -> Px {
         let result = measure
             .call3(
                 &JsValue::NULL,
                 &JsValue::from_str(text),
-                &converter.to_px(size).as_jsvalue(),
+                &JsValue::from_f64(converter.spaces_to_px(size) as f64),
                 &JsValue::from_str(font),
             )
             .unwrap();
-        result.as_f64().unwrap() as f32
+        result.as_f64().unwrap() as Px
     }
 }

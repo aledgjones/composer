@@ -2,7 +2,6 @@ use super::measurements::PaddingSpaces;
 use super::units::{Converter, Px, Space};
 use js_sys::Function;
 use serde::Serialize;
-use std::collections::HashMap;
 use wasm_bindgen::JsValue;
 
 #[derive(Debug, Serialize)]

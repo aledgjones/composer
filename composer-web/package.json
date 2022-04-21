@@ -7,8 +7,10 @@
     "wasm": "wasm-pack build ../composer-engine --target web",
     "wasm:release": "wasm-pack build ../composer-engine --target web --release",
     "dev": "npm run wasm && vite",
-    "build": "npm run wasm:release && vite build",
-    "preview": "npm run wasm:release && vite preview"
+    "build": "vite build",
+    "deploy:patch": "npm run wasm:release && npm version patch && git push",
+    "deploy:minor": "npm run wasm:release && npm version minor && git push",
+    "deploy:major": "npm run wasm:release && npm version major && git push"
   },
   "author": "Aled Jones <aledjones.viola@gmail.com>",
   "license": "(MIT OR Apache-2.0)",

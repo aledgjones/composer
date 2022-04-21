@@ -19,3 +19,5 @@ impl Stave {
         }
     }
 }
+
+pub const STAVE_LINE_WIDTH: f32 = 0.125;

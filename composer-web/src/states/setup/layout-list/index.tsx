@@ -1,16 +1,17 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { mdiCogOutline, mdiPlus } from "@mdi/js";
 
 import { CollpaseDirection, Panel } from "../../../components/panel";
 import { PanelHeader } from "../../../components/panel-header";
 import { Icon } from "../../../ui/components/icon";
+import { noop } from "../../../ui/utils/noop";
+import { ui } from "../../../data";
+import { EngraveSettings } from "../../../dialogs/engrave-settings";
 
 import "./styles.css";
 
-import { noop } from "../../../ui/utils/noop";
-import { ui } from "../../../data";
-
 export const LayoutList: FC = () => {
+  const [settings, setSettings] = useState(false);
   const open = ui.useState((s) => s.setup.panels.layouts);
 
   return (
@@ -28,15 +29,20 @@ export const LayoutList: FC = () => {
         <PanelHeader>
           <span className="layout-list__label">Layouts</span>
           <Icon
-            disabled
             style={{ marginRight: 12 }}
             size={24}
             path={mdiCogOutline}
-            onClick={noop}
+            onClick={() => setSettings(true)}
           />
           <Icon disabled size={24} path={mdiPlus} onClick={noop} />
         </PanelHeader>
       </Panel>
+
+      <EngraveSettings
+        width={900}
+        open={settings}
+        onClose={() => setSettings(false)}
+      />
     </>
   );
 };

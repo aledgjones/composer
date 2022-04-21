@@ -1,3 +1,5 @@
+import { LayoutType } from "composer-engine";
+
 export const enum View {
   Setup,
   Write,
@@ -16,11 +18,19 @@ export const enum PlayerPage {
   AutoNumbering,
 }
 
+export const enum EngravePage {
+  Barlines,
+  BracketsAndBraces,
+  NoteSpacing,
+  Staves,
+}
+
 export interface State {
   view: View;
   setup: {
     dialogs: {
-      players: PlayerPage;
+      players: { page: PlayerPage };
+      engrave: { page: EngravePage; config: string | null };
     };
     expanded: { [key: string]: boolean };
     selected: { key: string; type: SelectionType } | null;

@@ -1,6 +1,5 @@
 import { FC, useState } from "react";
 import { mdiCogOutline, mdiPlus } from "@mdi/js";
-import { useSnapshot } from "valtio";
 
 import { engine, ui } from "../../../data";
 import { SelectionType } from "../../../data/defs";

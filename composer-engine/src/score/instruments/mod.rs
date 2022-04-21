@@ -23,6 +23,16 @@ pub struct Instrument {
     pub mute: bool,
 }
 
+impl Instrument {
+    pub fn family(&self) -> &str {
+        let mut parts = self.id.split('.');
+        match parts.next() {
+            None => "unknown",
+            Some(part) => part,
+        }
+    }
+}
+
 #[wasm_bindgen]
 impl Engine {
     /// Create an instrument

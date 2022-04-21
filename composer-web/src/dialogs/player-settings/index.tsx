@@ -22,7 +22,7 @@ const getPage = (page: PlayerPage) => {
 };
 
 export const PlayerSettings = Dialog<Props>(({ onClose }) => {
-  const page = ui.useState((s) => s.setup.dialogs.players);
+  const page = ui.useState((s) => s.setup.dialogs.players.page);
 
   return (
     <div className="setup-settings generic-settings">
@@ -32,7 +32,7 @@ export const PlayerSettings = Dialog<Props>(({ onClose }) => {
             selected={page === PlayerPage.AutoNumbering}
             onClick={() =>
               ui.update((s) => {
-                s.setup.dialogs.players = PlayerPage.AutoNumbering;
+                s.setup.dialogs.players.page = PlayerPage.AutoNumbering;
               })
             }
           >

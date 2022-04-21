@@ -1,8 +1,10 @@
+use crate::components::text::measure_text;
 use crate::components::units::{Converter, Px, Space};
 use crate::score::engrave::Engrave;
 use crate::score::players::Player;
 use crate::Engine;
 use js_sys::Function;
+use std::collections::HashMap;
 
 impl Engine {
     pub fn measure_instrument_names(
@@ -17,7 +19,7 @@ impl Engine {
         for player in players {
             for instrument_key in &player.instruments {
                 let text = self.get_instrument_name(&player.key, instrument_key);
-                let width = self.measure_text(
+                let width = measure_text(
                     measure,
                     &text,
                     &engrave.instrument_name.size,

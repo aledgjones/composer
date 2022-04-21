@@ -1,5 +1,5 @@
 use crate::Engine;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 #[derive(Clone, Debug)]
 #[wasm_bindgen]

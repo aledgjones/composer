@@ -1,5 +1,3 @@
-use wasm_bindgen::JsValue;
-
 pub type Px = f32;
 pub type Mm = f32;
 pub type Space = f32;

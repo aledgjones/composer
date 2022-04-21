@@ -1,4 +1,6 @@
 use super::instruments::defs::get_def;
+use super::instruments::Instrument;
+use super::players::Player;
 use super::stave::Stave;
 use super::tracks::Track;
 use crate::entries::clef::Clef;
@@ -6,7 +8,8 @@ use crate::entries::Entry;
 use crate::utils::shortid;
 use crate::Engine;
 use std::collections::{HashMap, HashSet};
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::JsValue;
 
 #[derive(Debug)]
 pub struct Flows {
@@ -47,6 +50,35 @@ impl Flow {
             master: master.key.clone(),
             staves: HashMap::new(),
         }
+    }
+}
+
+impl Engine {
+    pub fn get_flow_players(
+        &self,
+        flow_key: &str,
+    ) -> (&Flow, Vec<&Player>, Vec<&Instrument>, Vec<&Stave>) {
+        let mut players: Vec<&Player> = Vec::new();
+        let mut instruments: Vec<&Instrument> = Vec::new();
+        let mut staves: Vec<&Stave> = Vec::new();
+
+        let flow = self.score.flows.by_key.get(flow_key).unwrap();
+        for player_key in &self.score.players.order {
+            if flow.players.contains(player_key) {
+                let player = self.score.players.by_key.get(player_key).unwrap();
+                players.push(player);
+                for instrument_key in &player.instruments {
+                    let instrument = self.score.instruments.get(instrument_key).unwrap();
+                    instruments.push(instrument);
+
+                    for stave_key in &instrument.staves {
+                        let stave = flow.staves.get(stave_key).unwrap();
+                        staves.push(stave);
+                    }
+                }
+            }
+        }
+        (flow, players, instruments, staves)
     }
 }
 

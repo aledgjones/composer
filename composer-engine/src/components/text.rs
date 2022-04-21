@@ -1,6 +1,14 @@
-use super::{measurements::PaddingSpaces, units::Space};
+use std::collections::HashMap;
 
-#[derive(Debug)]
+use crate::Engine;
+
+use super::measurements::PaddingSpaces;
+use super::units::{Converter, Px, Space};
+use js_sys::Function;
+use serde::Serialize;
+use wasm_bindgen::JsValue;
+
+#[derive(Debug, Serialize)]
 pub enum Justify {
     Start,
     Middle,
@@ -17,7 +25,7 @@ impl Justify {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum Align {
     Top,
     Middle,
@@ -41,4 +49,24 @@ pub struct Font {
     pub justify: Justify,
     pub align: Align,
     pub padding: PaddingSpaces,
+}
+
+pub fn measure_text(
+    measure: &Function,
+    text: &str,
+    size: &Space,
+    font: &str,
+    converter: &Converter,
+) -> Px {
+    let size = converter.spaces_to_px(size) as f64;
+    let result = measure
+        .call3(
+            &JsValue::NULL,
+            &JsValue::from_str(text),
+            &JsValue::from_f64(size),
+            &JsValue::from_str(font),
+        )
+        .unwrap();
+
+    result.as_f64().unwrap() as f32
 }

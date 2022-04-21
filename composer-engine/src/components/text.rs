@@ -2,6 +2,7 @@ use super::measurements::PaddingSpaces;
 use super::units::{Converter, Px, Space};
 use js_sys::Function;
 use serde::Serialize;
+use std::collections::HashMap;
 use wasm_bindgen::JsValue;
 
 #[derive(Debug, Serialize)]
@@ -54,15 +55,17 @@ pub fn measure_text(
     font: &str,
     converter: &Converter,
 ) -> Px {
-    let size = converter.spaces_to_px(size) as f64;
+    let size = converter.spaces_to_px(size);
     let result = measure
         .call3(
             &JsValue::NULL,
             &JsValue::from_str(text),
-            &JsValue::from_f64(size),
+            &JsValue::from_f64(size as f64),
             &JsValue::from_str(font),
         )
+        .unwrap()
+        .as_f64()
         .unwrap();
 
-    result.as_f64().unwrap() as f32
+    result as f32
 }

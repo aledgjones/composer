@@ -17,7 +17,7 @@ pub struct Instrument {
     pub long_name: String,
     pub short_name: String,
     pub staves: Vec<String>,
-    pub count: Option<u8>,
+    pub count: Option<String>,
     pub volume: u8, // 0-127
     pub solo: bool,
     pub mute: bool,
@@ -29,6 +29,41 @@ impl Instrument {
         match parts.next() {
             None => "unknown",
             Some(part) => part,
+        }
+    }
+
+    pub fn name(&self) -> String {
+        match &self.count {
+            Some(count) => {
+                format!("{} {}", &self.long_name, count)
+            }
+            None => self.long_name.clone(),
+        }
+    }
+}
+
+impl Engine {
+    pub fn assign_count(&mut self, entries: HashMap<String, Vec<(String, String)>>) {
+        for (_, keys) in entries {
+            if keys.len() > 1 {
+                for (i, (player_key, instrument_key)) in keys.iter().enumerate() {
+                    let player = self.score.players.by_key.get(player_key).unwrap();
+                    let instrument = self.score.instruments.get_mut(instrument_key).unwrap();
+                    let count = (i + 1) as i32;
+
+                    let count_type = match player.player_type {
+                        PlayerType::Solo => &self.score.config.auto_count.solo,
+                        PlayerType::Section => &self.score.config.auto_count.section,
+                    };
+
+                    let styled_count = match count_type {
+                        AutoCountStyle::Roman => roman::to(count).unwrap(),
+                        AutoCountStyle::Arabic => count.to_string(),
+                    };
+
+                    instrument.count = Some(styled_count);
+                }
+            }
         }
     }
 }
@@ -74,29 +109,14 @@ impl Engine {
         self.emit();
     }
 
-    pub fn get_instrument_name(&self, player_key: &str, instrument_key: &str) -> String {
-        let player = self.score.players.by_key.get(player_key).unwrap();
+    pub fn get_instrument_name(&self, instrument_key: &str) -> String {
         let instrument = self.score.instruments.get(instrument_key).unwrap();
-        let count_type = match player.player_type {
-            PlayerType::Solo => &self.score.config.auto_count.solo,
-            PlayerType::Section => &self.score.config.auto_count.section,
-        };
-
-        match instrument.count {
-            Some(count) => {
-                let styled_count = match count_type {
-                    AutoCountStyle::Roman => roman::to(count as i32).unwrap(),
-                    AutoCountStyle::Arabic => count.to_string(),
-                };
-                format!("{} {}", instrument.long_name, styled_count)
-            }
-            None => instrument.long_name.clone(),
-        }
+        instrument.name()
     }
 
     pub fn calculate_counts(&mut self) {
-        let mut instruments_solo: HashMap<String, Vec<String>> = HashMap::new();
-        let mut instruments_section: HashMap<String, Vec<String>> = HashMap::new();
+        let mut instruments_solo: HashMap<String, Vec<(String, String)>> = HashMap::new();
+        let mut instruments_section: HashMap<String, Vec<(String, String)>> = HashMap::new();
 
         // collect keys of each instruments with exactly the same name and player type
         for player_key in &self.score.players.order {
@@ -112,36 +132,19 @@ impl Engine {
                         let entry = instruments_solo
                             .entry(instrument.long_name.clone())
                             .or_insert(vec![]);
-                        entry.push(instrument.key.clone());
+                        entry.push((player_key.clone(), instrument.key.clone()));
                     }
                     PlayerType::Section => {
                         let entry = instruments_section
                             .entry(instrument.long_name.clone())
                             .or_insert(vec![]);
-                        entry.push(instrument.key.clone());
+                        entry.push((player_key.clone(), instrument.key.clone()));
                     }
                 }
             }
         }
 
-        for (_, instrument_keys) in instruments_solo {
-            if instrument_keys.len() > 1 {
-                for (i, instrument_key) in instrument_keys.iter().enumerate() {
-                    if let Some(instrument) = self.score.instruments.get_mut(instrument_key) {
-                        instrument.count = Some(i as u8 + 1)
-                    };
-                }
-            }
-        }
-
-        for (_, instrument_keys) in instruments_section {
-            if instrument_keys.len() > 1 {
-                for (i, instrument_key) in instrument_keys.iter().enumerate() {
-                    if let Some(instrument) = self.score.instruments.get_mut(instrument_key) {
-                        instrument.count = Some(i as u8 + 1)
-                    };
-                }
-            }
-        }
+        self.assign_count(instruments_solo);
+        self.assign_count(instruments_section);
     }
 }

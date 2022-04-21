@@ -153,7 +153,8 @@ impl Engine {
         }
 
         for (i, instrument_key) in player.instruments.iter().enumerate() {
-            let name = self.get_instrument_name(player_key, instrument_key);
+            let instrument = self.score.instruments.get(instrument_key).unwrap();
+            let name = instrument.name();
 
             if i == 0 {
                 out = name;

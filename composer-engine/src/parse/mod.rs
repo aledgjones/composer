@@ -15,12 +15,14 @@ use crate::score::engrave::LayoutType;
 use crate::Engine;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
+use draw_names::draw_names;
 use draw_staves::draw_staves;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
 use get_vertical_spans::get_vertical_spans;
 use js_sys::Function;
 use measure_brackets_and_braces::measure_brackets_and_braces;
+use measure_instrument_names::measure_instrument_names;
 use measure_vertical_spacing::measure_vertical_spacing;
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
@@ -82,8 +84,10 @@ impl Engine {
 
         let vertical_spans = get_vertical_spans(&instruments, engrave);
         let vertical_spacing = measure_vertical_spacing(&instruments, &flow.staves, engrave);
+
         let name_widths: Space =
-            self.measure_instrument_names(&players, engrave, &converter, measure);
+            measure_instrument_names(&instruments, engrave, &converter, measure);
+
         let bracket_widths: Space =
             measure_brackets_and_braces(&vertical_spacing, &vertical_spans, engrave);
 
@@ -109,8 +113,8 @@ impl Engine {
             &converter,
             &mut instructions,
         );
-        self.draw_names(
-            &players,
+        draw_names(
+            &instruments,
             &(padding_left + name_widths),
             &padding_top,
             &vertical_spacing,

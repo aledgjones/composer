@@ -1,0 +1,11 @@
+.keyboard {
+  position: relative;
+  width: 64px;
+  min-width: 64px;
+  touch-action: none;
+  background-color: var(--background-200);
+}
+
+.keyboard:active {
+  cursor: grab;
+}

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { DragScroll } from "../../ui/components/drag-scroll";
 import merge from "classnames";
 
@@ -6,6 +6,7 @@ import "./styles.css";
 
 interface Props {
   className?: string;
+  children: ReactNode;
 }
 
 export const RenderRegion: FC<Props> = ({ children, className }) => {

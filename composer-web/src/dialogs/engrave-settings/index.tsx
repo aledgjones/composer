@@ -10,6 +10,7 @@ import { Barlines } from "./barlines";
 import { BracketsAndBraces } from "./brackets-and-braces";
 import { NoteSpacing } from "./note-spacing";
 import { Staves } from "./staves";
+import { actions } from "../../data/actions";
 
 import "../generic-settings.css";
 
@@ -44,9 +45,7 @@ export const EngraveSettings = Dialog<Props>(({ onClose }) => {
           <MenuItem
             selected={page === EngravePage.Barlines}
             onClick={() => {
-              ui.update((s) => {
-                s.setup.dialogs.engrave.page = EngravePage.Barlines;
-              });
+              actions.setup.dialogs.engrave.page.set(EngravePage.Barlines);
             }}
           >
             Barlines
@@ -54,9 +53,9 @@ export const EngraveSettings = Dialog<Props>(({ onClose }) => {
           <MenuItem
             selected={page === EngravePage.BracketsAndBraces}
             onClick={() => {
-              ui.update((s) => {
-                s.setup.dialogs.engrave.page = EngravePage.BracketsAndBraces;
-              });
+              actions.setup.dialogs.engrave.page.set(
+                EngravePage.BracketsAndBraces
+              );
             }}
           >
             Brackets &amp; Braces
@@ -64,9 +63,7 @@ export const EngraveSettings = Dialog<Props>(({ onClose }) => {
           <MenuItem
             selected={page === EngravePage.NoteSpacing}
             onClick={() => {
-              ui.update((s) => {
-                s.setup.dialogs.engrave.page = EngravePage.NoteSpacing;
-              });
+              actions.setup.dialogs.engrave.page.set(EngravePage.NoteSpacing);
             }}
           >
             Note Spacing
@@ -74,9 +71,7 @@ export const EngraveSettings = Dialog<Props>(({ onClose }) => {
           <MenuItem
             selected={page === EngravePage.Staves}
             onClick={() => {
-              ui.update((s) => {
-                s.setup.dialogs.engrave.page = EngravePage.Staves;
-              });
+              actions.setup.dialogs.engrave.page.set(EngravePage.Staves);
             }}
           >
             Staves
@@ -93,11 +88,7 @@ export const EngraveSettings = Dialog<Props>(({ onClose }) => {
           direction="up"
           style={{ width: 300, marginRight: 8 }}
           value={configKey}
-          onChange={(key: string) => {
-            ui.update((s) => {
-              s.setup.dialogs.engrave.config = key;
-            });
-          }}
+          onChange={actions.setup.dialogs.engrave.config.set}
         >
           {configs.map((config) => {
             return (

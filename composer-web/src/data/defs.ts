@@ -1,4 +1,11 @@
-import { LayoutType } from "composer-engine";
+import { NoteDuration } from "composer-engine";
+
+export const enum Tool {
+  Select,
+  Draw,
+  Slice,
+  Erase,
+}
 
 export const enum View {
   Setup,
@@ -27,6 +34,7 @@ export const enum EngravePage {
 
 export interface State {
   view: View;
+  snap: NoteDuration;
   setup: {
     dialogs: {
       players: { page: PlayerPage };
@@ -38,5 +46,12 @@ export interface State {
       players: boolean;
       layouts: boolean;
     };
+  };
+  play: {
+    tool: Tool;
+    zoom: number;
+    expanded: { [key: string]: boolean };
+    keyboard: { [key: string]: number };
+    stave: { [key: string]: string };
   };
 }

@@ -1,4 +1,4 @@
-import { FC, CSSProperties } from "react";
+import { FC, CSSProperties, ReactNode } from "react";
 import merge from "classnames";
 
 import "./styles.css";
@@ -7,6 +7,7 @@ interface Props {
   id?: string;
   className?: string;
   style?: CSSProperties;
+  children: ReactNode;
 }
 
 export const Label: FC<Props> = ({ id, className, style, children }) => {

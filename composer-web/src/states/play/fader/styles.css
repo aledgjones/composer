@@ -1,0 +1,66 @@
+.fader {
+  position: relative;
+  height: 20px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.fader__track {
+  position: relative;
+  height: 8px;
+  width: 100%;
+  background-color: var(--background-500);
+  border: 1px solid var(--background-200);
+  border-radius: var(--border-radius);
+}
+
+.fader__meter {
+  position: absolute;
+  height: 100%;
+}
+
+.fader__handle {
+  position: absolute;
+  top: -5px;
+  height: 16px;
+  width: 24px;
+  transform: translate(-50%, 0);
+  border: 1px solid var(--background-200);
+  z-index: 1;
+  cursor: pointer;
+  outline: none;
+  color: inherit;
+  border-radius: var(--border-radius);
+}
+
+.fader__handle:active {
+  cursor: grab;
+}
+
+.fader__handle:focus-visible {
+  outline: 1px solid currentColor;
+}
+
+.fader__handle:after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  height: 10px;
+  width: 1px;
+  transform: translateX(-50%);
+  background-color: var(--background-200);
+}
+
+.fader__scale {
+  position: absolute;
+  top: 12px;
+  height: 8px;
+  width: 1px;
+  transform: translateX(-50%);
+  background-color: var(--background-200);
+}
+
+.fader__scale--tall {
+  height: 12px;
+}

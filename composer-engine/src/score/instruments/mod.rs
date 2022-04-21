@@ -114,6 +114,52 @@ impl Engine {
         instrument.name()
     }
 
+    pub fn get_instrument_id(&self, instrument_key: &str) -> String {
+        let instrument = self.score.instruments.get(instrument_key).unwrap();
+        instrument.id.clone()
+    }
+
+    pub fn get_instrument_volume(&self, instrument_key: &str) -> u8 {
+        let instrument = self.score.instruments.get(instrument_key).unwrap();
+        instrument.volume
+    }
+
+    pub fn set_instrument_volume(&mut self, instrument_key: &str, value: u8) {
+        let instrument = self.score.instruments.get_mut(instrument_key).unwrap();
+        instrument.volume = value;
+
+        self.emit();
+    }
+
+    pub fn get_instrument_solo(&self, instrument_key: &str) -> bool {
+        let instrument = self.score.instruments.get(instrument_key).unwrap();
+        instrument.solo
+    }
+
+    pub fn toggle_instrument_solo(&mut self, instrument_key: &str) {
+        let instrument = self.score.instruments.get_mut(instrument_key).unwrap();
+        instrument.solo = !instrument.solo;
+
+        self.emit();
+    }
+
+    pub fn get_instrument_mute(&self, instrument_key: &str) -> bool {
+        let instrument = self.score.instruments.get(instrument_key).unwrap();
+        instrument.mute
+    }
+
+    pub fn toggle_instrument_mute(&mut self, instrument_key: &str) {
+        let instrument = self.score.instruments.get_mut(instrument_key).unwrap();
+        instrument.mute = !instrument.mute;
+
+        self.emit();
+    }
+
+    pub fn get_instrument_staves(&self, instrument_key: &str) -> JsValue {
+        let instrument = self.score.instruments.get(instrument_key).unwrap();
+        JsValue::from_serde(&instrument.staves).unwrap()
+    }
+
     pub fn calculate_counts(&mut self) {
         let mut instruments_solo: HashMap<String, Vec<(String, String)>> = HashMap::new();
         let mut instruments_section: HashMap<String, Vec<(String, String)>> = HashMap::new();

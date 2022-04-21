@@ -1,0 +1,47 @@
+.tone-track-entry {
+  border: 1px solid rgba(25, 25, 25, 0.8);
+}
+
+.tone-track-entry--selected {
+  border: 1px solid var(--primary-bg);
+  z-index: 100;
+}
+
+.tone-track-entry__handle {
+  touch-action: none;
+  position: absolute;
+  top: -4px;
+  height: calc(100% + 8px);
+  width: 8px;
+  z-index: 2;
+}
+
+.tone-track-entry__handle--e {
+  right: -4px;
+  cursor: e-resize;
+}
+
+.tone-track-entry__handle--move {
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+.tone-track-entry__handle--w {
+  left: -4px;
+  cursor: w-resize;
+}
+
+/* // make the cursor stay by resizxing hit target during editing */
+
+.tone-track-entry__handle:active {
+  transform: scale(10);
+}
+
+.tone-track-entry--disabled {
+  opacity: 0.2;
+  z-index: 0;
+  pointer-events: none;
+}

@@ -8,6 +8,7 @@ import { Button } from "../../ui/components/button";
 import { AutoNumbering } from "./auto-numbering";
 
 import "../generic-settings.css";
+import { actions } from "../../data/actions";
 
 interface Props {
   onClose: () => void;
@@ -30,11 +31,9 @@ export const PlayerSettings = Dialog<Props>(({ onClose }) => {
         <div className="generic-settings__left-panel">
           <MenuItem
             selected={page === PlayerPage.AutoNumbering}
-            onClick={() =>
-              ui.update((s) => {
-                s.setup.dialogs.players.page = PlayerPage.AutoNumbering;
-              })
-            }
+            onClick={() => {
+              actions.setup.dialogs.players.page.set(PlayerPage.AutoNumbering);
+            }}
           >
             Auto Numbering
           </MenuItem>

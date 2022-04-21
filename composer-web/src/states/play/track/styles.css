@@ -1,0 +1,39 @@
+.track {
+  position: relative;
+  background-color: var(--background-600);
+  color: var(--foreground-600);
+  min-width: calc(100vw - 350px);
+  margin: 8px 0;
+}
+
+.track__header {
+  z-index: 100;
+  display: block;
+  height: 48px;
+  background-color: var(--background-700);
+  color: var(--foreground-700);
+  border-right: 1px solid var(--background-200);
+  margin-right: 64px;
+}
+
+.track__tone-channel {
+  position: relative;
+}
+
+.track__tone-channel-slots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-color: var(--background-700);
+  z-index: 1;
+}
+
+.track__tone-channel-ticks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
+  border-right: 1px solid var(--background-200);
+}

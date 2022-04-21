@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import merge from "classnames";
 
 import "./styles.css";
@@ -6,6 +6,7 @@ import "./styles.css";
 interface Props {
   selected?: boolean;
   onClick?: () => void;
+  children: ReactNode;
 }
 
 export const MenuItem: FC<Props> = ({ selected, onClick, children }) => {

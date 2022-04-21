@@ -1,4 +1,4 @@
-import { MouseEvent, CSSProperties, FC } from "react";
+import { MouseEvent, CSSProperties, FC, ReactNode } from "react";
 
 import merge from "classnames";
 import { Spinner } from "../spinner";
@@ -16,12 +16,23 @@ interface Props {
   working?: boolean;
 
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  children: ReactNode;
 }
 
 /**
  * Button component with optional outline-only styling.
  */
-export const Button: FC<Props> = ({ id, className, style, children, compact, outline, disabled, working, onClick }) => {
+export const Button: FC<Props> = ({
+  id,
+  className,
+  style,
+  children,
+  compact,
+  outline,
+  disabled,
+  working,
+  onClick,
+}) => {
   return (
     <button
       id={id}
@@ -37,7 +48,13 @@ export const Button: FC<Props> = ({ id, className, style, children, compact, out
       style={style}
       onClick={onClick}
     >
-      {working && <Spinner className="ui-spinner--button" size={16} color="rgb(84,84,84)" />}
+      {working && (
+        <Spinner
+          className="ui-spinner--button"
+          size={16}
+          color="rgb(84,84,84)"
+        />
+      )}
       {children}
     </button>
   );

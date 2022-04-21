@@ -1,4 +1,13 @@
-import { useState, useMemo, CSSProperties, FC, useRef, useEffect, Children } from "react";
+import {
+  useState,
+  useMemo,
+  CSSProperties,
+  FC,
+  useRef,
+  useEffect,
+  Children,
+  ReactNode,
+} from "react";
 import { mdiChevronDown } from "@mdi/js";
 
 import merge from "classnames";
@@ -21,12 +30,24 @@ interface Props {
   direction?: "up" | "down";
 
   onChange: (value: any) => void;
+
+  children: ReactNode;
 }
 
 /**
  * Select component to be used with the Option component.
  */
-export const Select: FC<Props> = ({ id, className, style, value, margin, children, onChange, disabled, direction }) => {
+export const Select: FC<Props> = ({
+  id,
+  className,
+  style,
+  value,
+  margin,
+  children,
+  onChange,
+  disabled,
+  direction,
+}) => {
   const [focus, setFocus] = useState<boolean>(false);
   const element = useRef<HTMLDivElement>(null);
 

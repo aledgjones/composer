@@ -12,6 +12,7 @@ import merge from "classnames";
 import { SelectionType } from "../../../data/defs";
 import { engine, ui } from "../../../data";
 import { PlayerType } from "composer-engine";
+import { actions } from "../../../data/actions";
 
 import { Icon } from "../../../ui/components/icon";
 import { SortableContainer } from "../../../ui/components/sortable-container";
@@ -106,13 +107,7 @@ export const PlayerItem: FC<Props> = ({
           size={24}
           onClick={(e) => {
             e.stopPropagation();
-            ui.update((s) => {
-              if (expanded) {
-                delete s.setup.expanded[playerKey];
-              } else {
-                s.setup.expanded[playerKey] = true;
-              }
-            });
+            actions.setup.expanded.toggle(playerKey);
           }}
         />
       </div>

@@ -7,6 +7,7 @@ import { Icon } from "../../../ui/components/icon";
 import { noop } from "../../../ui/utils/noop";
 import { ui } from "../../../data";
 import { EngraveSettings } from "../../../dialogs/engrave-settings";
+import { actions } from "../../../data/actions";
 
 import "./styles.css";
 
@@ -20,11 +21,7 @@ export const LayoutList: FC = () => {
         className="layout-list"
         collapse={CollpaseDirection.Left}
         collapsed={!open}
-        onToggle={() => {
-          ui.update((s) => {
-            s.setup.panels.layouts = !s.setup.panels.layouts;
-          });
-        }}
+        onToggle={actions.setup.panels.layout.toggle}
       >
         <PanelHeader>
           <span className="layout-list__label">Layouts</span>

@@ -27,7 +27,7 @@ export const InstrumentItem: FC<Props> = ({
   onSelect,
 }) => {
   const handle = useRef<HTMLDivElement>(null);
-  const name = engine.get_instrument_name(playerKey, instrumentKey);
+  const name = engine.get_instrument_name(instrumentKey);
 
   return (
     <SortableItem

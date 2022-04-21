@@ -1,0 +1,41 @@
+.snap {
+  width: 48px;
+  font-size: 14px;
+  border-left: 1px solid var(--background-200);
+}
+
+.snap__select .ui-select__container {
+  min-height: 0;
+  height: 28px;
+  border: none;
+  background-color: transparent;
+}
+
+.snap__select .ui-input__display {
+  min-height: 0;
+  padding: 0 12px;
+  justify-content: center;
+  position: relative;
+  font-family: Bravura, sans-serif;
+  font-size: 18px;
+  line-height: 0;
+  top: 5px;
+}
+
+.snap__select .ui-select__item {
+  justify-content: center;
+  font-family: Bravura, sans-serif;
+  font-size: 18px;
+  line-height: 0;
+  height: 40px;
+  padding: 18px 0 6px 0;
+  overflow: hidden;
+}
+
+.snap__select .ui-select__card--up {
+  bottom: calc(100% + 1px);
+}
+
+.snap__select .ui-icon {
+  display: none;
+}

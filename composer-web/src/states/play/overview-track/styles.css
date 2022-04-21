@@ -1,0 +1,12 @@
+.overview-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 101;
+  height: 48px;
+}
+
+.overview-track__block {
+  position: absolute;
+  height: 100%;
+}

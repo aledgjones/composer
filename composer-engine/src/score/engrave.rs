@@ -3,7 +3,6 @@ use crate::components::text::{Align, Font, Justify};
 use crate::components::units::{Mm, Space};
 use crate::utils::shortid;
 use crate::Engine;
-use serde::Serialize;
 use std::collections::HashMap;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
@@ -16,7 +15,7 @@ pub enum BracketingApproach {
     SmallEnsemble,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone)]
 #[wasm_bindgen]
 pub enum BracketStyle {
     None,
@@ -24,7 +23,7 @@ pub enum BracketStyle {
     Line,
 }
 
-#[derive(PartialEq, Debug, Serialize)]
+#[derive(PartialEq, Debug)]
 #[wasm_bindgen]
 pub enum LayoutType {
     Score,
@@ -173,7 +172,19 @@ impl Engine {
         self.emit();
     }
 
-    pub fn get_bracke_single_staves(&self, key: &str) -> bool {
+    pub fn get_bracket_style(&self, key: &str) -> BracketStyle {
+        let config = self.score.engrave.by_key.get(key).unwrap();
+        config.bracket_style.clone()
+    }
+
+    pub fn set_bracket_style(&mut self, key: &str, value: BracketStyle) {
+        let config = self.score.engrave.by_key.get_mut(key).unwrap();
+        config.bracket_style = value;
+
+        self.emit();
+    }
+
+    pub fn get_bracket_single_staves(&self, key: &str) -> bool {
         let config = self.score.engrave.by_key.get(key).unwrap();
         config.bracket_single_staves
     }

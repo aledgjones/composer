@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { mdiChevronLeft, mdiChevronRight } from "@mdi/js";
 import merge from "classnames";
 
@@ -17,6 +17,7 @@ interface Props {
   collapse?: CollpaseDirection;
   onToggle?: () => void;
   className: string;
+  children: ReactNode;
 }
 
 export const Panel: FC<Props> = ({

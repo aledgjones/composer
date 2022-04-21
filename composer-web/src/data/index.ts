@@ -1,11 +1,12 @@
-import { Engine } from "composer-engine";
+import { Engine, NoteDuration } from "composer-engine";
 import { Store } from "pullstate";
-import { EngravePage, PlayerPage, State, View } from "./defs";
+import { EngravePage, PlayerPage, State, Tool, View } from "./defs";
 
 export const engine = new Engine();
 
 export const ui = new Store<State>({
   view: View.Setup,
+  snap: NoteDuration.Sixteenth,
   setup: {
     dialogs: {
       players: { page: PlayerPage.AutoNumbering },
@@ -17,5 +18,12 @@ export const ui = new Store<State>({
       players: true,
       layouts: true,
     },
+  },
+  play: {
+    tool: Tool.Select,
+    zoom: 100,
+    expanded: {},
+    keyboard: {},
+    stave: {},
   },
 });

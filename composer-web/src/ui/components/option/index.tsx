@@ -1,8 +1,10 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 interface Props {
   value: any;
   displayAs: string;
+
+  children?: ReactNode;
 }
 
 /**

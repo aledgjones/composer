@@ -1,4 +1,4 @@
-import { BracketingApproach } from "composer-engine";
+import { BracketingApproach, BracketStyle } from "composer-engine";
 import { FC } from "react";
 import { engine } from "../../data";
 import { Label } from "../../ui/components/label";
@@ -14,8 +14,9 @@ interface Props {
 
 export const BracketsAndBraces: FC<Props> = ({ configKey }) => {
   const bracketingApproach = engine.get_bracketing_approach(configKey);
-  const bracketSingleStaves = engine.get_bracke_single_staves(configKey);
+  const bracketSingleStaves = engine.get_bracket_single_staves(configKey);
   const subBracket = engine.get_sub_bracket(configKey);
+  const bracketStyle = engine.get_bracket_style(configKey);
 
   console.log(bracketingApproach);
 
@@ -73,27 +74,25 @@ export const BracketsAndBraces: FC<Props> = ({ configKey }) => {
         <Switch value={subBracket} />
       </ListItem>
 
-      {/* <div className="generic-settings__section">
+      <div className="generic-settings__section">
         <Subheader>Design</Subheader>
         <Select
-          value={engraving.bracketEndStyle}
-          onChange={(val: BracketEndStyle) =>
-            actions.score.engraving.update(engraving.key, {
-              bracketEndStyle: val,
-            })
-          }
+          value={bracketStyle}
+          onChange={(value: BracketStyle) => {
+            engine.set_bracket_style(configKey, value);
+          }}
         >
-          <Option value={BracketEndStyle.None} displayAs="None">
+          <Option value={BracketStyle.None} displayAs="None">
             None
           </Option>
-          <Option value={BracketEndStyle.Line} displayAs="Lines">
+          <Option value={BracketStyle.Line} displayAs="Lines">
             Lines
           </Option>
-          <Option value={BracketEndStyle.Wing} displayAs="Wings">
+          <Option value={BracketStyle.Wing} displayAs="Wings">
             Wings
           </Option>
         </Select>
-      </div> */}
+      </div>
     </>
   );
 };

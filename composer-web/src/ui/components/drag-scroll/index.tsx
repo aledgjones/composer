@@ -1,4 +1,4 @@
-import { FC, CSSProperties, useState, useCallback } from "react";
+import { FC, CSSProperties, useState, useCallback, ReactNode } from "react";
 
 import merge from "classnames";
 import { useDragHandler } from "../../hooks/use-drag-handler";
@@ -15,9 +15,21 @@ interface Props {
   ignore?: string; // class to ignore completely
   ignoreX?: string; // class to ignoreX completely
   ignoreY?: string; // class to ignoreY completely
+
+  children: ReactNode;
 }
 
-export const DragScroll: FC<Props> = ({ id, className, style, x, y, ignore, ignoreX, ignoreY, children }) => {
+export const DragScroll: FC<Props> = ({
+  id,
+  className,
+  style,
+  x,
+  y,
+  ignore,
+  ignoreX,
+  ignoreY,
+  children,
+}) => {
   const [dragging, setDragging] = useState(false);
 
   const allow = useCallback((target: HTMLElement, ignore?: string) => {
@@ -47,7 +59,13 @@ export const DragScroll: FC<Props> = ({ id, className, style, x, y, ignore, igno
     {
       onDown: (e) => {
         // only accept unmodified left mouse buttons
-        if (e.button > 0 || e.ctrlKey || e.shiftKey || e.metaKey || !allow(e.target as HTMLElement, ignore)) {
+        if (
+          e.button > 0 ||
+          e.ctrlKey ||
+          e.shiftKey ||
+          e.metaKey ||
+          !allow(e.target as HTMLElement, ignore)
+        ) {
           return false;
         }
 

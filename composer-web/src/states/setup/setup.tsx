@@ -11,6 +11,7 @@ import { useTitle } from "../../ui/hooks/use-title";
 import { FlowList } from "./flow-list";
 import { LayoutList } from "./layout-list";
 import { PlayerList } from "./player-list";
+import { actions } from "../../data/actions";
 
 import "./setup.css";
 
@@ -33,7 +34,7 @@ const Setup: FC = () => {
   const onPlayerTypePicked = (type: PlayerType) => {
     setShowPlayerPicker(false);
     const playerKey = engine.create_player(type);
-    onSelect(playerKey, SelectionType.Player);
+    actions.setup.selection.set(playerKey, SelectionType.Player);
     setPlayerKey(playerKey);
     setShowInstrumentPicker(true);
   };
@@ -44,27 +45,14 @@ const Setup: FC = () => {
     engine.assign_instrument_to_player(playerKey as string, instrumentKey);
   };
 
-  const onSelect = (key: string, type: SelectionType) => {
-    ui.update((s) => {
-      s.setup.selected = { key, type };
-    });
-  };
-
-  const onClear = () => {
-    console.log("clear");
-    ui.update((s) => {
-      s.setup.selected = null;
-    });
-  };
-
   return (
     <>
       <div className="setup">
         <PlayerList
           onCreatePlayer={pickPlayerType}
           onAddInstrument={onAddInstrument}
-          onSelect={onSelect}
-          onClear={onClear}
+          onSelect={actions.setup.selection.set}
+          onClear={actions.setup.selection.clear}
         />
 
         <div className="setup__middle">
@@ -73,7 +61,10 @@ const Setup: FC = () => {
               <Renderer key={flowKey} flowKey={flowKey} />
             ))}
           </RenderRegion>
-          <FlowList onSelect={onSelect} onClear={onClear} />
+          <FlowList
+            onSelect={actions.setup.selection.set}
+            onClear={actions.setup.selection.clear}
+          />
         </div>
 
         <LayoutList />

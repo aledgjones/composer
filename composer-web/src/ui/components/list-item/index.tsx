@@ -1,4 +1,4 @@
-import { FC, CSSProperties } from "react";
+import { FC, CSSProperties, ReactNode } from "react";
 
 import merge from "classnames";
 
@@ -12,12 +12,20 @@ interface Props {
   disabled?: boolean;
 
   onClick?: () => void;
+  children: ReactNode;
 }
 
 /**
  * List Item with default hover styles if onClick present.
  */
-export const ListItem: FC<Props> = ({ id, className, style, disabled, onClick, children }) => {
+export const ListItem: FC<Props> = ({
+  id,
+  className,
+  style,
+  disabled,
+  onClick,
+  children,
+}) => {
   return (
     <div
       id={id}

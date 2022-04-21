@@ -3,6 +3,7 @@ import { mdiCogOutline, mdiPlus } from "@mdi/js";
 
 import { engine, ui } from "../../../data";
 import { SelectionType } from "../../../data/defs";
+import { actions } from "../../../data/actions";
 
 import { Icon } from "../../../ui/components/icon";
 import { CollpaseDirection, Panel } from "../../../components/panel";
@@ -36,11 +37,7 @@ export const PlayerList: FC<Props> = ({
         className="player-list"
         collapse={CollpaseDirection.Right}
         collapsed={!open}
-        onToggle={() => {
-          ui.update((s) => {
-            s.setup.panels.players = !s.setup.panels.players;
-          });
-        }}
+        onToggle={actions.setup.panels.players.toggle}
       >
         <PanelHeader>
           <span className="player-list__label">Players</span>

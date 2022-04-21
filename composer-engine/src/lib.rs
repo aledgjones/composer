@@ -4,8 +4,6 @@ mod parse;
 mod score;
 mod utils;
 
-use std::collections::HashMap;
-
 use js_sys::Function;
 use score::engrave::LayoutType;
 use score::Score;
@@ -20,7 +18,6 @@ extern crate lazy_static;
 #[wasm_bindgen]
 pub struct Engine {
     listener: Option<Function>,
-    cache: HashMap<String, f32>,
     score: Score,
 }
 
@@ -28,10 +25,8 @@ pub struct Engine {
 impl Engine {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        let mut cache: HashMap<String, f32> = HashMap::new();
         let mut engine = Self {
             listener: None,
-            cache,
             score: Score::new(),
         };
 

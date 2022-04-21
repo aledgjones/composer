@@ -23,8 +23,8 @@ pub struct Clef {
 }
 
 impl Clef {
-    pub fn new(tick: u32, pitch: u8, offset: i8, draw_as: ClefDrawType) -> Clef {
-        Clef {
+    pub fn new(tick: u32, pitch: u8, offset: i8, draw_as: ClefDrawType) -> Self {
+        Self {
             key: shortid(),
             tick,
             draw_as,

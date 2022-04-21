@@ -37,7 +37,7 @@ impl Track {
     }
 
     /// Move an entry to a new tick
-    pub fn _shift(&mut self, key: &str, new_tick: u32) {
+    pub fn shift(&mut self, key: &str, new_tick: u32) {
         let entry = match self.entries.by_key.get_mut(key) {
             Some(entry) => entry,
             None => return,
@@ -58,7 +58,7 @@ impl Track {
     }
 
     /// remove an entry and return the removed entry
-    pub fn _remove(&mut self, key: &str) -> Option<Entry> {
+    pub fn remove(&mut self, key: &str) -> Option<Entry> {
         let entry = match self.entries.by_key.get(key) {
             Some(entry) => entry,
             None => return None,

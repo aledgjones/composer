@@ -1,0 +1,15 @@
+{
+  "name": "composer-engine",
+  "collaborators": [
+    "Aled Jones <aledjones.viola@gmail.com>"
+  ],
+  "version": "1.0.0",
+  "files": [
+    "composer_engine_bg.wasm",
+    "composer_engine.js",
+    "composer_engine.d.ts"
+  ],
+  "module": "composer_engine.js",
+  "types": "composer_engine.d.ts",
+  "sideEffects": false
+}

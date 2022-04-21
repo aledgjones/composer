@@ -1,15 +1,15 @@
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect, FC, ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 interface Props {
-  styles?: string;
+  children: ReactNode;
 }
 
 /**
  * Portal in new window.
  */
-export const Window: FC<Props> = ({ children, styles }) => {
-  const [root, setRoot] = useState<HTMLElement>(null);
+export const Window: FC<Props> = ({ children }) => {
+  const [root, setRoot] = useState<HTMLElement | null>(null);
 
   // init
   useEffect(() => {
@@ -23,9 +23,6 @@ export const Window: FC<Props> = ({ children, styles }) => {
       const element = view.document.createElement("div");
       element.id = "ui-console--root";
       view.document.body.append(element);
-      const style = view.document.createElement("style");
-      style.textContent = styles;
-      view.document.body.append(style);
       setRoot(element);
       return () => {
         view.close();

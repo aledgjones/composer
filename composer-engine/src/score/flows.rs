@@ -3,7 +3,9 @@ use super::instruments::Instrument;
 use super::players::Player;
 use super::stave::Stave;
 use super::tracks::Track;
+use crate::components::duration::NoteDuration;
 use crate::entries::clef::Clef;
+use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
 use crate::entries::Entry;
 use crate::utils::shortid;
 use crate::Engine;
@@ -44,8 +46,8 @@ impl Flow {
             key: shortid(),
             title: String::from(""),
             players: HashSet::new(),
-            length: 16,       // 1 quarter beats
-            subdivisions: 16, // auto it to 32nd notes as this is the shortest snap
+            length: 16 * 4 * 4, // 4 * 4/4
+            subdivisions: 16,   // auto it to 32nd notes as this is the shortest snap
 
             master: master.key.clone(),
             staves: HashMap::new(),
@@ -85,8 +87,17 @@ impl Engine {
 #[wasm_bindgen]
 impl Engine {
     pub fn create_flow(&mut self) -> String {
-        let master = Track::new();
+        let mut master = Track::new();
         let flow = Flow::new(&master);
+
+        master.insert(Entry::TimeSignature(TimeSignature::new(
+            0,
+            4,
+            NoteDuration::Quarter,
+            TimeSignatureDrawType::Normal,
+            None,
+        )));
+
         self.score.tracks.insert(master.key.clone(), master);
 
         let flow_key = flow.key.clone();

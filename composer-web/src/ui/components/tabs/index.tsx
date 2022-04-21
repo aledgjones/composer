@@ -1,4 +1,4 @@
-import { FC, Children, useState, CSSProperties } from "react";
+import { FC, Children, useState, CSSProperties, ReactNode } from "react";
 
 import merge from "classnames";
 import { TabExtended } from "../tab";
@@ -11,12 +11,20 @@ interface Props {
   style?: CSSProperties;
   value: any;
   onChange: (value: any) => void;
+  children: ReactNode;
 }
 
 /**
  * Tabs component used with the Tab component.
  */
-export const Tabs: FC<Props> = ({ id, style, className, value, onChange, children }) => {
+export const Tabs: FC<Props> = ({
+  id,
+  style,
+  className,
+  value,
+  onChange,
+  children,
+}) => {
   const [bar, setBar] = useState({ left: 0, width: 73 });
 
   return (
@@ -24,7 +32,12 @@ export const Tabs: FC<Props> = ({ id, style, className, value, onChange, childre
       {Children.map(children, (child: any) => {
         if (child) {
           return (
-            <TabExtended {...child.props} selected={value === child.props.value} onChange={onChange} setBar={setBar} />
+            <TabExtended
+              {...child.props}
+              selected={value === child.props.value}
+              onChange={onChange}
+              setBar={setBar}
+            />
           );
         } else {
           return null;

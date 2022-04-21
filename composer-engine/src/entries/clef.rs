@@ -13,7 +13,7 @@ pub enum ClefDrawType {
     Percussion,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Clef {
     pub key: String,
     pub tick: u32,

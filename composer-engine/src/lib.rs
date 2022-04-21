@@ -7,6 +7,7 @@ mod utils;
 use js_sys::Function;
 use score::engrave::LayoutType;
 use score::Score;
+use utils::log;
 use wasm_bindgen::prelude::*;
 
 #[macro_use]

@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[wasm_bindgen]
 pub enum Accidental {
     DoubleSharp,
@@ -33,7 +33,7 @@ impl Accidental {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Pitch {
     pub int: u8, // the midi number
     pub accidental: Accidental,

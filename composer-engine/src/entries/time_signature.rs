@@ -14,7 +14,7 @@ enum TimeSignatureType {
 }
 
 #[wasm_bindgen]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TimeSignatureDrawType {
     Hidden,          // always hidden
     Normal,          // open time sig as 'X'
@@ -22,7 +22,7 @@ pub enum TimeSignatureDrawType {
     SplitCommonTime, // '¢'
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TimeSignature {
     pub key: String,
     pub tick: u32,
@@ -167,50 +167,52 @@ impl Engine {
         draw_type: TimeSignatureDrawType,
         groupings: Option<Vec<u8>>,
     ) {
-        let flow = self.score.flows.by_key.get(flow_key).unwrap();
-        let mut master = self.score.tracks.get_mut(&flow.master).unwrap();
+        let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
+        let master = self.score.tracks.get_mut(&flow.master).unwrap();
 
         // remove old time signative if defined
-        match master.get_time_signature_at_tick(tick) {
-            Some(old) => {
-                master.remove(&old.key);
-            }
-            None => (),
+        if let Some(old) = master.get_time_signature_at_tick(tick) {
+            master.remove(&old.key);
         };
 
         // insert the new time signature
         let new = TimeSignature::new(tick, beats, beat_type, draw_type, groupings);
-        let ticks_per_bar = new.ticks_per_bar(flow.subdivisions);
+        let ticks_per_bar = new.ticks_per_bar(flow.subdivisions) as f32;
         let entry = Entry::TimeSignature(new);
-        let track = &mut master;
-        track.insert(entry);
+        master.insert(entry);
 
         // calculate diff
         let next_tick = match master.get_time_signature_after_tick(tick, flow.length) {
-            Some(entry) => entry.tick,
-            None => flow.length,
+            Some(entry) => entry.tick as f32,
+            None => flow.length as f32,
         };
 
-        let complete_bars_until_next = ((next_tick - tick) / ticks_per_bar);
-        let overflow = tick + complete_bars_until_next * ticks_per_bar - next_tick;
+        let complete_bars_until_next = ((next_tick - tick as f32) / ticks_per_bar).ceil();
+        let overflow = (tick as f32 + complete_bars_until_next * ticks_per_bar - next_tick) as u32;
+
+        if overflow > 0 {
+            flow.length += overflow;
+
+            for _ in [tick..flow.length] {
+                if let Some(old) = master.get_time_signature_at_tick(tick) {
+                    master.shift(&old.key, old.tick + overflow);
+                };
+            }
+        }
     }
 }
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_time_signature_at_tick(&self, tick: u32) -> Option<&TimeSignature> {
+    pub fn get_time_signature_at_tick(&self, tick: u32) -> Option<TimeSignature> {
         let entry_keys = match self.entries.by_tick.get(&tick) {
             Some(entries) => entries,
             None => return None,
         };
 
         for key in entry_keys.iter() {
-            match self.entries.by_key.get(key) {
-                Some(entry) => match entry {
-                    Entry::TimeSignature(time_signature) => return Some(time_signature),
-                    _ => (),
-                },
-                None => (),
+            if let Some(Entry::TimeSignature(time_signature)) = self.entries.by_key.get(key) {
+                return Some(time_signature.clone());
             }
         }
 
@@ -218,11 +220,10 @@ impl Track {
     }
 
     /// Returns the next time signature entry *after* a given tick if it exists
-    pub fn get_time_signature_after_tick(&self, tick: u32, length: u32) -> Option<&TimeSignature> {
+    pub fn get_time_signature_after_tick(&self, tick: u32, length: u32) -> Option<TimeSignature> {
         for i in tick + 1..length {
-            match self.get_time_signature_at_tick(i) {
-                Some(time_signature) => return Some(time_signature),
-                None => (),
+            if let Some(time_signature) = self.get_time_signature_at_tick(i) {
+                return Some(time_signature);
             };
         }
 

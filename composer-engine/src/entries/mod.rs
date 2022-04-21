@@ -4,7 +4,7 @@ pub mod time_signature;
 use clef::Clef;
 use time_signature::TimeSignature;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Entry {
     Clef(Clef),
     TimeSignature(TimeSignature),

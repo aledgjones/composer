@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum NoteDuration {
     Whole,
     Half,

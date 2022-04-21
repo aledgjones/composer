@@ -9,10 +9,12 @@
     "dev": "npm run wasm && vite",
     "build": "vite build",
     "deploy": "npm run deploy:patch",
-    "deploy:patch": "npm run wasm:release && git push",
-    "deploy:minor": "npm run wasm:release && git push",
-    "deploy:major": "npm run wasm:release && git push",
-    "bump:patch": "npm version patch && git add package.json && git add package-lock.json && git commit -m version-bump"
+    "deploy:patch": "npm run wasm:release && npm run bump:patch && git push",
+    "deploy:minor": "npm run wasm:release && npm run bump:minor && git push",
+    "deploy:major": "npm run wasm:release && npm run bump:major && git push",
+    "bump:patch": "npm version patch && git add package.json && git add package-lock.json && git commit -m version-bump",
+    "bump:minor": "npm version minor && git add package.json && git add package-lock.json && git commit -m version-bump",
+    "bump:major": "npm version major && git add package.json && git add package-lock.json && git commit -m version-bump"
   },
   "author": "Aled Jones <aledjones.viola@gmail.com>",
   "license": "(MIT OR Apache-2.0)",

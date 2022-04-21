@@ -4,7 +4,6 @@ use crate::score::engrave::Engrave;
 use crate::score::players::Player;
 use crate::Engine;
 use js_sys::Function;
-use std::collections::HashMap;
 
 impl Engine {
     pub fn measure_instrument_names(

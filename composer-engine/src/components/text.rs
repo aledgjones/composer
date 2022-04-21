@@ -1,7 +1,3 @@
-use std::collections::HashMap;
-
-use crate::Engine;
-
 use super::measurements::PaddingSpaces;
 use super::units::{Converter, Px, Space};
 use js_sys::Function;

@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export function engine_render(a: number, b: number, c: number, d: number, e: number, f: number): number;
 export function engine_create_engrave(a: number, b: number, c: number, d: number): void;
 export function engine_engraves(a: number): number;
 export function engine_get_systemic_barline_single_instrument_system(a: number, b: number, c: number): number;
@@ -42,6 +43,8 @@ export function engine_listen(a: number, b: number): void;
 export function engine_state(a: number, b: number): void;
 export function run(): void;
 export function engine_create_time_signature(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number): void;
+export function get_full_path_from_partial(a: number): number;
+export function def_tree(a: number): number;
 export function engine_application_version(a: number, b: number): void;
 export function engine_set_application_version(a: number, b: number, c: number): void;
 export function engine_title(a: number, b: number): void;
@@ -62,8 +65,6 @@ export function engine_auto_count_style_solo(a: number): number;
 export function engine_set_auto_count_style_solo(a: number, b: number): void;
 export function engine_auto_count_style_section(a: number): number;
 export function engine_set_auto_count_style_section(a: number, b: number): void;
-export function get_full_path_from_partial(a: number): number;
-export function def_tree(a: number): number;
 export function engine_create_player(a: number, b: number, c: number): void;
 export function engine_remove_player(a: number, b: number, c: number): void;
 export function engine_reorder_players(a: number, b: number, c: number): void;
@@ -74,7 +75,6 @@ export function engine_players(a: number): number;
 export function engine_get_player_type(a: number, b: number, c: number): number;
 export function engine_get_player_name(a: number, b: number, c: number, d: number): void;
 export function engine_get_player_instruments(a: number, b: number, c: number): number;
-export function engine_render(a: number, b: number, c: number, d: number, e: number, f: number, g: number): void;
 export function engine_create_flow(a: number, b: number): void;
 export function engine_remove_flow(a: number, b: number, c: number): void;
 export function engine_reorder_flow(a: number, b: number, c: number): void;

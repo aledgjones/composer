@@ -199,6 +199,14 @@ function debugString(val) {
     // TODO we could test for more things here, like `Set`s and `Map`s.
     return className;
 }
+
+let stack_pointer = 32;
+
+function addBorrowedObject(obj) {
+    if (stack_pointer == 1) throw new Error('out of js stack');
+    heap[--stack_pointer] = obj;
+    return stack_pointer;
+}
 /**
 */
 export function run() {
@@ -210,14 +218,6 @@ function passArray8ToWasm0(arg, malloc) {
     getUint8Memory0().set(arg, ptr / 1);
     WASM_VECTOR_LEN = arg.length;
     return ptr;
-}
-
-let stack_pointer = 32;
-
-function addBorrowedObject(obj) {
-    if (stack_pointer == 1) throw new Error('out of js stack');
-    heap[--stack_pointer] = obj;
-    return stack_pointer;
 }
 /**
 * Get a full path to def from partial path
@@ -276,9 +276,6 @@ function getArrayU8FromWasm0(ptr, len) {
 }
 /**
 */
-export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
-/**
-*/
 export const BracketingApproach = Object.freeze({ None:0,"0":"None",Orchestral:1,"1":"Orchestral",SmallEnsemble:2,"2":"SmallEnsemble", });
 /**
 */
@@ -288,7 +285,13 @@ export const BracketStyle = Object.freeze({ None:0,"0":"None",Wing:1,"1":"Wing",
 export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",Custom:2,"2":"Custom", });
 /**
 */
+export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
+/**
+*/
 export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Normal:1,"1":"Normal",CommonTime:2,"2":"CommonTime",SplitCommonTime:3,"3":"SplitCommonTime",Open:4,"4":"Open", });
+/**
+*/
+export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond", });
 /**
 */
 export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:1,"1":"Sharp",Natural:2,"2":"Natural",Flat:3,"3":"Flat",DoubleFlat:4,"4":"DoubleFlat", });
@@ -297,16 +300,13 @@ export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:
 export const AutoCountStyle = Object.freeze({ Arabic:0,"0":"Arabic",Roman:1,"1":"Roman", });
 /**
 */
-export const PlayerType = Object.freeze({ Solo:0,"0":"Solo",Section:1,"1":"Section", });
-/**
-*/
-export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond", });
-/**
-*/
 export const Expression = Object.freeze({ Natural:0,"0":"Natural",Pizzicato:1,"1":"Pizzicato",Spiccato:2,"2":"Spiccato",Staccato:3,"3":"Staccato",Tremolo:4,"4":"Tremolo",Mute:5,"5":"Mute", });
 /**
 */
 export const InstrumentType = Object.freeze({ Melodic:0,"0":"Melodic",Percussive:1,"1":"Percussive", });
+/**
+*/
+export const PlayerType = Object.freeze({ Solo:0,"0":"Solo",Section:1,"1":"Section", });
 /**
 */
 export class Engine {
@@ -328,6 +328,27 @@ export class Engine {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_engine_free(ptr);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {number} px_per_mm
+    * @param {Function} setup
+    * @param {Function} measure
+    * @returns {any}
+    */
+    render(flow_key, px_per_mm, setup, measure) {
+        try {
+            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+            _assertNum(this.ptr);
+            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            _assertNum(px_per_mm);
+            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(setup), addBorrowedObject(measure));
+            return takeObject(ret);
+        } finally {
+            heap[stack_pointer++] = undefined;
+            heap[stack_pointer++] = undefined;
+        }
     }
     /**
     * @param {number} layout_type
@@ -1186,27 +1207,6 @@ export class Engine {
         return takeObject(ret);
     }
     /**
-    * @param {string} flow_key
-    * @param {number} px_per_mm
-    * @param {Function} setup
-    * @param {Function} render
-    * @param {Function} measure
-    */
-    render(flow_key, px_per_mm, setup, render, measure) {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            _assertNum(this.ptr);
-            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            _assertNum(px_per_mm);
-            wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(setup), addBorrowedObject(render), addBorrowedObject(measure));
-        } finally {
-            heap[stack_pointer++] = undefined;
-            heap[stack_pointer++] = undefined;
-            heap[stack_pointer++] = undefined;
-        }
-    }
-    /**
     * @returns {string}
     */
     create_flow() {
@@ -1523,10 +1523,6 @@ async function init(input) {
     }, arguments) };
     imports.wbg.__wbg_call_89558c3e96703ca1 = function() { return handleError(function (arg0, arg1) {
         var ret = getObject(arg0).call(getObject(arg1));
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_call_94697a95cb7e239c = function() { return handleError(function (arg0, arg1, arg2) {
-        var ret = getObject(arg0).call(getObject(arg1), getObject(arg2));
         return addHeapObject(ret);
     }, arguments) };
     imports.wbg.__wbg_call_471669b9b42539e5 = function() { return handleError(function (arg0, arg1, arg2, arg3) {

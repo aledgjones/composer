@@ -1,15 +1,15 @@
 import { RefObject, useLayoutEffect } from "react";
 import { engine } from "../data";
-import { drawBox } from "../render/draw-box";
-import { drawCircle } from "../render/draw-circle";
-import { drawCurve } from "../render/draw-curve";
-import { drawLine } from "../render/draw-line";
-import { drawShape } from "../render/draw-shape";
-import { drawText } from "../render/draw-text";
 import { InstructionType, RenderInstruction } from "../render/instructions";
 import { useMM } from "./use-mm";
 import { measureText } from "../ui/utils/measure-text";
 import { timer } from "../ui/utils/timer";
+import { drawLine } from "../render/line";
+import { drawText } from "../render/text";
+import { drawCircle } from "../render/circle";
+import { drawCurve } from "../render/curve";
+import { drawShape } from "../render/shape";
+import { drawBox } from "../render/box";
 
 export function usePipeline(
   canvas: RefObject<HTMLCanvasElement>,

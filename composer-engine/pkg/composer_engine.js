@@ -1,9 +1,27 @@
 
 let wasm;
 
-let cachedTextDecoder = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
+const heap = new Array(32).fill(undefined);
 
-cachedTextDecoder.decode();
+heap.push(undefined, null, true, false);
+
+function getObject(idx) { return heap[idx]; }
+
+let heap_next = heap.length;
+
+function dropObject(idx) {
+    if (idx < 36) return;
+    heap[idx] = heap_next;
+    heap_next = idx;
+}
+
+function takeObject(idx) {
+    const ret = getObject(idx);
+    dropObject(idx);
+    return ret;
+}
+
+let WASM_VECTOR_LEN = 0;
 
 let cachegetUint8Memory0 = null;
 function getUint8Memory0() {
@@ -12,31 +30,6 @@ function getUint8Memory0() {
     }
     return cachegetUint8Memory0;
 }
-
-function getStringFromWasm0(ptr, len) {
-    return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
-}
-
-const heap = new Array(32).fill(undefined);
-
-heap.push(undefined, null, true, false);
-
-let heap_next = heap.length;
-
-function addHeapObject(obj) {
-    if (heap_next === heap.length) heap.push(heap.length + 1);
-    const idx = heap_next;
-    heap_next = heap[idx];
-
-    if (typeof(heap_next) !== 'number') throw new Error('corrupt heap');
-
-    heap[idx] = obj;
-    return idx;
-}
-
-function getObject(idx) { return heap[idx]; }
-
-let WASM_VECTOR_LEN = 0;
 
 let cachedTextEncoder = new TextEncoder('utf-8');
 
@@ -54,8 +47,6 @@ const encodeString = (typeof cachedTextEncoder.encodeInto === 'function'
 });
 
 function passStringToWasm0(arg, malloc, realloc) {
-
-    if (typeof(arg) !== 'string') throw new Error('expected a string argument');
 
     if (realloc === undefined) {
         const buf = cachedTextEncoder.encode(arg);
@@ -85,7 +76,7 @@ function passStringToWasm0(arg, malloc, realloc) {
         ptr = realloc(ptr, len, len = offset + arg.length * 3);
         const view = getUint8Memory0().subarray(ptr + offset, ptr + len);
         const ret = encodeString(arg, view);
-        if (ret.read !== arg.length) throw new Error('failed to pass whole string');
+
         offset += ret.written;
     }
 
@@ -101,12 +92,25 @@ function getInt32Memory0() {
     return cachegetInt32Memory0;
 }
 
-function isLikeNone(x) {
-    return x === undefined || x === null;
+let cachedTextDecoder = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
+
+cachedTextDecoder.decode();
+
+function getStringFromWasm0(ptr, len) {
+    return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
 
-function _assertNum(n) {
-    if (typeof(n) !== 'number') throw new Error('expected a number argument');
+function addHeapObject(obj) {
+    if (heap_next === heap.length) heap.push(heap.length + 1);
+    const idx = heap_next;
+    heap_next = heap[idx];
+
+    heap[idx] = obj;
+    return idx;
+}
+
+function isLikeNone(x) {
+    return x === undefined || x === null;
 }
 
 let cachegetFloat64Memory0 = null;
@@ -115,24 +119,6 @@ function getFloat64Memory0() {
         cachegetFloat64Memory0 = new Float64Array(wasm.memory.buffer);
     }
     return cachegetFloat64Memory0;
-}
-
-function dropObject(idx) {
-    if (idx < 36) return;
-    heap[idx] = heap_next;
-    heap_next = idx;
-}
-
-function takeObject(idx) {
-    const ret = getObject(idx);
-    dropObject(idx);
-    return ret;
-}
-
-function _assertBoolean(n) {
-    if (typeof(n) !== 'boolean') {
-        throw new Error('expected a boolean argument');
-    }
 }
 
 function debugString(val) {
@@ -199,6 +185,11 @@ function debugString(val) {
     // TODO we could test for more things here, like `Set`s and `Map`s.
     return className;
 }
+/**
+*/
+export function run() {
+    wasm.run();
+}
 
 let stack_pointer = 32;
 
@@ -206,18 +197,6 @@ function addBorrowedObject(obj) {
     if (stack_pointer == 1) throw new Error('out of js stack');
     heap[--stack_pointer] = obj;
     return stack_pointer;
-}
-/**
-*/
-export function run() {
-    wasm.run();
-}
-
-function passArray8ToWasm0(arg, malloc) {
-    const ptr = malloc(arg.length * 1);
-    getUint8Memory0().set(arg, ptr / 1);
-    WASM_VECTOR_LEN = arg.length;
-    return ptr;
 }
 /**
 * Get a full path to def from partial path
@@ -247,20 +226,11 @@ export function def_tree(selection) {
     }
 }
 
-function logError(f, args) {
-    try {
-        return f.apply(this, args);
-    } catch (e) {
-        let error = (function () {
-            try {
-                return e instanceof Error ? `${e.message}\n\nStack:\n${e.stack}` : e.toString();
-            } catch(_) {
-                return "<failed to stringify thrown value>";
-            }
-        }());
-        console.error("wasm-bindgen: imported JS function that was not marked as `catch` threw an error:", error);
-        throw e;
-    }
+function passArray8ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 1);
+    getUint8Memory0().set(arg, ptr / 1);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
 }
 
 function handleError(f, args) {
@@ -276,28 +246,10 @@ function getArrayU8FromWasm0(ptr, len) {
 }
 /**
 */
-export const BracketingApproach = Object.freeze({ None:0,"0":"None",Orchestral:1,"1":"Orchestral",SmallEnsemble:2,"2":"SmallEnsemble", });
-/**
-*/
-export const BracketStyle = Object.freeze({ None:0,"0":"None",Wing:1,"1":"Wing",Line:2,"2":"Line", });
-/**
-*/
-export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",Custom:2,"2":"Custom", });
-/**
-*/
-export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
-/**
-*/
-export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Normal:1,"1":"Normal",CommonTime:2,"2":"CommonTime",SplitCommonTime:3,"3":"SplitCommonTime",Open:4,"4":"Open", });
-/**
-*/
 export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond", });
 /**
 */
-export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:1,"1":"Sharp",Natural:2,"2":"Natural",Flat:3,"3":"Flat",DoubleFlat:4,"4":"DoubleFlat", });
-/**
-*/
-export const AutoCountStyle = Object.freeze({ Arabic:0,"0":"Arabic",Roman:1,"1":"Roman", });
+export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
 /**
 */
 export const Expression = Object.freeze({ Natural:0,"0":"Natural",Pizzicato:1,"1":"Pizzicato",Spiccato:2,"2":"Spiccato",Staccato:3,"3":"Staccato",Tremolo:4,"4":"Tremolo",Mute:5,"5":"Mute", });
@@ -307,6 +259,24 @@ export const InstrumentType = Object.freeze({ Melodic:0,"0":"Melodic",Percussive
 /**
 */
 export const PlayerType = Object.freeze({ Solo:0,"0":"Solo",Section:1,"1":"Section", });
+/**
+*/
+export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Normal:1,"1":"Normal",CommonTime:2,"2":"CommonTime",SplitCommonTime:3,"3":"SplitCommonTime",Open:4,"4":"Open", });
+/**
+*/
+export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:1,"1":"Sharp",Natural:2,"2":"Natural",Flat:3,"3":"Flat",DoubleFlat:4,"4":"DoubleFlat", });
+/**
+*/
+export const AutoCountStyle = Object.freeze({ Arabic:0,"0":"Arabic",Roman:1,"1":"Roman", });
+/**
+*/
+export const BracketingApproach = Object.freeze({ None:0,"0":"None",Orchestral:1,"1":"Orchestral",SmallEnsemble:2,"2":"SmallEnsemble", });
+/**
+*/
+export const BracketStyle = Object.freeze({ None:0,"0":"None",Wing:1,"1":"Wing",Line:2,"2":"Line", });
+/**
+*/
+export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",Custom:2,"2":"Custom", });
 /**
 */
 export class Engine {
@@ -330,456 +300,6 @@ export class Engine {
         wasm.__wbg_engine_free(ptr);
     }
     /**
-    * @param {string} flow_key
-    * @param {number} px_per_mm
-    * @param {Function} setup
-    * @param {Function} measure
-    * @returns {any}
-    */
-    render(flow_key, px_per_mm, setup, measure) {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            _assertNum(this.ptr);
-            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            _assertNum(px_per_mm);
-            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(setup), addBorrowedObject(measure));
-            return takeObject(ret);
-        } finally {
-            heap[stack_pointer++] = undefined;
-            heap[stack_pointer++] = undefined;
-        }
-    }
-    /**
-    * @param {number} layout_type
-    * @param {string} name
-    */
-    create_engrave(layout_type, name) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        _assertNum(layout_type);
-        var ptr0 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_create_engrave(this.ptr, layout_type, ptr0, len0);
-    }
-    /**
-    * @returns {any}
-    */
-    get engraves() {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ret = wasm.engine_engraves(this.ptr);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} key
-    * @returns {boolean}
-    */
-    get_systemic_barline_single_instrument_system(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_systemic_barline_single_instrument_system(this.ptr, ptr0, len0);
-        return ret !== 0;
-    }
-    /**
-    * @param {string} key
-    * @param {boolean} value
-    */
-    set_systemic_barline_single_instrument_system(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        _assertBoolean(value);
-        wasm.engine_set_systemic_barline_single_instrument_system(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {number}
-    */
-    get_bracketing_approach(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_bracketing_approach(this.ptr, ptr0, len0);
-        return ret >>> 0;
-    }
-    /**
-    * @param {string} key
-    * @param {number} value
-    */
-    set_bracketing_approach(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        _assertNum(value);
-        wasm.engine_set_bracketing_approach(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {number}
-    */
-    get_bracket_style(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_bracket_style(this.ptr, ptr0, len0);
-        return ret >>> 0;
-    }
-    /**
-    * @param {string} key
-    * @param {number} value
-    */
-    set_bracket_style(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        _assertNum(value);
-        wasm.engine_set_bracket_style(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {boolean}
-    */
-    get_bracket_single_staves(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_bracket_single_staves(this.ptr, ptr0, len0);
-        return ret !== 0;
-    }
-    /**
-    * @param {string} key
-    * @param {boolean} value
-    */
-    set_bracket_single_staves(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        _assertBoolean(value);
-        wasm.engine_set_bracket_single_staves(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {boolean}
-    */
-    get_sub_bracket(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_sub_bracket(this.ptr, ptr0, len0);
-        return ret !== 0;
-    }
-    /**
-    * @param {string} key
-    * @param {boolean} value
-    */
-    set_sub_bracket(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        _assertBoolean(value);
-        wasm.engine_set_sub_bracket(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {number}
-    */
-    get_base_note_space(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_base_note_space(this.ptr, ptr0, len0);
-        return ret;
-    }
-    /**
-    * @param {string} key
-    * @param {number} value
-    */
-    set_base_note_space(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_base_note_space(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {number}
-    */
-    get_minimum_note_space(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_minimum_note_space(this.ptr, ptr0, len0);
-        return ret;
-    }
-    /**
-    * @param {string} key
-    * @param {number} value
-    */
-    set_minimum_note_space(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_minimum_note_space(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {number}
-    */
-    get_minimum_tie_space(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_minimum_tie_space(this.ptr, ptr0, len0);
-        return ret;
-    }
-    /**
-    * @param {string} key
-    * @param {number} value
-    */
-    set_minimum_tie_space(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_minimum_tie_space(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {number}
-    */
-    get_note_space_ratio(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_note_space_ratio(this.ptr, ptr0, len0);
-        return ret;
-    }
-    /**
-    * @param {string} key
-    * @param {number} value
-    */
-    set_note_space_ratio(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_note_space_ratio(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} key
-    * @returns {number}
-    */
-    get_space(key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_space(this.ptr, ptr0, len0);
-        return ret;
-    }
-    /**
-    * @param {string} key
-    * @param {number} value
-    */
-    set_space(key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_space(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * Create an instrument
-    * @param {string} id
-    * @returns {string}
-    */
-    create_instrument(id) {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            var ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            wasm.engine_create_instrument(retptr, this.ptr, ptr0, len0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} instrument_key
-    */
-    remove_instrument(instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_remove_instrument(this.ptr, ptr0, len0);
-    }
-    /**
-    * @param {string} instrument_key
-    * @returns {string}
-    */
-    get_instrument_name(instrument_key) {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            wasm.engine_get_instrument_name(retptr, this.ptr, ptr0, len0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} instrument_key
-    * @returns {string}
-    */
-    get_instrument_id(instrument_key) {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            wasm.engine_get_instrument_id(retptr, this.ptr, ptr0, len0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} instrument_key
-    * @returns {number}
-    */
-    get_instrument_volume(instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_instrument_volume(this.ptr, ptr0, len0);
-        return ret;
-    }
-    /**
-    * @param {string} instrument_key
-    * @param {number} value
-    */
-    set_instrument_volume(instrument_key, value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        _assertNum(value);
-        wasm.engine_set_instrument_volume(this.ptr, ptr0, len0, value);
-    }
-    /**
-    * @param {string} instrument_key
-    * @returns {boolean}
-    */
-    get_instrument_solo(instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_instrument_solo(this.ptr, ptr0, len0);
-        return ret !== 0;
-    }
-    /**
-    * @param {string} instrument_key
-    */
-    toggle_instrument_solo(instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_toggle_instrument_solo(this.ptr, ptr0, len0);
-    }
-    /**
-    * @param {string} instrument_key
-    * @returns {boolean}
-    */
-    get_instrument_mute(instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_instrument_mute(this.ptr, ptr0, len0);
-        return ret !== 0;
-    }
-    /**
-    * @param {string} instrument_key
-    */
-    toggle_instrument_mute(instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_toggle_instrument_mute(this.ptr, ptr0, len0);
-    }
-    /**
-    * @param {string} instrument_key
-    * @returns {any}
-    */
-    get_instrument_staves(instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_instrument_staves(this.ptr, ptr0, len0);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {string} instrument_key
-    * @returns {any}
-    */
-    get_instrument_tracks(flow_key, instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_instrument_tracks(this.ptr, ptr0, len0, ptr1, len1);
-        return takeObject(ret);
-    }
-    /**
-    */
-    calculate_counts() {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        wasm.engine_calculate_counts(this.ptr);
-    }
-    /**
     */
     constructor() {
         var ret = wasm.engine_new();
@@ -789,8 +309,6 @@ export class Engine {
     * @param {Function} cb
     */
     listen(cb) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         wasm.engine_listen(this.ptr, addHeapObject(cb));
     }
     /**
@@ -798,9 +316,7 @@ export class Engine {
     */
     get state() {
         try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
             wasm.engine_state(retptr, this.ptr);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
@@ -811,278 +327,12 @@ export class Engine {
         }
     }
     /**
-    * @param {string} flow_key
-    * @param {number} tick
-    * @param {number} beats
-    * @param {number} beat_type
-    * @param {number} draw_type
-    * @param {Uint8Array | undefined} groupings
-    */
-    create_time_signature(flow_key, tick, beats, beat_type, draw_type, groupings) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        _assertNum(tick);
-        _assertNum(beats);
-        _assertNum(beat_type);
-        _assertNum(draw_type);
-        var ptr1 = isLikeNone(groupings) ? 0 : passArray8ToWasm0(groupings, wasm.__wbindgen_malloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_create_time_signature(this.ptr, ptr0, len0, tick, beats, beat_type, draw_type, ptr1, len1);
-    }
-    /**
-    * @returns {string}
-    */
-    get application_version() {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            wasm.engine_application_version(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set application_version(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_application_version(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get title() {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            wasm.engine_title(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set title(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_title(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get subtitle() {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            wasm.engine_subtitle(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set subtitle(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_subtitle(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get composer() {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            wasm.engine_composer(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set composer(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_composer(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get arranger() {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            wasm.engine_arranger(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set arranger(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_arranger(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get lyricist() {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            wasm.engine_lyricist(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set lyricist(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_lyricist(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get copyright() {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            wasm.engine_copyright(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set copyright(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_copyright(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {number}
-    */
-    get created() {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ret = wasm.engine_created(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} value
-    */
-    set created(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        wasm.engine_set_created(this.ptr, value);
-    }
-    /**
-    * @returns {number}
-    */
-    get auto_count_style_solo() {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ret = wasm.engine_auto_count_style_solo(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} value
-    */
-    set auto_count_style_solo(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        _assertNum(value);
-        wasm.engine_set_auto_count_style_solo(this.ptr, value);
-    }
-    /**
-    * @returns {number}
-    */
-    get auto_count_style_section() {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ret = wasm.engine_auto_count_style_section(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} value
-    */
-    set auto_count_style_section(value) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        _assertNum(value);
-        wasm.engine_set_auto_count_style_section(this.ptr, value);
-    }
-    /**
     * @param {number} player_type
     * @returns {string}
     */
     create_player(player_type) {
         try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            _assertNum(player_type);
             wasm.engine_create_player(retptr, this.ptr, player_type);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
@@ -1096,8 +346,6 @@ export class Engine {
     * @param {string} player_key
     */
     remove_player(player_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.engine_remove_player(this.ptr, ptr0, len0);
@@ -1107,10 +355,6 @@ export class Engine {
     * @param {number} to
     */
     reorder_players(from, to) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        _assertNum(from);
-        _assertNum(to);
         wasm.engine_reorder_players(this.ptr, from, to);
     }
     /**
@@ -1118,8 +362,6 @@ export class Engine {
     * @param {string} instrument_key
     */
     assign_instrument_to_player(player_key, instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1131,8 +373,6 @@ export class Engine {
     * @param {string} instrument_key
     */
     unassign_instrument_from_player(player_key, instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1145,20 +385,14 @@ export class Engine {
     * @param {number} to
     */
     reorder_player_instruments(player_key, from, to) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
-        _assertNum(from);
-        _assertNum(to);
         wasm.engine_reorder_player_instruments(this.ptr, ptr0, len0, from, to);
     }
     /**
     * @returns {any}
     */
     get players() {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ret = wasm.engine_players(this.ptr);
         return takeObject(ret);
     }
@@ -1167,8 +401,6 @@ export class Engine {
     * @returns {number}
     */
     get_player_type(player_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ret = wasm.engine_get_player_type(this.ptr, ptr0, len0);
@@ -1180,9 +412,7 @@ export class Engine {
     */
     get_player_name(player_key) {
         try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
             var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
             var len0 = WASM_VECTOR_LEN;
             wasm.engine_get_player_name(retptr, this.ptr, ptr0, len0);
@@ -1199,21 +429,58 @@ export class Engine {
     * @returns {any}
     */
     get_player_instruments(player_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ret = wasm.engine_get_player_instruments(this.ptr, ptr0, len0);
         return takeObject(ret);
     }
     /**
+    * @param {string} flow_key
+    * @param {number} tick
+    * @param {number} beats
+    * @param {number} beat_type
+    * @param {number} draw_type
+    * @param {Uint8Array | undefined} groupings
+    */
+    create_time_signature(flow_key, tick, beats, beat_type, draw_type, groupings) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = isLikeNone(groupings) ? 0 : passArray8ToWasm0(groupings, wasm.__wbindgen_malloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_create_time_signature(this.ptr, ptr0, len0, tick, beats, beat_type, draw_type, ptr1, len1);
+    }
+    /**
+    * @returns {number}
+    */
+    get auto_count_style_solo() {
+        var ret = wasm.engine_auto_count_style_solo(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} value
+    */
+    set auto_count_style_solo(value) {
+        wasm.engine_set_auto_count_style_solo(this.ptr, value);
+    }
+    /**
+    * @returns {number}
+    */
+    get auto_count_style_section() {
+        var ret = wasm.engine_auto_count_style_section(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} value
+    */
+    set auto_count_style_section(value) {
+        wasm.engine_set_auto_count_style_section(this.ptr, value);
+    }
+    /**
     * @returns {string}
     */
     create_flow() {
         try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
             wasm.engine_create_flow(retptr, this.ptr);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
@@ -1227,8 +494,6 @@ export class Engine {
     * @param {string} flow_key
     */
     remove_flow(flow_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.engine_remove_flow(this.ptr, ptr0, len0);
@@ -1238,10 +503,6 @@ export class Engine {
     * @param {number} new_index
     */
     reorder_flow(old_index, new_index) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        _assertNum(old_index);
-        _assertNum(new_index);
         wasm.engine_reorder_flow(this.ptr, old_index, new_index);
     }
     /**
@@ -1249,8 +510,6 @@ export class Engine {
     * @param {string} name
     */
     rename_flow(flow_key, name) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1262,11 +521,8 @@ export class Engine {
     * @param {number} length
     */
     set_flow_length(flow_key, length) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
-        _assertNum(length);
         wasm.engine_set_flow_length(this.ptr, ptr0, len0, length);
     }
     /**
@@ -1277,8 +533,6 @@ export class Engine {
     * @param {string} player_key
     */
     assign_player_to_flow(flow_key, player_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1293,8 +547,6 @@ export class Engine {
     * @param {string} instrument_key
     */
     assign_instrument_to_flow(flow_key, instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1306,8 +558,6 @@ export class Engine {
     * @param {string} player_key
     */
     unassign_player_from_flow(flow_key, player_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1319,8 +569,6 @@ export class Engine {
     * @param {string} instrument_key
     */
     unassign_instrument_from_flow(flow_key, instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1331,8 +579,6 @@ export class Engine {
     * @returns {any}
     */
     get flows() {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ret = wasm.engine_flows(this.ptr);
         return takeObject(ret);
     }
@@ -1342,9 +588,7 @@ export class Engine {
     */
     get_flow_title(flow_key) {
         try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
             var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
             var len0 = WASM_VECTOR_LEN;
             wasm.engine_get_flow_title(retptr, this.ptr, ptr0, len0);
@@ -1362,8 +606,6 @@ export class Engine {
     * @returns {boolean}
     */
     flow_contains_player(flow_key, player_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1376,12 +618,552 @@ export class Engine {
     * @returns {any}
     */
     get_flow_ticks(flow_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ret = wasm.engine_get_flow_ticks(this.ptr, ptr0, len0);
         return takeObject(ret);
+    }
+    /**
+    * Create an instrument
+    * @param {string} id
+    * @returns {string}
+    */
+    create_instrument(id) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm.engine_create_instrument(retptr, this.ptr, ptr0, len0);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} instrument_key
+    */
+    remove_instrument(instrument_key) {
+        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_remove_instrument(this.ptr, ptr0, len0);
+    }
+    /**
+    * @param {string} instrument_key
+    * @returns {string}
+    */
+    get_instrument_name(instrument_key) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm.engine_get_instrument_name(retptr, this.ptr, ptr0, len0);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} instrument_key
+    * @returns {string}
+    */
+    get_instrument_id(instrument_key) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm.engine_get_instrument_id(retptr, this.ptr, ptr0, len0);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} instrument_key
+    * @returns {number}
+    */
+    get_instrument_volume(instrument_key) {
+        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_instrument_volume(this.ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+    * @param {string} instrument_key
+    * @param {number} value
+    */
+    set_instrument_volume(instrument_key, value) {
+        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_instrument_volume(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} instrument_key
+    * @returns {boolean}
+    */
+    get_instrument_solo(instrument_key) {
+        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_instrument_solo(this.ptr, ptr0, len0);
+        return ret !== 0;
+    }
+    /**
+    * @param {string} instrument_key
+    */
+    toggle_instrument_solo(instrument_key) {
+        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_toggle_instrument_solo(this.ptr, ptr0, len0);
+    }
+    /**
+    * @param {string} instrument_key
+    * @returns {boolean}
+    */
+    get_instrument_mute(instrument_key) {
+        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_instrument_mute(this.ptr, ptr0, len0);
+        return ret !== 0;
+    }
+    /**
+    * @param {string} instrument_key
+    */
+    toggle_instrument_mute(instrument_key) {
+        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_toggle_instrument_mute(this.ptr, ptr0, len0);
+    }
+    /**
+    * @param {string} instrument_key
+    * @returns {any}
+    */
+    get_instrument_staves(instrument_key) {
+        var ptr0 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_instrument_staves(this.ptr, ptr0, len0);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {string} instrument_key
+    * @returns {any}
+    */
+    get_instrument_tracks(flow_key, instrument_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_instrument_tracks(this.ptr, ptr0, len0, ptr1, len1);
+        return takeObject(ret);
+    }
+    /**
+    */
+    calculate_counts() {
+        wasm.engine_calculate_counts(this.ptr);
+    }
+    /**
+    * @param {number} layout_type
+    * @param {string} name
+    */
+    create_engrave(layout_type, name) {
+        var ptr0 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_create_engrave(this.ptr, layout_type, ptr0, len0);
+    }
+    /**
+    * @returns {any}
+    */
+    get engraves() {
+        var ret = wasm.engine_engraves(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} key
+    * @returns {boolean}
+    */
+    get_systemic_barline_single_instrument_system(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_systemic_barline_single_instrument_system(this.ptr, ptr0, len0);
+        return ret !== 0;
+    }
+    /**
+    * @param {string} key
+    * @param {boolean} value
+    */
+    set_systemic_barline_single_instrument_system(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_systemic_barline_single_instrument_system(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {number}
+    */
+    get_bracketing_approach(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_bracketing_approach(this.ptr, ptr0, len0);
+        return ret >>> 0;
+    }
+    /**
+    * @param {string} key
+    * @param {number} value
+    */
+    set_bracketing_approach(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_bracketing_approach(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {number}
+    */
+    get_bracket_style(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_bracket_style(this.ptr, ptr0, len0);
+        return ret >>> 0;
+    }
+    /**
+    * @param {string} key
+    * @param {number} value
+    */
+    set_bracket_style(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_bracket_style(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {boolean}
+    */
+    get_bracket_single_staves(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_bracket_single_staves(this.ptr, ptr0, len0);
+        return ret !== 0;
+    }
+    /**
+    * @param {string} key
+    * @param {boolean} value
+    */
+    set_bracket_single_staves(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_bracket_single_staves(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {boolean}
+    */
+    get_sub_bracket(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_sub_bracket(this.ptr, ptr0, len0);
+        return ret !== 0;
+    }
+    /**
+    * @param {string} key
+    * @param {boolean} value
+    */
+    set_sub_bracket(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_sub_bracket(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {number}
+    */
+    get_base_note_space(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_base_note_space(this.ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+    * @param {string} key
+    * @param {number} value
+    */
+    set_base_note_space(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_base_note_space(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {number}
+    */
+    get_minimum_note_space(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_minimum_note_space(this.ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+    * @param {string} key
+    * @param {number} value
+    */
+    set_minimum_note_space(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_minimum_note_space(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {number}
+    */
+    get_minimum_tie_space(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_minimum_tie_space(this.ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+    * @param {string} key
+    * @param {number} value
+    */
+    set_minimum_tie_space(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_minimum_tie_space(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {number}
+    */
+    get_note_space_ratio(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_note_space_ratio(this.ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+    * @param {string} key
+    * @param {number} value
+    */
+    set_note_space_ratio(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_note_space_ratio(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} key
+    * @returns {number}
+    */
+    get_space(key) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_space(this.ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+    * @param {string} key
+    * @param {number} value
+    */
+    set_space(key, value) {
+        var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_space(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {number} px_per_mm
+    * @param {Function} measure
+    * @returns {any}
+    */
+    render(flow_key, px_per_mm, measure) {
+        try {
+            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(measure));
+            return takeObject(ret);
+        } finally {
+            heap[stack_pointer++] = undefined;
+        }
+    }
+    /**
+    * @returns {string}
+    */
+    get application_version() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_application_version(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set application_version(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_application_version(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get title() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_title(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set title(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_title(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get subtitle() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_subtitle(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set subtitle(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_subtitle(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get composer() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_composer(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set composer(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_composer(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get arranger() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_arranger(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set arranger(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_arranger(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get lyricist() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_lyricist(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set lyricist(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_lyricist(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get copyright() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_copyright(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set copyright(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_copyright(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {number}
+    */
+    get created() {
+        var ret = wasm.engine_created(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} value
+    */
+    set created(value) {
+        wasm.engine_set_created(this.ptr, value);
     }
 }
 
@@ -1422,17 +1204,8 @@ async function init(input) {
     }
     const imports = {};
     imports.wbg = {};
-    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
-        var ret = getStringFromWasm0(arg0, arg1);
-        return addHeapObject(ret);
-    };
-    imports.wbg.__wbindgen_number_new = function(arg0) {
-        var ret = arg0;
-        return addHeapObject(ret);
-    };
-    imports.wbg.__wbindgen_json_parse = function(arg0, arg1) {
-        var ret = JSON.parse(getStringFromWasm0(arg0, arg1));
-        return addHeapObject(ret);
+    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
+        takeObject(arg0);
     };
     imports.wbg.__wbindgen_json_serialize = function(arg0, arg1) {
         const obj = getObject(arg1);
@@ -1442,105 +1215,105 @@ async function init(input) {
         getInt32Memory0()[arg0 / 4 + 1] = len0;
         getInt32Memory0()[arg0 / 4 + 0] = ptr0;
     };
+    imports.wbg.__wbindgen_json_parse = function(arg0, arg1) {
+        var ret = JSON.parse(getStringFromWasm0(arg0, arg1));
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
+        var ret = getStringFromWasm0(arg0, arg1);
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_number_new = function(arg0) {
+        var ret = arg0;
+        return addHeapObject(ret);
+    };
     imports.wbg.__wbindgen_number_get = function(arg0, arg1) {
         const obj = getObject(arg1);
         var ret = typeof(obj) === 'number' ? obj : undefined;
-        if (!isLikeNone(ret)) {
-            _assertNum(ret);
-        }
         getFloat64Memory0()[arg0 / 8 + 1] = isLikeNone(ret) ? 0 : ret;
         getInt32Memory0()[arg0 / 4 + 0] = !isLikeNone(ret);
     };
-    imports.wbg.__wbg_error_09919627ac0992f5 = function() { return logError(function (arg0, arg1) {
-        try {
-            console.error(getStringFromWasm0(arg0, arg1));
-        } finally {
-            wasm.__wbindgen_free(arg0, arg1);
-        }
-    }, arguments) };
-    imports.wbg.__wbg_new_693216e109162396 = function() { return logError(function () {
+    imports.wbg.__wbg_new_693216e109162396 = function() {
         var ret = new Error();
         return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_stack_0ddaca5d1abfb52f = function() { return logError(function (arg0, arg1) {
+    };
+    imports.wbg.__wbg_stack_0ddaca5d1abfb52f = function(arg0, arg1) {
         var ret = getObject(arg1).stack;
         var ptr0 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         getInt32Memory0()[arg0 / 4 + 1] = len0;
         getInt32Memory0()[arg0 / 4 + 0] = ptr0;
-    }, arguments) };
-    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
-        takeObject(arg0);
     };
-    imports.wbg.__wbg_msCrypto_d07655bf62361f21 = function() { return logError(function (arg0) {
-        var ret = getObject(arg0).msCrypto;
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_crypto_2f56257a38275dbd = function() { return logError(function (arg0) {
-        var ret = getObject(arg0).crypto;
-        return addHeapObject(ret);
+    imports.wbg.__wbg_error_09919627ac0992f5 = function(arg0, arg1) {
+        try {
+            console.error(getStringFromWasm0(arg0, arg1));
+        } finally {
+            wasm.__wbindgen_free(arg0, arg1);
+        }
+    };
+    imports.wbg.__wbg_randomFillSync_654a7797990fb8db = function() { return handleError(function (arg0, arg1, arg2) {
+        getObject(arg0).randomFillSync(getArrayU8FromWasm0(arg1, arg2));
     }, arguments) };
     imports.wbg.__wbg_getRandomValues_fb6b088efb6bead2 = function() { return handleError(function (arg0, arg1) {
         getObject(arg0).getRandomValues(getObject(arg1));
     }, arguments) };
-    imports.wbg.__wbg_static_accessor_NODE_MODULE_33b45247c55045b0 = function() { return logError(function () {
-        var ret = module;
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_require_2a93bc09fee45aca = function() { return handleError(function (arg0, arg1, arg2) {
-        var ret = getObject(arg0).require(getStringFromWasm0(arg1, arg2));
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_randomFillSync_654a7797990fb8db = function() { return handleError(function (arg0, arg1, arg2) {
-        getObject(arg0).randomFillSync(getArrayU8FromWasm0(arg1, arg2));
-    }, arguments) };
-    imports.wbg.__wbg_process_70251ed1291754d5 = function() { return logError(function (arg0) {
+    imports.wbg.__wbg_process_70251ed1291754d5 = function(arg0) {
         var ret = getObject(arg0).process;
         return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_versions_b23f2588cdb2ddbb = function() { return logError(function (arg0) {
-        var ret = getObject(arg0).versions;
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_node_61b8c9a82499895d = function() { return logError(function (arg0) {
-        var ret = getObject(arg0).node;
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbindgen_is_string = function(arg0) {
-        var ret = typeof(getObject(arg0)) === 'string';
-        _assertBoolean(ret);
-        return ret;
     };
     imports.wbg.__wbindgen_is_object = function(arg0) {
         const val = getObject(arg0);
         var ret = typeof(val) === 'object' && val !== null;
-        _assertBoolean(ret);
         return ret;
     };
-    imports.wbg.__wbg_newnoargs_f579424187aa1717 = function() { return logError(function (arg0, arg1) {
-        var ret = new Function(getStringFromWasm0(arg0, arg1));
+    imports.wbg.__wbg_versions_b23f2588cdb2ddbb = function(arg0) {
+        var ret = getObject(arg0).versions;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_node_61b8c9a82499895d = function(arg0) {
+        var ret = getObject(arg0).node;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_is_string = function(arg0) {
+        var ret = typeof(getObject(arg0)) === 'string';
+        return ret;
+    };
+    imports.wbg.__wbg_static_accessor_NODE_MODULE_33b45247c55045b0 = function() {
+        var ret = module;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_require_2a93bc09fee45aca = function() { return handleError(function (arg0, arg1, arg2) {
+        var ret = getObject(arg0).require(getStringFromWasm0(arg1, arg2));
         return addHeapObject(ret);
     }, arguments) };
+    imports.wbg.__wbg_crypto_2f56257a38275dbd = function(arg0) {
+        var ret = getObject(arg0).crypto;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_msCrypto_d07655bf62361f21 = function(arg0) {
+        var ret = getObject(arg0).msCrypto;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_newnoargs_f579424187aa1717 = function(arg0, arg1) {
+        var ret = new Function(getStringFromWasm0(arg0, arg1));
+        return addHeapObject(ret);
+    };
     imports.wbg.__wbg_call_89558c3e96703ca1 = function() { return handleError(function (arg0, arg1) {
         var ret = getObject(arg0).call(getObject(arg1));
         return addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbg_call_471669b9b42539e5 = function() { return handleError(function (arg0, arg1, arg2, arg3) {
-        var ret = getObject(arg0).call(getObject(arg1), getObject(arg2), getObject(arg3));
+    imports.wbg.__wbindgen_object_clone_ref = function(arg0) {
+        var ret = getObject(arg0);
         return addHeapObject(ret);
-    }, arguments) };
+    };
     imports.wbg.__wbg_call_d43ade9f0e170391 = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
         var ret = getObject(arg0).call(getObject(arg1), getObject(arg2), getObject(arg3), getObject(arg4));
         return addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbg_now_e6c39c10a5e8aec7 = function() { return logError(function () {
+    imports.wbg.__wbg_now_e6c39c10a5e8aec7 = function() {
         var ret = Date.now();
         return ret;
-    }, arguments) };
-    imports.wbg.__wbg_globalThis_d61b1f48a57191ae = function() { return handleError(function () {
-        var ret = globalThis.globalThis;
-        return addHeapObject(ret);
-    }, arguments) };
+    };
     imports.wbg.__wbg_self_e23d74ae45fb17d1 = function() { return handleError(function () {
         var ret = self.self;
         return addHeapObject(ret);
@@ -1549,43 +1322,41 @@ async function init(input) {
         var ret = window.window;
         return addHeapObject(ret);
     }, arguments) };
+    imports.wbg.__wbg_globalThis_d61b1f48a57191ae = function() { return handleError(function () {
+        var ret = globalThis.globalThis;
+        return addHeapObject(ret);
+    }, arguments) };
     imports.wbg.__wbg_global_e7669da72fd7f239 = function() { return handleError(function () {
         var ret = global.global;
         return addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbg_new_e3b800e570795b3c = function() { return logError(function (arg0) {
-        var ret = new Uint8Array(getObject(arg0));
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_newwithlength_5f4ce114a24dfe1e = function() { return logError(function (arg0) {
-        var ret = new Uint8Array(arg0 >>> 0);
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_subarray_a68f835ca2af506f = function() { return logError(function (arg0, arg1, arg2) {
-        var ret = getObject(arg0).subarray(arg1 >>> 0, arg2 >>> 0);
-        return addHeapObject(ret);
-    }, arguments) };
-    imports.wbg.__wbg_length_30803400a8f15c59 = function() { return logError(function (arg0) {
-        var ret = getObject(arg0).length;
-        _assertNum(ret);
-        return ret;
-    }, arguments) };
-    imports.wbg.__wbg_set_5b8081e9d002f0df = function() { return logError(function (arg0, arg1, arg2) {
-        getObject(arg0).set(getObject(arg1), arg2 >>> 0);
-    }, arguments) };
     imports.wbg.__wbindgen_is_undefined = function(arg0) {
         var ret = getObject(arg0) === undefined;
-        _assertBoolean(ret);
         return ret;
     };
-    imports.wbg.__wbindgen_object_clone_ref = function(arg0) {
-        var ret = getObject(arg0);
-        return addHeapObject(ret);
-    };
-    imports.wbg.__wbg_buffer_5e74a88a1424a2e0 = function() { return logError(function (arg0) {
+    imports.wbg.__wbg_buffer_5e74a88a1424a2e0 = function(arg0) {
         var ret = getObject(arg0).buffer;
         return addHeapObject(ret);
-    }, arguments) };
+    };
+    imports.wbg.__wbg_new_e3b800e570795b3c = function(arg0) {
+        var ret = new Uint8Array(getObject(arg0));
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_set_5b8081e9d002f0df = function(arg0, arg1, arg2) {
+        getObject(arg0).set(getObject(arg1), arg2 >>> 0);
+    };
+    imports.wbg.__wbg_length_30803400a8f15c59 = function(arg0) {
+        var ret = getObject(arg0).length;
+        return ret;
+    };
+    imports.wbg.__wbg_newwithlength_5f4ce114a24dfe1e = function(arg0) {
+        var ret = new Uint8Array(arg0 >>> 0);
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_subarray_a68f835ca2af506f = function(arg0, arg1, arg2) {
+        var ret = getObject(arg0).subarray(arg1 >>> 0, arg2 >>> 0);
+        return addHeapObject(ret);
+    };
     imports.wbg.__wbindgen_debug_string = function(arg0, arg1) {
         var ret = debugString(getObject(arg1));
         var ptr0 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);

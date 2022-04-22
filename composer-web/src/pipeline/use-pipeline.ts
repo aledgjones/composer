@@ -24,21 +24,25 @@ export function usePipeline(
         const ctx = canvas.current.getContext("2d", { alpha: false });
         const dpi = window.devicePixelRatio;
 
-        const setup = (height: number, width: number) => {
-          if (ctx) {
-            ctx.canvas.height = height * dpi;
-            ctx.canvas.width = width * dpi;
-            ctx.canvas.style.height = `${height}px`;
-            ctx.canvas.style.width = `${width}px`;
+        if (ctx) {
+          const [width, height, instructions] = engine.render(
+            flowKey,
+            mm,
+            measureText
+          );
 
-            // clear
-            ctx.fillStyle = "#fff";
-            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-          }
-        };
+          // setup canvas
+          ctx.canvas.height = height * dpi;
+          ctx.canvas.width = width * dpi;
+          ctx.canvas.style.height = `${height}px`;
+          ctx.canvas.style.width = `${width}px`;
 
-        const render = (instruction: RenderInstruction<any>) => {
-          if (ctx) {
+          // clear canvas
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+          // render instruction set
+          instructions.forEach((instruction: RenderInstruction<any>) => {
             switch (instruction.type) {
               case InstructionType.Line:
                 drawLine(ctx, instruction, dpi);
@@ -61,10 +65,8 @@ export function usePipeline(
               default:
                 break;
             }
-          }
-        };
-
-        engine.render(flowKey, mm, setup, render, measureText);
+          });
+        }
       }
     });
   });

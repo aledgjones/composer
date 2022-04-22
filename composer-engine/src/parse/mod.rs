@@ -53,22 +53,9 @@ pub enum Instruction {
     Text(Text),
 }
 
-impl Instruction {
-    fn to_jsvalue(&self) -> JsValue {
-        JsValue::from_serde(&self).unwrap()
-    }
-}
-
 #[wasm_bindgen]
 impl Engine {
-    pub fn render(
-        &self,
-        flow_key: &str,
-        px_per_mm: usize,
-        setup: &Function,
-        render: &Function,
-        measure: &Function,
-    ) {
+    pub fn render(&self, flow_key: &str, px_per_mm: usize, measure: &Function) -> JsValue {
         let mut instructions: Vec<Instruction> = Vec::new();
 
         let engrave = self.get_engrave_by_type(LayoutType::Score).unwrap();
@@ -157,14 +144,9 @@ impl Engine {
             &mut instructions,
         );
 
-        let _ = setup.call2(
-            &JsValue::NULL,
-            &JsValue::from_f64(converter.spaces_to_px(&height) as f64),
-            &JsValue::from_f64(converter.spaces_to_px(&width) as f64),
-        );
+        let width = converter.spaces_to_px(&width);
+        let height = converter.spaces_to_px(&height);
 
-        for instruction in instructions {
-            let _ = render.call1(&JsValue::NULL, &instruction.to_jsvalue());
-        }
+        JsValue::from_serde(&(width, height, instructions)).unwrap()
     }
 }

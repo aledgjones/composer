@@ -4,9 +4,9 @@ import { SLOT_HEIGHT } from "../const";
 import { useDragHandler } from "../../../ui/hooks/use-drag-handler";
 import { ui } from "../../../data";
 import { noop } from "../../../ui/utils/noop";
+import { actions } from "../../../data/actions";
 
 import "./styles.css";
-import { actions } from "../../../data/actions";
 
 interface Props {
   instrumentKey: string;

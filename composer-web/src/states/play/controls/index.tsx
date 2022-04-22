@@ -16,18 +16,22 @@ import "./styles.css";
 
 interface Props {
   color: string;
+  flowKey: string;
   instrumentKey: string;
 }
 
-export const Controls: FC<Props> = ({ color, instrumentKey }) => {
-  const staves: string[] = engine.get_instrument_staves(instrumentKey);
+export const Controls: FC<Props> = ({ color, flowKey, instrumentKey }) => {
+  const tracks: [string, string][] = engine.get_instrument_tracks(
+    flowKey,
+    instrumentKey
+  );
   const expanded = ui.useState(
     (s) => s.play.expanded[instrumentKey],
     [instrumentKey]
   );
-  const stave = ui.useState(
-    (s) => s.play.stave[instrumentKey] || staves[0],
-    [instrumentKey, staves]
+  const track = ui.useState(
+    (s) => s.play.track[flowKey + instrumentKey] || tracks[0]?.[0],
+    [flowKey, instrumentKey, tracks]
   );
   const name = engine.get_instrument_name(instrumentKey);
   const id = engine.get_instrument_id(instrumentKey);
@@ -85,18 +89,20 @@ export const Controls: FC<Props> = ({ color, instrumentKey }) => {
                   }}
                 />
                 <Select
-                  value={stave}
+                  value={track}
                   onChange={(value) => {
-                    actions.play.stave.set(instrumentKey, value);
+                    actions.play.track.set(instrumentKey, value);
                   }}
                 >
-                  {staves.map((staveKey, i) => {
+                  {tracks.map(([trackKey, trackName]) => {
                     return (
                       <Option
-                        key={staveKey}
-                        value={staveKey}
-                        displayAs={`Stave ${i + 1}`}
-                      >{`Stave ${i + 1}`}</Option>
+                        key={trackKey}
+                        value={trackKey}
+                        displayAs={trackName}
+                      >
+                        {trackName}
+                      </Option>
                     );
                   })}
                 </Select>

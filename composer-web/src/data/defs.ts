@@ -35,6 +35,7 @@ export const enum EngravePage {
 export interface State {
   view: View;
   snap: NoteDuration;
+  flow: string | null;
   setup: {
     dialogs: {
       players: { page: PlayerPage };
@@ -52,6 +53,6 @@ export interface State {
     zoom: number;
     expanded: { [key: string]: boolean };
     keyboard: { [key: string]: number };
-    stave: { [key: string]: string };
+    track: { [key: string]: string };
   };
 }

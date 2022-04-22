@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const Fader: FC<Props> = ({
-  instrumentKey,
+  // instrumentKey,
   volume,
   color,
   onChange,

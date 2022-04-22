@@ -7,6 +7,7 @@ export const engine = new Engine();
 export const ui = new Store<State>({
   view: View.Setup,
   snap: NoteDuration.Sixteenth,
+  flow: null,
   setup: {
     dialogs: {
       players: { page: PlayerPage.AutoNumbering },
@@ -24,6 +25,6 @@ export const ui = new Store<State>({
     zoom: 100,
     expanded: {},
     keyboard: {},
-    stave: {},
+    track: {},
   },
 });

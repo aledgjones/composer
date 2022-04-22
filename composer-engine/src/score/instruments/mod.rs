@@ -2,9 +2,9 @@ pub mod defs;
 pub mod utils;
 
 use super::config::AutoCountStyle;
-use crate::score::players::PlayerType;
 use crate::utils::shortid;
 use crate::Engine;
+use crate::{components::misc::ALPHABET_LOWERCASE, score::players::PlayerType};
 use defs::{get_def, InstrumentType};
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
@@ -158,6 +158,29 @@ impl Engine {
     pub fn get_instrument_staves(&self, instrument_key: &str) -> JsValue {
         let instrument = self.score.instruments.get(instrument_key).unwrap();
         JsValue::from_serde(&instrument.staves).unwrap()
+    }
+
+    pub fn get_instrument_tracks(&self, flow_key: &str, instrument_key: &str) -> JsValue {
+        let mut output: Vec<(&String, String)> = Vec::new();
+        let flow = self.score.flows.by_key.get(flow_key).unwrap();
+        let instrument = self.score.instruments.get(instrument_key).unwrap();
+        let multi_stave = instrument.staves.len() > 1;
+
+        for (i, stave_key) in instrument.staves.iter().enumerate() {
+            let stave = flow.staves.get(stave_key).unwrap();
+            for (ii, track_key) in stave.tracks.iter().enumerate() {
+                if multi_stave {
+                    output.push((
+                        track_key,
+                        format!("Staff ({}), Voice {}", ALPHABET_LOWERCASE[i], ii + 1),
+                    ));
+                } else {
+                    output.push((track_key, format!("Voice {}", ii + 1)));
+                }
+            }
+        }
+
+        JsValue::from_serde(&output).unwrap()
     }
 
     pub fn calculate_counts(&mut self) {

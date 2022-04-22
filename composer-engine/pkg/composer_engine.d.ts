@@ -17,6 +17,15 @@ export function get_full_path_from_partial(selection: any): any;
 export function def_tree(selection: any): any;
 /**
 */
+export enum ClefDrawType {
+  Hidden,
+  G,
+  F,
+  C,
+  Percussion,
+}
+/**
+*/
 export enum TimeSignatureDrawType {
   Hidden,
   Normal,
@@ -72,15 +81,6 @@ export enum NoteDuration {
 }
 /**
 */
-export enum ClefDrawType {
-  Hidden,
-  G,
-  F,
-  C,
-  Percussion,
-}
-/**
-*/
 export enum BracketingApproach {
   None,
   Orchestral,
@@ -105,68 +105,21 @@ export enum LayoutType {
 export class Engine {
   free(): void;
 /**
-* Create an instrument
-* @param {string} id
-* @returns {string}
-*/
-  create_instrument(id: string): string;
-/**
-* @param {string} instrument_key
-*/
-  remove_instrument(instrument_key: string): void;
-/**
-* @param {string} instrument_key
-* @returns {string}
-*/
-  get_instrument_name(instrument_key: string): string;
-/**
-* @param {string} instrument_key
-* @returns {string}
-*/
-  get_instrument_id(instrument_key: string): string;
-/**
-* @param {string} instrument_key
-* @returns {number}
-*/
-  get_instrument_volume(instrument_key: string): number;
-/**
-* @param {string} instrument_key
-* @param {number} value
-*/
-  set_instrument_volume(instrument_key: string, value: number): void;
-/**
-* @param {string} instrument_key
-* @returns {boolean}
-*/
-  get_instrument_solo(instrument_key: string): boolean;
-/**
-* @param {string} instrument_key
-*/
-  toggle_instrument_solo(instrument_key: string): void;
-/**
-* @param {string} instrument_key
-* @returns {boolean}
-*/
-  get_instrument_mute(instrument_key: string): boolean;
-/**
-* @param {string} instrument_key
-*/
-  toggle_instrument_mute(instrument_key: string): void;
-/**
-* @param {string} instrument_key
-* @returns {any}
-*/
-  get_instrument_staves(instrument_key: string): any;
-/**
-*/
-  calculate_counts(): void;
-/**
 */
   constructor();
 /**
 * @param {Function} cb
 */
   listen(cb: Function): void;
+/**
+* @param {string} flow_key
+* @param {number} tick
+* @param {number} beats
+* @param {number} beat_type
+* @param {number} draw_type
+* @param {Uint8Array | undefined} groupings
+*/
+  create_time_signature(flow_key: string, tick: number, beats: number, beat_type: number, draw_type: number, groupings?: Uint8Array): void;
 /**
 * @returns {string}
 */
@@ -227,15 +180,6 @@ export class Engine {
 * @returns {boolean}
 */
   flow_contains_player(flow_key: string, player_key: string): boolean;
-/**
-* @param {string} flow_key
-* @param {number} tick
-* @param {number} beats
-* @param {number} beat_type
-* @param {number} draw_type
-* @param {Uint8Array | undefined} groupings
-*/
-  create_time_signature(flow_key: string, tick: number, beats: number, beat_type: number, draw_type: number, groupings?: Uint8Array): void;
 /**
 * @param {number} player_type
 * @returns {string}
@@ -395,6 +339,68 @@ export class Engine {
 */
   set_space(key: string, value: number): void;
 /**
+* Create an instrument
+* @param {string} id
+* @returns {string}
+*/
+  create_instrument(id: string): string;
+/**
+* @param {string} instrument_key
+*/
+  remove_instrument(instrument_key: string): void;
+/**
+* @param {string} instrument_key
+* @returns {string}
+*/
+  get_instrument_name(instrument_key: string): string;
+/**
+* @param {string} instrument_key
+* @returns {string}
+*/
+  get_instrument_id(instrument_key: string): string;
+/**
+* @param {string} instrument_key
+* @returns {number}
+*/
+  get_instrument_volume(instrument_key: string): number;
+/**
+* @param {string} instrument_key
+* @param {number} value
+*/
+  set_instrument_volume(instrument_key: string, value: number): void;
+/**
+* @param {string} instrument_key
+* @returns {boolean}
+*/
+  get_instrument_solo(instrument_key: string): boolean;
+/**
+* @param {string} instrument_key
+*/
+  toggle_instrument_solo(instrument_key: string): void;
+/**
+* @param {string} instrument_key
+* @returns {boolean}
+*/
+  get_instrument_mute(instrument_key: string): boolean;
+/**
+* @param {string} instrument_key
+*/
+  toggle_instrument_mute(instrument_key: string): void;
+/**
+* @param {string} instrument_key
+* @returns {any}
+*/
+  get_instrument_staves(instrument_key: string): any;
+/**
+* @param {string} flow_key
+* @param {string} instrument_key
+* @returns {any}
+*/
+  get_instrument_tracks(flow_key: string, instrument_key: string): any;
+/**
+*/
+  calculate_counts(): void;
+/**
 * @returns {string}
 */
   application_version: string;
@@ -456,23 +462,12 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly engine_create_instrument: (a: number, b: number, c: number, d: number) => void;
-  readonly engine_remove_instrument: (a: number, b: number, c: number) => void;
-  readonly engine_get_instrument_name: (a: number, b: number, c: number, d: number) => void;
-  readonly engine_get_instrument_id: (a: number, b: number, c: number, d: number) => void;
-  readonly engine_get_instrument_volume: (a: number, b: number, c: number) => number;
-  readonly engine_set_instrument_volume: (a: number, b: number, c: number, d: number) => void;
-  readonly engine_get_instrument_solo: (a: number, b: number, c: number) => number;
-  readonly engine_toggle_instrument_solo: (a: number, b: number, c: number) => void;
-  readonly engine_get_instrument_mute: (a: number, b: number, c: number) => number;
-  readonly engine_toggle_instrument_mute: (a: number, b: number, c: number) => void;
-  readonly engine_get_instrument_staves: (a: number, b: number, c: number) => number;
-  readonly engine_calculate_counts: (a: number) => void;
   readonly __wbg_engine_free: (a: number) => void;
   readonly engine_new: () => number;
   readonly engine_listen: (a: number, b: number) => void;
   readonly engine_state: (a: number, b: number) => void;
   readonly run: () => void;
+  readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly engine_create_flow: (a: number, b: number) => void;
   readonly engine_remove_flow: (a: number, b: number, c: number) => void;
   readonly engine_reorder_flow: (a: number, b: number, c: number) => void;
@@ -485,13 +480,12 @@ export interface InitOutput {
   readonly engine_flows: (a: number) => number;
   readonly engine_get_flow_title: (a: number, b: number, c: number, d: number) => void;
   readonly engine_flow_contains_player: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
-  readonly get_full_path_from_partial: (a: number) => number;
-  readonly def_tree: (a: number) => number;
   readonly engine_auto_count_style_solo: (a: number) => number;
   readonly engine_set_auto_count_style_solo: (a: number, b: number) => void;
   readonly engine_auto_count_style_section: (a: number) => number;
   readonly engine_set_auto_count_style_section: (a: number, b: number) => void;
+  readonly get_full_path_from_partial: (a: number) => number;
+  readonly def_tree: (a: number) => number;
   readonly engine_application_version: (a: number, b: number) => void;
   readonly engine_set_application_version: (a: number, b: number, c: number) => void;
   readonly engine_title: (a: number, b: number) => void;
@@ -541,6 +535,19 @@ export interface InitOutput {
   readonly engine_set_note_space_ratio: (a: number, b: number, c: number, d: number) => void;
   readonly engine_get_space: (a: number, b: number, c: number) => number;
   readonly engine_set_space: (a: number, b: number, c: number, d: number) => void;
+  readonly engine_create_instrument: (a: number, b: number, c: number, d: number) => void;
+  readonly engine_remove_instrument: (a: number, b: number, c: number) => void;
+  readonly engine_get_instrument_name: (a: number, b: number, c: number, d: number) => void;
+  readonly engine_get_instrument_id: (a: number, b: number, c: number, d: number) => void;
+  readonly engine_get_instrument_volume: (a: number, b: number, c: number) => number;
+  readonly engine_set_instrument_volume: (a: number, b: number, c: number, d: number) => void;
+  readonly engine_get_instrument_solo: (a: number, b: number, c: number) => number;
+  readonly engine_toggle_instrument_solo: (a: number, b: number, c: number) => void;
+  readonly engine_get_instrument_mute: (a: number, b: number, c: number) => number;
+  readonly engine_toggle_instrument_mute: (a: number, b: number, c: number) => void;
+  readonly engine_get_instrument_staves: (a: number, b: number, c: number) => number;
+  readonly engine_get_instrument_tracks: (a: number, b: number, c: number, d: number, e: number) => number;
+  readonly engine_calculate_counts: (a: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;

@@ -37,10 +37,10 @@ export const actions = {
         });
       },
     },
-    stave: {
+    track: {
       set: (instrumentKey: string, staveKey: string) => {
         ui.update((s) => {
-          s.play.stave[instrumentKey] = staveKey;
+          s.play.track[instrumentKey] = staveKey;
         });
       },
     },
@@ -145,3 +145,5 @@ export const actions = {
     },
   },
 };
+
+(window as any).$actions = actions;

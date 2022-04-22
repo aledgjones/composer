@@ -79,7 +79,7 @@ export const FlowItem: FC<Props> = ({
       case "Escape":
         // revert
         engine.rename_flow(flowKey, savedValue);
-        input.current.blur();
+        input.current?.blur();
         break;
       default:
         break;
@@ -112,7 +112,7 @@ export const FlowItem: FC<Props> = ({
 
         <input
           ref={input}
-          style={{ fontStyle: !editing && !title && "italic" }}
+          style={{ fontStyle: !editing && !title ? "italic" : "normal" }}
           onBlur={() => setEditing(false)}
           readOnly={!editing}
           className="flow-item__name"

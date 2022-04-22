@@ -4,7 +4,7 @@ import { RenderRegion } from "../../components/render-region";
 import { Renderer } from "../../components/renderer";
 import { InstrumentPicker } from "../../dialogs/instrument-picker";
 import { PlayerTypePicker } from "../../dialogs/player-type-picker";
-import { engine, ui } from "../../data";
+import { engine } from "../../data";
 import { SelectionType } from "../../data/defs";
 
 import { useTitle } from "../../ui/hooks/use-title";

@@ -17,32 +17,32 @@ import { Select } from "../../ui/components/select";
 import { Option } from "../../ui/components/option";
 import { engine, ui } from "../../data";
 import { Tool } from "../../data/defs";
-import { Controls } from "./controls";
+import { ControlsPlaceholder } from "./controls-placeholder";
 import { actions } from "../../data/actions";
 
 import "./styles.css";
+import { Controls } from "./controls";
 
 const Play: FC = () => {
   useTitle("Solo Composer | Sequence");
+
+  const flows: string[] = engine.flows;
+  const flowKey = ui.useState(
+    (s) => {
+      if (s.flow && flows.includes(s.flow)) {
+        return s.flow;
+      } else {
+        return flows[0];
+      }
+    },
+    [flows]
+  );
 
   const players: string[] = engine.players;
   const tool = ui.useState((s) => s.play.tool);
   const zoom = ui.useState((s) => s.play.zoom);
 
   const colors = useRainbow(players.length);
-
-  // const [flowKey, players, tool, zoom] = useStore((s) => {
-  //   const flowKey = s.ui.flowKey;
-  //   const flowPlayers = s.score.flows.byKey[flowKey].players;
-  //   return [
-  //     flowKey,
-  //     s.score.players.order
-  //       .filter((playerKey) => flowPlayers[playerKey])
-  //       .map((playerKey) => s.score.players.byKey[playerKey]),
-  //     s.ui.play.tool,
-  //     s.ui.play.zoom,
-  //   ];
-  // });
 
   // const ticks = useTicks();
 
@@ -86,16 +86,26 @@ const Play: FC = () => {
             />
           </div>
           {players.map((playerKey, i) => {
-            const instruments: string[] =
-              engine.get_player_instruments(playerKey);
-            return instruments.map((instrumentKey) => {
-              return (
-                <Controls
-                  key={instrumentKey}
-                  instrumentKey={instrumentKey}
-                  color={colors[i]}
-                />
-              );
+            const instruments = engine.get_player_instruments(playerKey);
+            return instruments.map((instrumentKey: string) => {
+              if (engine.flow_contains_player(flowKey, playerKey)) {
+                return (
+                  <Controls
+                    key={instrumentKey}
+                    flowKey={flowKey}
+                    instrumentKey={instrumentKey}
+                    color={colors[i]}
+                  />
+                );
+              } else {
+                return (
+                  <ControlsPlaceholder
+                    key={instrumentKey}
+                    instrumentKey={instrumentKey}
+                    color={colors[i]}
+                  />
+                );
+              }
             });
           })}
         </div>

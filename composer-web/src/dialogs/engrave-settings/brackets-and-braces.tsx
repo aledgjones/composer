@@ -18,8 +18,6 @@ export const BracketsAndBraces: FC<Props> = ({ configKey }) => {
   const subBracket = engine.get_sub_bracket(configKey);
   const bracketStyle = engine.get_bracket_style(configKey);
 
-  console.log(bracketingApproach);
-
   return (
     <>
       <div className="generic-settings__section" style={{ paddingBottom: 20 }}>

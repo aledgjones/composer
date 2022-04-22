@@ -19,9 +19,11 @@ import { engine, ui } from "../../data";
 import { Tool } from "../../data/defs";
 import { ControlsPlaceholder } from "./controls-placeholder";
 import { actions } from "../../data/actions";
+import { Controls } from "./controls";
 
 import "./styles.css";
-import { Controls } from "./controls";
+import { Ticks } from "./ticks";
+import { timer } from "../../ui/utils/timer";
 
 const Play: FC = () => {
   useTitle("Solo Composer | Sequence");
@@ -43,6 +45,7 @@ const Play: FC = () => {
   const zoom = ui.useState((s) => s.play.zoom);
 
   const colors = useRainbow(players.length);
+  const ticks = timer("ticks", true, () => engine.get_flow_ticks(flowKey));
 
   // const ticks = useTicks();
 
@@ -113,15 +116,15 @@ const Play: FC = () => {
         <div className="play__right-panel">
           <div className="play__right-panel-content">
             {/* <PlayHead ticks={ticks} zoom={zoom} /> */}
-            {/* <div className="play__ticks">
+            <div className="play__ticks">
               <Ticks
                 isTrack={false}
                 ticks={ticks}
                 height={48}
                 className="play__tick-track"
-                zoom={zoom}
+                zoom={zoom / 100}
               />
-            </div> */}
+            </div>
             {/* {players.map((player, i) => {
               return player.instruments.map((instrumentKey) => {
                 return (

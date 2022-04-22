@@ -9,6 +9,7 @@ use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
 use crate::entries::Entry;
 use crate::utils::shortid;
 use crate::Engine;
+use serde::Serialize;
 use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
@@ -34,7 +35,6 @@ pub struct Flow {
     pub title: String,
     pub players: HashSet<String>, // purely for inclusion lookup -- order comes from score.players.order
     pub length: u32,              // number of subdivision ticks in the flow
-    pub subdivisions: u8,         // how many times to subdevide the crotchet
 
     pub master: String,
     pub staves: HashMap<String, Stave>,
@@ -46,13 +46,28 @@ impl Flow {
             key: shortid(),
             title: String::from(""),
             players: HashSet::new(),
-            length: 16 * 4 * 4, // 4 * 4/4
-            subdivisions: 16,   // auto it to 32nd notes as this is the shortest snap
+            length: 16 * 4, // 4 * 4/4
 
             master: master.key.clone(),
             staves: HashMap::new(),
         }
     }
+}
+
+#[derive(Serialize)]
+struct Tick {
+    x: f32,
+    width: f32,
+    first: bool,
+    beat: bool,
+    sub_beat: bool,
+    boundry: bool,
+}
+
+#[derive(Serialize)]
+struct TickList {
+    list: Vec<Tick>,
+    width: f32,
 }
 
 impl Engine {
@@ -250,5 +265,46 @@ impl Engine {
     pub fn flow_contains_player(&self, flow_key: &str, player_key: &str) -> bool {
         let flow = self.score.flows.by_key.get(flow_key).unwrap();
         flow.players.contains(player_key)
+    }
+
+    pub fn get_flow_ticks(&self, flow_key: &str) -> JsValue {
+        const QUARTER_WIDTH: f32 = 72.0;
+
+        let mut output = TickList {
+            list: Vec::new(),
+            width: 0.0,
+        };
+
+        let flow = self.score.flows.by_key.get(flow_key).unwrap();
+        let master = self.score.tracks.get(&flow.master).unwrap();
+
+        let mut time_signature: TimeSignature = TimeSignature::new(
+            0,
+            4,
+            NoteDuration::Quarter,
+            TimeSignatureDrawType::Hidden,
+            None,
+        );
+
+        for tick in 0..flow.length {
+            if let Some(entry) = master.get_time_signature_at_tick(tick) {
+                time_signature = entry;
+            }
+
+            let tick_width = QUARTER_WIDTH / time_signature.subdivisions as f32;
+
+            output.list.push(Tick {
+                x: output.width,
+                width: tick_width,
+                first: time_signature.is_on_first_beat(tick),
+                beat: time_signature.is_on_beat(tick),
+                sub_beat: time_signature.is_on_beat_type(tick, &time_signature.beat_type.half()),
+                boundry: time_signature.is_on_grouping_boundry(tick),
+            });
+
+            output.width += tick_width;
+        }
+
+        JsValue::from_serde(&output).unwrap()
     }
 }

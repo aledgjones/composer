@@ -2,7 +2,7 @@ use crate::components::duration::NoteDuration;
 use crate::components::measurements::{BoundingBox, PaddingSpaces};
 use crate::entries::Entry;
 use crate::score::tracks::Track;
-use crate::utils::shortid;
+use crate::utils::{log, shortid};
 use crate::Engine;
 use wasm_bindgen::prelude::*;
 
@@ -17,9 +17,10 @@ enum TimeSignatureType {
 #[derive(Debug, Clone)]
 pub enum TimeSignatureDrawType {
     Hidden,          // always hidden
-    Normal,          // open time sig as 'X'
+    Normal,          // 4/4 etc
     CommonTime,      // 'C'
     SplitCommonTime, // '¢'
+    Open,
 }
 
 #[derive(Debug, Clone)]
@@ -30,6 +31,7 @@ pub struct TimeSignature {
     pub beat_type: NoteDuration,
     pub draw_type: TimeSignatureDrawType,
     pub groupings: Vec<u8>,
+    pub subdivisions: u8,
 }
 
 impl TimeSignature {
@@ -50,6 +52,7 @@ impl TimeSignature {
                 None => TimeSignature::groupings(beats),
             },
             draw_type,
+            subdivisions: 16,
         }
     }
 
@@ -94,40 +97,45 @@ impl TimeSignature {
     }
 
     /// Get the number of ticks per the time signatures bar
-    pub fn ticks_per_bar(&self, subdivisions: u8) -> u32 {
-        (self.ticks_per_beat(subdivisions) * self.beats) as u32
+    pub fn ticks_per_bar(&self) -> u32 {
+        (self.ticks_per_beat() * self.beats) as u32
     }
 
     /// Get the number of ticks per the time signatures beat type
-    pub fn ticks_per_beat(&self, subdivisions: u8) -> u8 {
-        self.beat_type.to_ticks(subdivisions)
+    pub fn ticks_per_beat(&self) -> u8 {
+        self.beat_type.to_ticks(self.subdivisions)
     }
 
-    pub fn distance_from_barline(&self, tick: u32, subdivisions: u8) -> u32 {
+    /// Returns how far away the tick is from the nearest barline
+    pub fn distance_from_barline(&self, tick: u32) -> u32 {
         match self.kind() {
             TimeSignatureType::Open => tick - self.tick,
-            _ => (tick - self.tick) % self.ticks_per_bar(subdivisions),
+            _ => (tick - self.tick) % self.ticks_per_bar(),
         }
     }
 
     // Returns true if the tick is on a beat
-    pub fn is_on_beat(&self, tick: u32, subdivisions: u8) -> bool {
-        self.is_on_beat_type(tick, subdivisions, &self.beat_type)
+    pub fn is_on_beat(&self, tick: u32) -> bool {
+        self.is_on_beat_type(tick, &self.beat_type)
     }
 
     /// Return true if a tick is on an arbitrary beat type
-    pub fn is_on_beat_type(&self, tick: u32, subdivisions: u8, beat_type: &NoteDuration) -> bool {
-        let ticks_per_beat = beat_type.to_ticks(subdivisions) as u32;
+    pub fn is_on_beat_type(&self, tick: u32, beat_type: &NoteDuration) -> bool {
+        let ticks_per_beat = beat_type.to_ticks(self.subdivisions) as u32;
         ((tick - self.tick) % ticks_per_beat) == 0
     }
 
+    pub fn is_on_first_beat(&self, tick: u32) -> bool {
+        self.distance_from_barline(tick) == 0
+    }
+
     // Returns true is the tick is on a beat group boundry
-    pub fn is_on_grouping_boundry(&self, tick: u32, subdivisions: u8) -> bool {
+    pub fn is_on_grouping_boundry(&self, tick: u32) -> bool {
         match self.kind() {
             TimeSignatureType::Open => false,
             _ => {
-                let ticks_per_beat = self.ticks_per_beat(subdivisions);
-                let bar_length = self.ticks_per_bar(subdivisions);
+                let ticks_per_beat = self.ticks_per_beat();
+                let bar_length = self.ticks_per_bar();
                 let distance_from_first_beat = (tick - self.tick) % bar_length;
 
                 if distance_from_first_beat == 0 {
@@ -177,25 +185,24 @@ impl Engine {
 
         // insert the new time signature
         let new = TimeSignature::new(tick, beats, beat_type, draw_type, groupings);
-        let ticks_per_bar = new.ticks_per_bar(flow.subdivisions) as f32;
-        let entry = Entry::TimeSignature(new);
-        master.insert(entry);
+        let ticks_per_bar = new.ticks_per_bar();
+        master.insert(Entry::TimeSignature(new));
 
         // calculate diff
         let next_tick = match master.get_time_signature_after_tick(tick, flow.length) {
-            Some(entry) => entry.tick as f32,
-            None => flow.length as f32,
+            Some(entry) => entry.tick,
+            None => flow.length,
         };
 
-        let complete_bars_until_next = ((next_tick - tick as f32) / ticks_per_bar).ceil();
-        let overflow = (tick as f32 + complete_bars_until_next * ticks_per_bar - next_tick) as u32;
+        let overflow = (next_tick - tick) % ticks_per_bar;
+        let fill = ticks_per_bar - overflow;
 
-        if overflow > 0 {
-            flow.length += overflow;
+        if fill > 0 {
+            flow.length += fill;
 
-            for _ in [tick..flow.length] {
-                if let Some(old) = master.get_time_signature_at_tick(tick) {
-                    master.shift(&old.key, old.tick + overflow);
+            for i in tick + 1..flow.length {
+                if let Some(old) = master.get_time_signature_at_tick(i) {
+                    master.shift(&old.key, old.tick + fill);
                 };
             }
         }

@@ -38,6 +38,28 @@ impl NoteDuration {
             NoteDuration::ThirtySecond => "\u{1D162}",
         }
     }
+
+    pub fn double(&self) -> NoteDuration {
+        match self {
+            NoteDuration::Whole => NoteDuration::Whole,
+            NoteDuration::Half => NoteDuration::Whole,
+            NoteDuration::Quarter => NoteDuration::Half,
+            NoteDuration::Eighth => NoteDuration::Quarter,
+            NoteDuration::Sixteenth => NoteDuration::Eighth,
+            NoteDuration::ThirtySecond => NoteDuration::Sixteenth,
+        }
+    }
+
+    pub fn half(&self) -> NoteDuration {
+        match self {
+            NoteDuration::Whole => NoteDuration::Half,
+            NoteDuration::Half => NoteDuration::Quarter,
+            NoteDuration::Quarter => NoteDuration::Eighth,
+            NoteDuration::Eighth => NoteDuration::Sixteenth,
+            NoteDuration::Sixteenth => NoteDuration::ThirtySecond,
+            NoteDuration::ThirtySecond => NoteDuration::ThirtySecond,
+        }
+    }
 }
 
 #[derive(Debug)]

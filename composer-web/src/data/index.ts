@@ -1,17 +1,13 @@
-import {
-  Engine,
-  NoteDuration,
-  PlayerType,
-  TimeSignatureDrawType,
-} from "composer-engine";
+import { Engine, NoteDuration, PlayerType } from "composer-engine";
 import { Store } from "pullstate";
 import { EngravePage, PlayerPage, State, Tool, View } from "./defs";
 
 export const engine = new Engine();
 
-export const ui = new Store<State>({
+export const store = new Store<State>({
   view: View.Setup,
   snap: NoteDuration.Sixteenth,
+  audition: true,
   flow: null,
   setup: {
     dialogs: {

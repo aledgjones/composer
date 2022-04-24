@@ -1,10 +1,10 @@
-import { ui } from ".";
+import { store } from ".";
 import { EngravePage, PlayerPage, SelectionType } from "./defs";
 
 export const setupActions = {
   expanded: {
     toggle: (key: string) => {
-      ui.update((s) => {
+      store.update((s) => {
         const isExpanded = s.setup.expanded[key];
         if (isExpanded) {
           delete s.setup.expanded[key];
@@ -17,14 +17,14 @@ export const setupActions = {
   panels: {
     players: {
       toggle: () => {
-        ui.update((s) => {
+        store.update((s) => {
           s.setup.panels.players = !s.setup.panels.players;
         });
       },
     },
     layout: {
       toggle: () => {
-        ui.update((s) => {
+        store.update((s) => {
           s.setup.panels.layouts = !s.setup.panels.layouts;
         });
       },
@@ -32,12 +32,12 @@ export const setupActions = {
   },
   selection: {
     set: (key: string, type: SelectionType) => {
-      ui.update((s) => {
+      store.update((s) => {
         s.setup.selected = { key, type };
       });
     },
     clear: () => {
-      ui.update((s) => {
+      store.update((s) => {
         s.setup.selected = null;
       });
     },
@@ -46,7 +46,7 @@ export const setupActions = {
     players: {
       page: {
         set: (page: PlayerPage) => {
-          ui.update((s) => {
+          store.update((s) => {
             s.setup.dialogs.players.page = page;
           });
         },
@@ -55,14 +55,14 @@ export const setupActions = {
     engrave: {
       config: {
         set: (key: string) => {
-          ui.update((s) => {
+          store.update((s) => {
             s.setup.dialogs.engrave.config = key;
           });
         },
       },
       page: {
         set: (page: EngravePage) => {
-          ui.update((s) => {
+          store.update((s) => {
             s.setup.dialogs.engrave.page = page;
           });
         },

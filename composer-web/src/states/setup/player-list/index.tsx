@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { mdiCogOutline, mdiPlus } from "@mdi/js";
 
-import { engine, ui } from "../../../data";
+import { engine, store } from "../../../data";
 import { SelectionType } from "../../../data/defs";
 import { actions } from "../../../data/actions";
 
@@ -28,7 +28,7 @@ export const PlayerList: FC<Props> = ({
   onSelect,
   onClear,
 }) => {
-  const open = ui.useState((s) => s.setup.panels.players);
+  const open = store.useState((s) => s.setup.panels.players);
   const [settings, setSettings] = useState(false);
 
   return (

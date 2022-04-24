@@ -1,13 +1,16 @@
 pub mod clef;
 pub mod time_signature;
+pub mod tone;
 
 use clef::Clef;
 use time_signature::TimeSignature;
+use tone::Tone;
 
 #[derive(Debug, Clone)]
 pub enum Entry {
     Clef(Clef),
     TimeSignature(TimeSignature),
+    Tone(Tone),
 }
 
 impl Entry {
@@ -16,6 +19,7 @@ impl Entry {
         match self {
             Entry::Clef(clef) => clef.key.clone(),
             Entry::TimeSignature(time_signature) => time_signature.key.clone(),
+            Entry::Tone(tone) => tone.key.clone(),
         }
     }
 
@@ -24,6 +28,7 @@ impl Entry {
         match self {
             Entry::Clef(clef) => clef.tick,
             Entry::TimeSignature(time_signature) => time_signature.tick,
+            Entry::Tone(tone) => tone.tick,
         }
     }
 
@@ -35,6 +40,7 @@ impl Entry {
         match self {
             Entry::Clef(clef) => clef.tick = tick,
             Entry::TimeSignature(time_signature) => time_signature.tick = tick,
+            Entry::Tone(tone) => tone.tick = tick,
         }
     }
 }

@@ -9,7 +9,7 @@ import { Select } from "../../../ui/components/select";
 import { Option } from "../../../ui/components/option";
 import { Label } from "../../../ui/components/label";
 import { noop } from "../../../ui/utils/noop";
-import { engine, ui } from "../../../data";
+import { engine, store } from "../../../data";
 import { actions } from "../../../data/actions";
 
 import "./styles.css";
@@ -25,11 +25,11 @@ export const Controls: FC<Props> = ({ color, flowKey, instrumentKey }) => {
     flowKey,
     instrumentKey
   );
-  const expanded = ui.useState(
+  const expanded = store.useState(
     (s) => s.play.expanded[instrumentKey],
     [instrumentKey]
   );
-  const track = ui.useState(
+  const trackKey = store.useState(
     (s) => s.play.track[flowKey + instrumentKey] || tracks[0]?.[0],
     [flowKey, instrumentKey, tracks]
   );
@@ -89,7 +89,7 @@ export const Controls: FC<Props> = ({ color, flowKey, instrumentKey }) => {
                   }}
                 />
                 <Select
-                  value={track}
+                  value={trackKey}
                   onChange={(value) => {
                     actions.play.track.set(instrumentKey, value);
                   }}

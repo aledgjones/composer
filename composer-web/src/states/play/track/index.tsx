@@ -4,10 +4,10 @@ import { Ticks } from "../ticks";
 import { Slots } from "../keyboard/slots";
 import { ToneTrack } from "../tone-track";
 import { OverviewTrack } from "../overview-track";
-import { useStore } from "../../../store/use-store";
-import { TickList } from "../../../store/score-flow/defs";
-import { Tool } from "../../../store/ui/defs";
 import merge from "classnames";
+import { engine, store } from "../../../data";
+import { TickList } from "../ticks/defs";
+import { Tool } from "../../../data/defs";
 
 import "./styles.css";
 
@@ -16,21 +16,53 @@ interface Props {
   instrumentKey: string;
   color: string;
   ticks: TickList;
+  tool: Tool;
   zoom: number;
 }
 
-export const Track: FC<Props> = ({ flowKey, instrumentKey, color, ticks, zoom }) => {
-  const [expanded, tool, base] = useStore(
-    (s) => [s.ui.play.expanded[instrumentKey], s.ui.play.tool, s.ui.play.keyboard[instrumentKey] || 76],
+export const Track: FC<Props> = ({
+  flowKey,
+  instrumentKey,
+  color,
+  ticks,
+  tool,
+  zoom,
+}) => {
+  const expanded = store.useState(
+    (s) => s.play.expanded[instrumentKey],
     [instrumentKey]
+  );
+  const base = store.useState(
+    (s) => s.play.keyboard[instrumentKey] || 76,
+    [instrumentKey]
+  );
+  const tracks: [string, string][] = engine.get_instrument_tracks(
+    flowKey,
+    instrumentKey
+  );
+  const trackKey = store.useState(
+    (s) => s.play.track[flowKey + instrumentKey] || tracks[0]?.[0],
+    [flowKey, instrumentKey, tracks]
   );
 
   return (
     <div className="track">
-      <Ticks isTrack={true} ticks={ticks} height={48} className="track__header" zoom={zoom} />
-      {!expanded && (
-        <OverviewTrack color={color} flowKey={flowKey} instrumentKey={instrumentKey} ticks={ticks} zoom={zoom} />
-      )}
+      <Ticks
+        isTrack={true}
+        ticks={ticks}
+        height={48}
+        className="track__header"
+        zoom={zoom}
+      />
+      {/* {!expanded && (
+        <OverviewTrack
+          color={color}
+          flowKey={flowKey}
+          instrumentKey={instrumentKey}
+          ticks={ticks}
+          zoom={zoom}
+        />
+      )} */}
       {expanded && (
         <>
           <div
@@ -56,7 +88,7 @@ export const Track: FC<Props> = ({ flowKey, instrumentKey, color, ticks, zoom })
             <ToneTrack
               color={color}
               flowKey={flowKey}
-              instrumentKey={instrumentKey}
+              trackKey={trackKey}
               ticks={ticks}
               base={base}
               tool={tool}

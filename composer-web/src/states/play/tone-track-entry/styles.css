@@ -39,9 +39,3 @@
 .tone-track-entry__handle:active {
   transform: scale(10);
 }
-
-.tone-track-entry--disabled {
-  opacity: 0.2;
-  z-index: 0;
-  pointer-events: none;
-}

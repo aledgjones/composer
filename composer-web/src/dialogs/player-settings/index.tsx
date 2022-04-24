@@ -1,4 +1,4 @@
-import { ui } from "../../data";
+import { store } from "../../data";
 import { PlayerPage } from "../../data/defs";
 
 import { MenuItem } from "../../components/menu-item";
@@ -23,7 +23,7 @@ const getPage = (page: PlayerPage) => {
 };
 
 export const PlayerSettings = Dialog<Props>(({ onClose }) => {
-  const page = ui.useState((s) => s.setup.dialogs.players.page);
+  const page = store.useState((s) => s.setup.dialogs.players.page);
 
   return (
     <div className="setup-settings generic-settings">

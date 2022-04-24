@@ -5,7 +5,7 @@ use std::collections::HashMap;
 #[derive(Debug)]
 pub struct Entries {
     pub by_tick: HashMap<u32, Vec<String>>,
-    pub by_key: HashMap<String, Entry>,
+    pub by_key: HashMap<String, Entry>, // we can iterate the hashmap directly, so no order/by_key needed
 }
 
 #[derive(Debug)]

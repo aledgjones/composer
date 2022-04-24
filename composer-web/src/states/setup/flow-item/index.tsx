@@ -6,7 +6,7 @@ import {
 } from "@mdi/js";
 import merge from "classnames";
 
-import { engine, ui } from "../../../data";
+import { engine, store } from "../../../data";
 import { SelectionType } from "../../../data/defs";
 
 import { SortableItem } from "../../../ui/components/sortable-item";
@@ -37,7 +37,7 @@ export const FlowItem: FC<Props> = ({
 
   const [savedValue, setSavedValue] = useState(title);
   const [editing, setEditing] = useState(false);
-  const selection = ui.useState((s) => s.setup.selected);
+  const selection = store.useState((s) => s.setup.selected);
   const selected = selection?.key === flowKey;
   const active = selection
     ? engine.flow_contains_player(flowKey, selection.key)

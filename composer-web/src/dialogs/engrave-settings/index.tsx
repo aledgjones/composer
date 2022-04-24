@@ -4,7 +4,7 @@ import { Select } from "../../ui/components/select";
 import { Option } from "../../ui/components/option";
 import { Button } from "../../ui/components/button";
 import { EngravePage } from "../../data/defs";
-import { engine, ui } from "../../data";
+import { engine, store } from "../../data";
 
 import { Barlines } from "./barlines";
 import { BracketsAndBraces } from "./brackets-and-braces";
@@ -34,9 +34,9 @@ const getPage = (page: EngravePage, layoutKey: string) => {
 
 export const EngraveSettings = Dialog<Props>(({ onClose }) => {
   const configs: string[] = engine.engraves;
-  const page = ui.useState((s) => s.setup.dialogs.engrave.page);
+  const page = store.useState((s) => s.setup.dialogs.engrave.page);
   const configKey =
-    ui.useState((s) => s.setup.dialogs.engrave.config) || configs[0];
+    store.useState((s) => s.setup.dialogs.engrave.config) || configs[0];
 
   return (
     <div className="generic-settings">

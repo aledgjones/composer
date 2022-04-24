@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Slots } from "./slots";
 import { SLOT_HEIGHT } from "../const";
 import { useDragHandler } from "../../../ui/hooks/use-drag-handler";
-import { ui } from "../../../data";
+import { store } from "../../../data";
 import { noop } from "../../../ui/utils/noop";
 import { actions } from "../../../data/actions";
 
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const Keyboard: FC<Props> = ({ instrumentKey, height }) => {
-  const base = ui.useState(
+  const base = store.useState(
     (s) => s.play.keyboard[instrumentKey] || 76,
     [instrumentKey]
   );

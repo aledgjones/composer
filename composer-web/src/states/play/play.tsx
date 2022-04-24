@@ -15,21 +15,23 @@ import { DragScroll } from "../../ui/components/drag-scroll";
 import { Icon } from "../../ui/components/icon";
 import { Select } from "../../ui/components/select";
 import { Option } from "../../ui/components/option";
-import { engine, ui } from "../../data";
+import { engine, store } from "../../data";
 import { Tool } from "../../data/defs";
 import { ControlsPlaceholder } from "./controls-placeholder";
 import { actions } from "../../data/actions";
 import { Controls } from "./controls";
-
-import "./styles.css";
 import { Ticks } from "./ticks";
 import { timer } from "../../ui/utils/timer";
+import { PlayHead } from "./play-head";
+import { Track } from "./track";
+
+import "./styles.css";
 
 const Play: FC = () => {
   useTitle("Solo Composer | Sequence");
 
   const flows: string[] = engine.flows;
-  const flowKey = ui.useState(
+  const flowKey = store.useState(
     (s) => {
       if (s.flow && flows.includes(s.flow)) {
         return s.flow;
@@ -41,11 +43,11 @@ const Play: FC = () => {
   );
 
   const players: string[] = engine.players;
-  const tool = ui.useState((s) => s.play.tool);
-  const zoom = ui.useState((s) => s.play.zoom);
+  const tool = store.useState((s) => s.play.tool);
+  const zoom = store.useState((s) => s.play.zoom);
 
   const colors = useRainbow(players.length);
-  const ticks = timer("ticks", true, () => engine.get_flow_ticks(flowKey));
+  const ticks = engine.get_flow_ticks(flowKey);
 
   // const ticks = useTicks();
 
@@ -115,7 +117,7 @@ const Play: FC = () => {
 
         <div className="play__right-panel">
           <div className="play__right-panel-content">
-            {/* <PlayHead ticks={ticks} zoom={zoom} /> */}
+            <PlayHead ticks={ticks} zoom={zoom / 100} />
             <div className="play__ticks">
               <Ticks
                 isTrack={false}
@@ -125,8 +127,10 @@ const Play: FC = () => {
                 zoom={zoom / 100}
               />
             </div>
-            {/* {players.map((player, i) => {
-              return player.instruments.map((instrumentKey) => {
+            {players.map((playerKey, i) => {
+              const instruments: string[] =
+                engine.get_player_instruments(playerKey);
+              return instruments.map((instrumentKey) => {
                 return (
                   <Track
                     key={instrumentKey}
@@ -134,11 +138,12 @@ const Play: FC = () => {
                     flowKey={flowKey}
                     color={colors[i]}
                     ticks={ticks}
-                    zoom={zoom}
+                    tool={tool}
+                    zoom={zoom / 100}
                   />
                 );
               });
-            })} */}
+            })}
           </div>
         </div>
       </DragScroll>

@@ -10,7 +10,7 @@ import {
 import merge from "classnames";
 
 import { SelectionType } from "../../../data/defs";
-import { engine, ui } from "../../../data";
+import { engine, store } from "../../../data";
 import { PlayerType } from "composer-engine";
 import { actions } from "../../../data/actions";
 
@@ -48,8 +48,11 @@ export const PlayerItem: FC<Props> = ({
   onClear,
 }) => {
   const handle = useRef<HTMLDivElement>(null);
-  const expanded = ui.useState((s) => s.setup.expanded[playerKey], [playerKey]);
-  const selected = ui.useState(
+  const expanded = store.useState(
+    (s) => s.setup.expanded[playerKey],
+    [playerKey]
+  );
+  const selected = store.useState(
     (s) => s.setup.selected?.key === playerKey,
     [playerKey]
   );

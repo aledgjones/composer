@@ -1,24 +1,9 @@
-import { NoteDuration } from "composer-engine";
-import { ui } from ".";
 import { playActions } from "./actions-play";
 import { setupActions } from "./actions-setup";
-import { View } from "./defs";
+import { uiActions } from "./actions-ui";
 
 export const actions = {
-  snap: {
-    set: (value: NoteDuration) => {
-      ui.update((s) => {
-        s.snap = value;
-      });
-    },
-  },
-  view: {
-    set: (value: View) => {
-      ui.update((s) => {
-        s.view = value;
-      });
-    },
-  },
+  ui: uiActions,
   play: playActions,
   setup: setupActions,
 };

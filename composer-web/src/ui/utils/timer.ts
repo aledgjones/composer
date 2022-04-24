@@ -1,4 +1,8 @@
-export const timer = (name: string, active: boolean, fn: () => any) => {
+export const timer = (
+  name: string,
+  active: boolean,
+  fn: (...args: any[]) => any
+) => {
   if (active) {
     performance.mark(`start-${name}`);
   }

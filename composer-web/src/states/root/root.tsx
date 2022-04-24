@@ -1,7 +1,7 @@
 import { FC, Suspense, lazy } from "react";
 import { mdiRedo, mdiUndo } from "@mdi/js";
 
-import { ui } from "../../data";
+import { store } from "../../data";
 import { View } from "../../data/defs";
 
 import { File } from "../../components/file";
@@ -17,13 +17,17 @@ const Setup = lazy(() => import("../setup/setup"));
 const Play = lazy(() => import("../play/play"));
 
 export const Root: FC = () => {
-  const view = ui.useState((s) => s.view);
+  const view = store.useState((s) => s.view);
 
   return (
     <div className="root">
       <div className="root__title-bar">
         <File />
-        <Tabs className="root__tabs" value={view} onChange={actions.view.set}>
+        <Tabs
+          className="root__tabs"
+          value={view}
+          onChange={actions.ui.view.set}
+        >
           <Tab value={View.Setup}>Setup</Tab>
           <Tab value={View.Write}>Write</Tab>
           <Tab value={View.Engrave}>Engrave</Tab>

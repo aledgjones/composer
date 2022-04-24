@@ -1,6 +1,6 @@
 import { NoteDuration } from "composer-engine";
 import { FC } from "react";
-import { ui } from "../../data";
+import { store } from "../../data";
 import { actions } from "../../data/actions";
 import { Option } from "../../ui/components/option";
 import { Select } from "../../ui/components/select";
@@ -8,7 +8,7 @@ import { Select } from "../../ui/components/select";
 import "./styles.css";
 
 export const Snap: FC = () => {
-  const snapDuration = ui.useState((s) => s.snap);
+  const snapDuration = store.useState((s) => s.snap);
 
   return (
     <div className="snap">
@@ -16,7 +16,7 @@ export const Snap: FC = () => {
         className="snap__select"
         direction="up"
         value={snapDuration}
-        onChange={actions.snap.set}
+        onChange={actions.ui.snap.set}
       >
         <Option value={NoteDuration.Eighth} displayAs={"\u{E1D7}"}>
           {"\u{E1D7}"}

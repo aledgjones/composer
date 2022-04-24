@@ -1,5 +1,5 @@
 import { SLOT_HEIGHT } from "./const";
-import { TickList } from "../../store/score-flow/defs";
+import { TickList } from "./ticks/defs";
 
 export function getStartOfTone(
   x: number,
@@ -15,7 +15,10 @@ export function getStartOfTone(
   if (fixedStart) {
     return start;
   } else {
-    const s = start + (getTickFromXPosition(x, ticks, snap, zoom) - getTickFromXPosition(initX, ticks, snap, zoom));
+    const s =
+      start +
+      (getTickFromXPosition(x, ticks, snap, zoom) -
+        getTickFromXPosition(initX, ticks, snap, zoom));
     if (fixedDuration) {
       if (s < 0) {
         return 0;
@@ -59,7 +62,11 @@ export function getDurationOfTone(
   }
 }
 
-export function getPitchFromYPosition(y: number, highestPitch: number, slots: number) {
+export function getPitchFromYPosition(
+  y: number,
+  highestPitch: number,
+  slots: number
+) {
   const lowestPitch = highestPitch - (slots - 1);
   const slot = Math.floor(y / SLOT_HEIGHT);
   const pitch = highestPitch - slot;
@@ -74,7 +81,13 @@ export function getPitchFromYPosition(y: number, highestPitch: number, slots: nu
   }
 }
 
-export function getTickFromXPosition(x: number, ticks: TickList, snap: number, zoom: number, round?: "up" | "down") {
+export function getTickFromXPosition(
+  x: number,
+  ticks: TickList,
+  snap: number,
+  zoom: number,
+  round?: "up" | "down"
+) {
   for (let i = 0; i < ticks.list.length; i++) {
     const tick = ticks.list[i];
     if (tick.x * zoom > x) {
@@ -83,8 +96,12 @@ export function getTickFromXPosition(x: number, ticks: TickList, snap: number, z
       const lowerSnapTick = index - (index % snap);
       const higherSnapTick = lowerSnapTick + snap;
 
-      const highestX = ticks.list[higherSnapTick] ? ticks.list[higherSnapTick].x * zoom : ticks.width * zoom;
-      const middleOfSnap = ticks.list[lowerSnapTick].x * zoom + (highestX - ticks.list[lowerSnapTick].x * zoom) / 2;
+      const highestX = ticks.list[higherSnapTick]
+        ? ticks.list[higherSnapTick].x * zoom
+        : ticks.width * zoom;
+      const middleOfSnap =
+        ticks.list[lowerSnapTick].x * zoom +
+        (highestX - ticks.list[lowerSnapTick].x * zoom) / 2;
 
       if (round === "down") {
         return lowerSnapTick;

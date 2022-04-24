@@ -1,7 +1,8 @@
+use serde::Serialize;
 use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone)]
 #[wasm_bindgen]
+#[derive(Debug, Clone, Copy, Serialize)]
 pub enum Accidental {
     DoubleSharp,
     Sharp,
@@ -33,7 +34,8 @@ impl Accidental {
     }
 }
 
-#[derive(Debug, Clone)]
+#[wasm_bindgen]
+#[derive(Debug, Clone, Serialize)]
 pub struct Pitch {
     pub int: u8, // the midi number
     pub accidental: Accidental,
@@ -84,7 +86,7 @@ impl Pitch {
 
     /// Get the scientific notation parts for the pitch in form (pitch: String, accidental: Accidental, octave: u8)
     /// eg. ("c", Accidental::Sharp, 0) == Pitch(60);
-    pub fn to_string(&self) -> String {
+    pub fn to_scientific_notation(&self) -> String {
         format!(
             "{}{}{}",
             self.letter(),

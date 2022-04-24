@@ -1,3 +1,4 @@
+use serde::Serialize;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -62,7 +63,8 @@ impl NoteDuration {
     }
 }
 
-#[derive(Debug)]
+#[wasm_bindgen]
+#[derive(Debug, Clone, Serialize)]
 pub struct Duration {
     // number of ticks in the duration
     pub int: u32,

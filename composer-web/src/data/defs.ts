@@ -1,4 +1,10 @@
-import { NoteDuration } from "composer-engine";
+import {
+  Articulation,
+  Duration,
+  NoteDuration,
+  Pitch,
+  Velocity,
+} from "composer-engine";
 
 export const enum Tool {
   Select,
@@ -32,9 +38,25 @@ export const enum EngravePage {
   Staves,
 }
 
+export interface Tone {
+  articulation: Articulation;
+  duration: Duration;
+  key: string;
+  pitch: Pitch;
+  tick: number;
+  velocity: Velocity;
+}
+
+export interface EntrySelection {
+  key: string;
+  trackKey: string;
+}
+
 export interface State {
+  selection: EntrySelection[];
   view: View;
   snap: NoteDuration;
+  audition: boolean;
   flow: string | null;
   setup: {
     dialogs: {

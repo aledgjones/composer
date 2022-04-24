@@ -17,7 +17,6 @@ import { ToneTrackEntry } from "../tone-track-entry";
 import "./styles.css";
 
 interface Props {
-  flowKey: string;
   trackKey: string;
   color: string;
   ticks: TickList;

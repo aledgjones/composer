@@ -22,9 +22,9 @@ export const playActions = {
     },
   },
   track: {
-    set: (instrumentKey: string, staveKey: string) => {
+    set: (instrumentKey: string, trackKey: string) => {
       store.update((s) => {
-        s.play.track[instrumentKey] = staveKey;
+        s.play.track[instrumentKey] = trackKey;
       });
     },
   },

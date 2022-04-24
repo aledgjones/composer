@@ -21,11 +21,11 @@ import { ControlsPlaceholder } from "./controls-placeholder";
 import { actions } from "../../data/actions";
 import { Controls } from "./controls";
 import { Ticks } from "./ticks";
-import { timer } from "../../ui/utils/timer";
 import { PlayHead } from "./play-head";
 import { Track } from "./track";
 
 import "./styles.css";
+import { TrackPlaceholder } from "./track-placeholder";
 
 const Play: FC = () => {
   useTitle("Solo Composer | Sequence");
@@ -131,17 +131,21 @@ const Play: FC = () => {
               const instruments: string[] =
                 engine.get_player_instruments(playerKey);
               return instruments.map((instrumentKey) => {
-                return (
-                  <Track
-                    key={instrumentKey}
-                    instrumentKey={instrumentKey}
-                    flowKey={flowKey}
-                    color={colors[i]}
-                    ticks={ticks}
-                    tool={tool}
-                    zoom={zoom / 100}
-                  />
-                );
+                if (engine.flow_contains_player(flowKey, playerKey)) {
+                  return (
+                    <Track
+                      key={instrumentKey}
+                      instrumentKey={instrumentKey}
+                      flowKey={flowKey}
+                      color={colors[i]}
+                      ticks={ticks}
+                      tool={tool}
+                      zoom={zoom / 100}
+                    />
+                  );
+                } else {
+                  return <TrackPlaceholder key={instrumentKey} />;
+                }
               });
             })}
           </div>

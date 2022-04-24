@@ -30,8 +30,8 @@ export const Controls: FC<Props> = ({ color, flowKey, instrumentKey }) => {
     [instrumentKey]
   );
   const trackKey = store.useState(
-    (s) => s.play.track[flowKey + instrumentKey] || tracks[0]?.[0],
-    [flowKey, instrumentKey, tracks]
+    (s) => s.play.track[instrumentKey] || tracks[0]?.[0],
+    [instrumentKey, tracks]
   );
   const name = engine.get_instrument_name(instrumentKey);
   const id = engine.get_instrument_id(instrumentKey);
@@ -120,7 +120,7 @@ export const Controls: FC<Props> = ({ color, flowKey, instrumentKey }) => {
                 </Label>
               </div>
             </div>
-            <Keyboard instrumentKey={instrumentKey} height={SLOT_COUNT} />
+            <Keyboard trackKey={trackKey} height={SLOT_COUNT} />
           </div>
         </>
       )}

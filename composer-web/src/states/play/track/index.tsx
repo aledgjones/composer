@@ -3,7 +3,6 @@ import { SLOT_COUNT, SLOT_HEIGHT } from "../const";
 import { Ticks } from "../ticks";
 import { Slots } from "../keyboard/slots";
 import { ToneTrack } from "../tone-track";
-import { OverviewTrack } from "../overview-track";
 import merge from "classnames";
 import { engine, store } from "../../../data";
 import { TickList } from "../ticks/defs";
@@ -32,17 +31,17 @@ export const Track: FC<Props> = ({
     (s) => s.play.expanded[instrumentKey],
     [instrumentKey]
   );
-  const base = store.useState(
-    (s) => s.play.keyboard[instrumentKey] || 76,
-    [instrumentKey]
-  );
   const tracks: [string, string][] = engine.get_instrument_tracks(
     flowKey,
     instrumentKey
   );
   const trackKey = store.useState(
-    (s) => s.play.track[flowKey + instrumentKey] || tracks[0]?.[0],
-    [flowKey, instrumentKey, tracks]
+    (s) => s.play.track[instrumentKey] || tracks[0]?.[0],
+    [instrumentKey, tracks]
+  );
+  const base = store.useState(
+    (s) => s.play.keyboard[trackKey] || 76,
+    [trackKey]
   );
 
   return (
@@ -87,7 +86,6 @@ export const Track: FC<Props> = ({
             />
             <ToneTrack
               color={color}
-              flowKey={flowKey}
               trackKey={trackKey}
               ticks={ticks}
               base={base}

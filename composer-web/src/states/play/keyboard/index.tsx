@@ -9,14 +9,14 @@ import { actions } from "../../../data/actions";
 import "./styles.css";
 
 interface Props {
-  instrumentKey: string;
+  trackKey: string;
   height: number;
 }
 
-export const Keyboard: FC<Props> = ({ instrumentKey, height }) => {
+export const Keyboard: FC<Props> = ({ trackKey, height }) => {
   const base = store.useState(
-    (s) => s.play.keyboard[instrumentKey] || 76,
-    [instrumentKey]
+    (s) => s.play.keyboard[trackKey] || 76,
+    [trackKey]
   );
 
   const onDrag = useDragHandler<{ y: number; base: number }>(
@@ -32,12 +32,12 @@ export const Keyboard: FC<Props> = ({ instrumentKey, height }) => {
         const next = init.base - change;
         // E8 <= next >= E1
         if (next <= 112 && next >= 28) {
-          actions.play.keyboard.set(instrumentKey, init.base - change);
+          actions.play.keyboard.set(trackKey, init.base - change);
         }
       },
       onEnd: noop,
     },
-    [base, instrumentKey]
+    [base, trackKey]
   );
 
   return (

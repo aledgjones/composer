@@ -1,11 +1,10 @@
-import { FC, useRef, useMemo } from "react";
+import { FC, useRef } from "react";
 import Color from "color";
-import { useStore } from "../../../store/use-store";
-import { TickList } from "../../../store/score-flow/defs";
-import { Tone } from "../../../store/entries/tone/defs";
-import { EntryType } from "../../../store/entries/defs";
+import { TickList } from "../ticks/defs";
 
 import "./styles.css";
+import { engine } from "../../../data";
+import { Tone } from "../../../data/defs";
 
 interface Props {
   flowKey: string;
@@ -15,59 +14,44 @@ interface Props {
   zoom: number;
 }
 
-export const OverviewTrack: FC<Props> = ({ flowKey, instrumentKey, color, ticks, zoom }) => {
+export const OverviewTrack: FC<Props> = ({
+  flowKey,
+  instrumentKey,
+  color,
+  ticks,
+  zoom,
+}) => {
   const track = useRef<HTMLDivElement>(null);
+  const tones: Tone[] = engine.get_all_tones(flowKey, instrumentKey);
 
-  const [tones] = useStore(
-    (s) => {
-      const flow = s.score.flows.byKey[flowKey];
-      const instrument = s.score.instruments[instrumentKey];
+  const blocks = tones.reduce<[number, number][]>((out, tone) => {
+    const prev = out[out.length - 1];
+    const start = tone.tick;
+    const stop = tone.tick + tone.duration.int;
+    if (prev) {
+      const [, prevStop] = prev;
+      if (start < prevStop && stop < prevStop) {
+        // the tone is within the previous range so ignore
+      } else if (start > prevStop) {
+        // the tone lays outside the previous range so start a new range
+        out.push([start, stop]);
+      } else if (stop > prevStop) {
+        // the tone starts in the previous range but carries on longer so extend the range
+        prev[1] = stop;
+      }
+    } else {
+      out.push([start, stop]);
+    }
 
-      return [
-        instrument.staves.reduce<Tone[]>((out, staveKey) => {
-          flow.staves[staveKey].tracks.forEach((trackKey) => {
-            const track = s.score.tracks[trackKey];
-            Object.values(track.entries.byKey).forEach((entry) => {
-              if (entry.type === EntryType.Tone) {
-                out.push(entry as Tone);
-              }
-            });
-          });
-          return out;
-        }, []),
-      ];
-    },
-    [flowKey, instrumentKey]
-  );
-
-  const blocks = useMemo(() => {
-    return tones
-      .sort((a, b) => a.tick - b.tick)
-      .reduce<[number, number][]>((out, tone) => {
-        const prev = out[out.length - 1];
-        const start = tone.tick;
-        const stop = tone.tick + tone.duration;
-        if (prev) {
-          const [, prevStop] = prev;
-          if (start < prevStop && stop < prevStop) {
-            // the tone is within the previous range so ignore
-          } else if (start > prevStop) {
-            // the tone lays outside the previous range so start a new range
-            out.push([start, stop]);
-          } else if (stop > prevStop) {
-            // the tone starts in the previous range but carries on longer so extend the range
-            prev[1] = stop;
-          }
-        } else {
-          out.push([start, stop]);
-        }
-
-        return out;
-      }, []);
-  }, [tones]);
+    return out;
+  }, []);
 
   return (
-    <div ref={track} className="overview-track" style={{ width: ticks.width * zoom }}>
+    <div
+      ref={track}
+      className="overview-track"
+      style={{ width: ticks.width * zoom }}
+    >
       {blocks.map(([start, stop], i) => {
         return (
           <div
@@ -85,7 +69,7 @@ export const OverviewTrack: FC<Props> = ({ flowKey, instrumentKey, color, ticks,
       })}
       {tones.map((tone) => {
         const start = tone.tick;
-        const stop = tone.tick + tone.duration;
+        const stop = tone.tick + tone.duration.int;
         return (
           <div
             key={tone.key}

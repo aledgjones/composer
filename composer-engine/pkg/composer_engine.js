@@ -246,6 +246,15 @@ function getArrayU8FromWasm0(ptr, len) {
 }
 /**
 */
+export const BracketingApproach = Object.freeze({ None:0,"0":"None",Orchestral:1,"1":"Orchestral",SmallEnsemble:2,"2":"SmallEnsemble", });
+/**
+*/
+export const BracketStyle = Object.freeze({ None:0,"0":"None",Wing:1,"1":"Wing",Line:2,"2":"Line", });
+/**
+*/
+export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",Custom:2,"2":"Custom", });
+/**
+*/
 export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
 /**
 */
@@ -271,15 +280,6 @@ export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Norma
 /**
 */
 export const AutoCountStyle = Object.freeze({ Arabic:0,"0":"Arabic",Roman:1,"1":"Roman", });
-/**
-*/
-export const BracketingApproach = Object.freeze({ None:0,"0":"None",Orchestral:1,"1":"Orchestral",SmallEnsemble:2,"2":"SmallEnsemble", });
-/**
-*/
-export const BracketStyle = Object.freeze({ None:0,"0":"None",Wing:1,"1":"Wing",Line:2,"2":"Line", });
-/**
-*/
-export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",Custom:2,"2":"Custom", });
 /**
 */
 export class Duration {
@@ -356,591 +356,6 @@ export class Engine {
             wasm.__wbindgen_add_to_stack_pointer(16);
             wasm.__wbindgen_free(r0, r1);
         }
-    }
-    /**
-    * @returns {string}
-    */
-    get application_version() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_application_version(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set application_version(value) {
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_application_version(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get title() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_title(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set title(value) {
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_title(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get subtitle() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_subtitle(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set subtitle(value) {
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_subtitle(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get composer() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_composer(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set composer(value) {
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_composer(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get arranger() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_arranger(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set arranger(value) {
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_arranger(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get lyricist() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_lyricist(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set lyricist(value) {
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_lyricist(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get copyright() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_copyright(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} value
-    */
-    set copyright(value) {
-        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_copyright(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {number}
-    */
-    get created() {
-        var ret = wasm.engine_created(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} value
-    */
-    set created(value) {
-        wasm.engine_set_created(this.ptr, value);
-    }
-    /**
-    * Create a tone
-    * @param {string} track_key
-    * @param {number} tick
-    * @param {number} duration
-    * @param {number} pitch
-    * @param {number} velocity
-    * @param {number} articulation
-    * @returns {string}
-    */
-    create_tone(track_key, tick, duration, pitch, velocity, articulation) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            wasm.engine_create_tone(retptr, this.ptr, ptr0, len0, tick, duration, pitch, velocity, articulation);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * update tone pitch
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} pitch
-    */
-    set_tone_pitch(track_key, entry_key, pitch) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_set_tone_pitch(this.ptr, ptr0, len0, ptr1, len1, pitch);
-    }
-    /**
-    * update tone duration
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} duration
-    */
-    set_tone_duration(track_key, entry_key, duration) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_set_tone_duration(this.ptr, ptr0, len0, ptr1, len1, duration);
-    }
-    /**
-    * move the tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} new_tick
-    */
-    shift_tone(track_key, entry_key, new_tick) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_shift_tone(this.ptr, ptr0, len0, ptr1, len1, new_tick);
-    }
-    /**
-    * Remove the tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    */
-    remove_tone(track_key, entry_key) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_remove_tone(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * Slice a tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} slice_at
-    */
-    slice_tone(track_key, entry_key, slice_at) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_slice_tone(this.ptr, ptr0, len0, ptr1, len1, slice_at);
-    }
-    /**
-    * @param {string} track_key
-    * @returns {any}
-    */
-    get_tones(track_key) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_tones(this.ptr, ptr0, len0);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {number} px_per_mm
-    * @param {Function} measure
-    * @returns {any}
-    */
-    render(flow_key, px_per_mm, measure) {
-        try {
-            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(measure));
-            return takeObject(ret);
-        } finally {
-            heap[stack_pointer++] = undefined;
-        }
-    }
-    /**
-    * @param {number} player_type
-    * @returns {string}
-    */
-    create_player(player_type) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_create_player(retptr, this.ptr, player_type);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} player_key
-    */
-    remove_player(player_key) {
-        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_remove_player(this.ptr, ptr0, len0);
-    }
-    /**
-    * @param {number} from
-    * @param {number} to
-    */
-    reorder_players(from, to) {
-        wasm.engine_reorder_players(this.ptr, from, to);
-    }
-    /**
-    * @param {string} player_key
-    * @param {string} instrument_key
-    */
-    assign_instrument_to_player(player_key, instrument_key) {
-        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_assign_instrument_to_player(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * @param {string} player_key
-    * @param {string} instrument_key
-    */
-    unassign_instrument_from_player(player_key, instrument_key) {
-        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_unassign_instrument_from_player(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * @param {string} player_key
-    * @param {number} from
-    * @param {number} to
-    */
-    reorder_player_instruments(player_key, from, to) {
-        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_reorder_player_instruments(this.ptr, ptr0, len0, from, to);
-    }
-    /**
-    * @returns {any}
-    */
-    get players() {
-        var ret = wasm.engine_players(this.ptr);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} player_key
-    * @returns {number}
-    */
-    get_player_type(player_key) {
-        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_player_type(this.ptr, ptr0, len0);
-        return ret >>> 0;
-    }
-    /**
-    * @param {string} player_key
-    * @returns {string}
-    */
-    get_player_name(player_key) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            wasm.engine_get_player_name(retptr, this.ptr, ptr0, len0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} player_key
-    * @returns {any}
-    */
-    get_player_instruments(player_key) {
-        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_player_instruments(this.ptr, ptr0, len0);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {number} tick
-    * @param {number} beats
-    * @param {number} beat_type
-    * @param {number} draw_type
-    * @param {Uint8Array | undefined} groupings
-    */
-    create_time_signature(flow_key, tick, beats, beat_type, draw_type, groupings) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = isLikeNone(groupings) ? 0 : passArray8ToWasm0(groupings, wasm.__wbindgen_malloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_create_time_signature(this.ptr, ptr0, len0, tick, beats, beat_type, draw_type, ptr1, len1);
-    }
-    /**
-    * @returns {number}
-    */
-    get auto_count_style_solo() {
-        var ret = wasm.engine_auto_count_style_solo(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} value
-    */
-    set auto_count_style_solo(value) {
-        wasm.engine_set_auto_count_style_solo(this.ptr, value);
-    }
-    /**
-    * @returns {number}
-    */
-    get auto_count_style_section() {
-        var ret = wasm.engine_auto_count_style_section(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} value
-    */
-    set auto_count_style_section(value) {
-        wasm.engine_set_auto_count_style_section(this.ptr, value);
-    }
-    /**
-    * @returns {string}
-    */
-    create_flow() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.engine_create_flow(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} flow_key
-    */
-    remove_flow(flow_key) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_remove_flow(this.ptr, ptr0, len0);
-    }
-    /**
-    * @param {number} old_index
-    * @param {number} new_index
-    */
-    reorder_flow(old_index, new_index) {
-        wasm.engine_reorder_flow(this.ptr, old_index, new_index);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {string} name
-    */
-    rename_flow(flow_key, name) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_rename_flow(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {number} length
-    */
-    set_flow_length(flow_key, length) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.engine_set_flow_length(this.ptr, ptr0, len0, length);
-    }
-    /**
-    *
-    *     * Assign a player to a flow
-    *
-    * @param {string} flow_key
-    * @param {string} player_key
-    */
-    assign_player_to_flow(flow_key, player_key) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_assign_player_to_flow(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    *
-    *     * Assign instrument to flow
-    *
-    * @param {string} flow_key
-    * @param {string} instrument_key
-    */
-    assign_instrument_to_flow(flow_key, instrument_key) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_assign_instrument_to_flow(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {string} player_key
-    */
-    unassign_player_from_flow(flow_key, player_key) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_unassign_player_from_flow(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {string} instrument_key
-    */
-    unassign_instrument_from_flow(flow_key, instrument_key) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_unassign_instrument_from_flow(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * @returns {any}
-    */
-    get flows() {
-        var ret = wasm.engine_flows(this.ptr);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} flow_key
-    * @returns {string}
-    */
-    get_flow_title(flow_key) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            wasm.engine_get_flow_title(retptr, this.ptr, ptr0, len0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} flow_key
-    * @param {string} player_key
-    * @returns {boolean}
-    */
-    flow_contains_player(flow_key, player_key) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_flow_contains_player(this.ptr, ptr0, len0, ptr1, len1);
-        return ret !== 0;
-    }
-    /**
-    * @param {string} flow_key
-    * @returns {any}
-    */
-    get_flow_ticks(flow_key) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_flow_ticks(this.ptr, ptr0, len0);
-        return takeObject(ret);
     }
     /**
     * Create an instrument
@@ -1293,6 +708,604 @@ export class Engine {
         var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.engine_set_space(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * Create a tone
+    * @param {string} track_key
+    * @param {number} tick
+    * @param {number} duration
+    * @param {number} pitch
+    * @param {number} velocity
+    * @param {number} articulation
+    * @returns {string}
+    */
+    create_tone(track_key, tick, duration, pitch, velocity, articulation) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm.engine_create_tone(retptr, this.ptr, ptr0, len0, tick, duration, pitch, velocity, articulation);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * update tone pitch
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} pitch
+    */
+    set_tone_pitch(track_key, entry_key, pitch) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_set_tone_pitch(this.ptr, ptr0, len0, ptr1, len1, pitch);
+    }
+    /**
+    * update tone duration
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} duration
+    */
+    set_tone_duration(track_key, entry_key, duration) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_set_tone_duration(this.ptr, ptr0, len0, ptr1, len1, duration);
+    }
+    /**
+    * move the tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} new_tick
+    */
+    shift_tone(track_key, entry_key, new_tick) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_shift_tone(this.ptr, ptr0, len0, ptr1, len1, new_tick);
+    }
+    /**
+    * Remove the tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    */
+    remove_tone(track_key, entry_key) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_remove_tone(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * Slice a tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} slice_at
+    */
+    slice_tone(track_key, entry_key, slice_at) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_slice_tone(this.ptr, ptr0, len0, ptr1, len1, slice_at);
+    }
+    /**
+    * @param {string} track_key
+    * @returns {any}
+    */
+    get_tones(track_key) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_tones(this.ptr, ptr0, len0);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {string} instrument_key
+    * @returns {any}
+    */
+    get_all_tones(flow_key, instrument_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_all_tones(this.ptr, ptr0, len0, ptr1, len1);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {number} px_per_mm
+    * @param {Function} measure
+    * @returns {any}
+    */
+    render(flow_key, px_per_mm, measure) {
+        try {
+            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(measure));
+            return takeObject(ret);
+        } finally {
+            heap[stack_pointer++] = undefined;
+        }
+    }
+    /**
+    * @returns {string}
+    */
+    get application_version() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_application_version(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set application_version(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_application_version(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get title() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_title(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set title(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_title(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get subtitle() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_subtitle(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set subtitle(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_subtitle(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get composer() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_composer(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set composer(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_composer(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get arranger() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_arranger(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set arranger(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_arranger(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get lyricist() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_lyricist(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set lyricist(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_lyricist(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    get copyright() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_copyright(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} value
+    */
+    set copyright(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_copyright(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {number}
+    */
+    get created() {
+        var ret = wasm.engine_created(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} value
+    */
+    set created(value) {
+        wasm.engine_set_created(this.ptr, value);
+    }
+    /**
+    * @param {number} player_type
+    * @returns {string}
+    */
+    create_player(player_type) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_create_player(retptr, this.ptr, player_type);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} player_key
+    */
+    remove_player(player_key) {
+        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_remove_player(this.ptr, ptr0, len0);
+    }
+    /**
+    * @param {number} from
+    * @param {number} to
+    */
+    reorder_players(from, to) {
+        wasm.engine_reorder_players(this.ptr, from, to);
+    }
+    /**
+    * @param {string} player_key
+    * @param {string} instrument_key
+    */
+    assign_instrument_to_player(player_key, instrument_key) {
+        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_assign_instrument_to_player(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * @param {string} player_key
+    * @param {string} instrument_key
+    */
+    unassign_instrument_from_player(player_key, instrument_key) {
+        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_unassign_instrument_from_player(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * @param {string} player_key
+    * @param {number} from
+    * @param {number} to
+    */
+    reorder_player_instruments(player_key, from, to) {
+        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_reorder_player_instruments(this.ptr, ptr0, len0, from, to);
+    }
+    /**
+    * @returns {any}
+    */
+    get players() {
+        var ret = wasm.engine_players(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} player_key
+    * @returns {number}
+    */
+    get_player_type(player_key) {
+        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_player_type(this.ptr, ptr0, len0);
+        return ret >>> 0;
+    }
+    /**
+    * @param {string} player_key
+    * @returns {string}
+    */
+    get_player_name(player_key) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm.engine_get_player_name(retptr, this.ptr, ptr0, len0);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} player_key
+    * @returns {any}
+    */
+    get_player_instruments(player_key) {
+        var ptr0 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_player_instruments(this.ptr, ptr0, len0);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {number} tick
+    * @param {number} beats
+    * @param {number} beat_type
+    * @param {number} draw_type
+    * @param {Uint8Array | undefined} groupings
+    */
+    create_time_signature(flow_key, tick, beats, beat_type, draw_type, groupings) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = isLikeNone(groupings) ? 0 : passArray8ToWasm0(groupings, wasm.__wbindgen_malloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_create_time_signature(this.ptr, ptr0, len0, tick, beats, beat_type, draw_type, ptr1, len1);
+    }
+    /**
+    * @returns {number}
+    */
+    get auto_count_style_solo() {
+        var ret = wasm.engine_auto_count_style_solo(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} value
+    */
+    set auto_count_style_solo(value) {
+        wasm.engine_set_auto_count_style_solo(this.ptr, value);
+    }
+    /**
+    * @returns {number}
+    */
+    get auto_count_style_section() {
+        var ret = wasm.engine_auto_count_style_section(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} value
+    */
+    set auto_count_style_section(value) {
+        wasm.engine_set_auto_count_style_section(this.ptr, value);
+    }
+    /**
+    * @returns {string}
+    */
+    create_flow() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.engine_create_flow(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} flow_key
+    */
+    remove_flow(flow_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_remove_flow(this.ptr, ptr0, len0);
+    }
+    /**
+    * @param {number} old_index
+    * @param {number} new_index
+    */
+    reorder_flow(old_index, new_index) {
+        wasm.engine_reorder_flow(this.ptr, old_index, new_index);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {string} name
+    */
+    rename_flow(flow_key, name) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_rename_flow(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {number} length
+    */
+    set_flow_length(flow_key, length) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_set_flow_length(this.ptr, ptr0, len0, length);
+    }
+    /**
+    *
+    *     * Assign a player to a flow
+    *
+    * @param {string} flow_key
+    * @param {string} player_key
+    */
+    assign_player_to_flow(flow_key, player_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_assign_player_to_flow(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    *
+    *     * Assign instrument to flow
+    *
+    * @param {string} flow_key
+    * @param {string} instrument_key
+    */
+    assign_instrument_to_flow(flow_key, instrument_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_assign_instrument_to_flow(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {string} player_key
+    */
+    unassign_player_from_flow(flow_key, player_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_unassign_player_from_flow(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {string} instrument_key
+    */
+    unassign_instrument_from_flow(flow_key, instrument_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_unassign_instrument_from_flow(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * @returns {any}
+    */
+    get flows() {
+        var ret = wasm.engine_flows(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} flow_key
+    * @returns {string}
+    */
+    get_flow_title(flow_key) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm.engine_get_flow_title(retptr, this.ptr, ptr0, len0);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} flow_key
+    * @param {string} player_key
+    * @returns {boolean}
+    */
+    flow_contains_player(flow_key, player_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(player_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_flow_contains_player(this.ptr, ptr0, len0, ptr1, len1);
+        return ret !== 0;
+    }
+    /**
+    * @param {string} flow_key
+    * @returns {any}
+    */
+    get_flow_ticks(flow_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_flow_ticks(this.ptr, ptr0, len0);
+        return takeObject(ret);
     }
 }
 /**

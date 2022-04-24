@@ -134,13 +134,37 @@ impl Engine {
     }
 
     pub fn get_tones(&self, track_key: &str) -> JsValue {
-        let track = self.score.tracks.get(track_key).unwrap();
         let mut output: Vec<&Tone> = Vec::new();
+
+        let track = self.score.tracks.get(track_key).unwrap();
         for entry in track.entries.by_key.values() {
             if let Entry::Tone(tone) = entry {
                 output.push(tone);
             }
         }
+
+        JsValue::from_serde(&output).unwrap()
+    }
+
+    pub fn get_all_tones(&self, flow_key: &str, instrument_key: &str) -> JsValue {
+        let mut output: Vec<&Tone> = Vec::new();
+
+        let flow = self.score.flows.by_key.get(flow_key).unwrap();
+        let instruemnt = self.score.instruments.get(instrument_key).unwrap();
+        for stave_key in &instruemnt.staves {
+            let stave = flow.staves.get(stave_key).unwrap();
+            for track_key in &stave.tracks {
+                let track = self.score.tracks.get(track_key).unwrap();
+                for entry in track.entries.by_key.values() {
+                    if let Entry::Tone(tone) = entry {
+                        output.push(tone);
+                    }
+                }
+            }
+        }
+
+        output.sort_unstable_by_key(|a| a.tick);
+
         JsValue::from_serde(&output).unwrap()
     }
 }

@@ -243,12 +243,13 @@ impl Engine {
 
         let instrument = self.score.instruments.get(instrument_key).unwrap();
         for stave_key in &instrument.staves {
-            let stave = flow.staves.get(stave_key).unwrap();
-            self.score.tracks.remove(&stave.master);
-            for track_key in &stave.tracks {
-                self.score.tracks.remove(track_key);
-            }
-            flow.staves.remove(stave_key);
+            if let Some(stave) = flow.staves.get(stave_key) {
+                self.score.tracks.remove(&stave.master);
+                for track_key in &stave.tracks {
+                    self.score.tracks.remove(track_key);
+                }
+                flow.staves.remove(stave_key);
+            };
         }
     }
 

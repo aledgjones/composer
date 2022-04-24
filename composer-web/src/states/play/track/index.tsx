@@ -9,6 +9,7 @@ import { TickList } from "../ticks/defs";
 import { Tool } from "../../../data/defs";
 
 import "./styles.css";
+import { OverviewTrack } from "../overview-track";
 
 interface Props {
   flowKey: string;
@@ -53,7 +54,7 @@ export const Track: FC<Props> = ({
         className="track__header"
         zoom={zoom}
       />
-      {/* {!expanded && (
+      {!expanded && (
         <OverviewTrack
           color={color}
           flowKey={flowKey}
@@ -61,7 +62,7 @@ export const Track: FC<Props> = ({
           ticks={ticks}
           zoom={zoom}
         />
-      )} */}
+      )}
       {expanded && (
         <>
           <div

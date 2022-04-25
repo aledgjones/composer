@@ -1,10 +1,4 @@
-import {
-  Articulation,
-  Duration,
-  NoteDuration,
-  Pitch,
-  Velocity,
-} from "composer-engine";
+import { Articulation, NoteDuration, Pitch, Velocity } from "composer-engine";
 
 export const enum Tool {
   Select,
@@ -40,7 +34,7 @@ export const enum EngravePage {
 
 export interface Tone {
   articulation: Articulation;
-  duration: Duration;
+  duration: number;
   key: string;
   pitch: Pitch;
   tick: number;

@@ -1,17 +1,20 @@
-mod draw_braces;
-mod draw_brackets;
-mod draw_names;
-mod draw_staves;
-mod draw_sub_brackets;
-mod draw_systemic_barline;
-mod get_vertical_spans;
-mod measure_brackets_and_braces;
-mod measure_instrument_names;
-mod measure_vertical_spacing;
+pub mod draw_braces;
+pub mod draw_brackets;
+pub mod draw_names;
+pub mod draw_staves;
+pub mod draw_sub_brackets;
+pub mod draw_systemic_barline;
+pub mod get_barlines;
+pub mod get_vertical_spans;
+pub mod get_written_durations;
+pub mod measure_brackets_and_braces;
+pub mod measure_instrument_names;
+pub mod measure_vertical_spacing;
 
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
+use crate::utils::log;
 use crate::Engine;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
@@ -19,9 +22,11 @@ use draw_names::draw_names;
 use draw_staves::draw_staves;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
+use get_barlines::get_barlines;
 use get_vertical_spans::get_vertical_spans;
+use get_written_durations::get_written_durations;
 use js_sys::Function;
-use measure_brackets_and_braces::measure_brackets_and_braces;
+use measure_brackets_and_braces::measure_brackets;
 use measure_instrument_names::measure_instrument_names;
 use measure_vertical_spacing::measure_vertical_spacing;
 use serde::Serialize;
@@ -67,16 +72,17 @@ impl Engine {
         let padding_right: Space = converter.mm_to_spaces(&engrave.frame_padding.right);
         let instrument_name_gap: Space = engrave.instrument_name.padding.right;
 
-        let (flow, players, instruments, staves) = self.get_flow_players(flow_key);
+        let (flow, instruments, staves, tracks) = self.get_flow_instruments(flow_key);
+        let flow_master = self.score.tracks.get(&flow.master).unwrap();
 
         let vertical_spans = get_vertical_spans(&instruments, engrave);
         let vertical_spacing = measure_vertical_spacing(&instruments, &flow.staves, engrave);
+        let name_widths = measure_instrument_names(&instruments, engrave, &converter, measure);
+        let bracket_widths = measure_brackets(&vertical_spacing, &vertical_spans, engrave);
+        let barlines = get_barlines(flow.length, flow_master);
+        let notation_by_track = get_written_durations(flow.length, &tracks, &barlines);
 
-        let name_widths: Space =
-            measure_instrument_names(&instruments, engrave, &converter, measure);
-
-        let bracket_widths: Space =
-            measure_brackets_and_braces(&vertical_spacing, &vertical_spans, engrave);
+        // log(&format!("{:#?}", notation_by_track));
 
         let content_width: Space = 40.0;
 
@@ -87,9 +93,6 @@ impl Engine {
             + content_width
             + padding_right;
         let height: Space = padding_top + vertical_spacing.height + padding_bottom;
-
-        // log(&format!("{:#?}", vertical_spans));
-        // log(&format!("{:#?}", vertical_spacing));
 
         draw_staves(
             &staves,

@@ -1,8 +1,9 @@
 use crate::components::articulation::Articulation;
-use crate::components::duration::Duration;
+use crate::components::misc::{Tick, Ticks};
 use crate::components::pitch::{Accidental, Pitch};
 use crate::components::velocity::Velocity;
 use crate::entries::Entry;
+use crate::score::tracks::Track;
 use crate::utils::shortid;
 use crate::Engine;
 use serde::Serialize;
@@ -14,8 +15,8 @@ use wasm_bindgen::JsValue;
 #[derive(Debug, Clone, Serialize)]
 pub struct Tone {
     pub key: String,
-    pub tick: u32,
-    pub duration: Duration,
+    pub tick: Tick,
+    pub duration: Ticks,
     pub pitch: Pitch,
     pub velocity: Velocity,
     pub articulation: Articulation,
@@ -24,8 +25,8 @@ pub struct Tone {
 impl Tone {
     pub fn new(
         key: String,
-        tick: u32,
-        duration: Duration,
+        tick: Tick,
+        duration: Ticks,
         pitch: Pitch,
         velocity: Velocity,
         articulation: Articulation,
@@ -47,8 +48,8 @@ impl Engine {
     pub fn create_tone(
         &mut self,
         track_key: &str,
-        tick: u32,
-        duration: u32,
+        tick: Tick,
+        duration: Ticks,
         pitch: u8,
         velocity: u8,
         articulation: Articulation,
@@ -61,7 +62,7 @@ impl Engine {
         track.insert(Entry::Tone(Tone::new(
             key.clone(),
             tick,
-            Duration::new(duration),
+            duration,
             Pitch::new(pitch, Accidental::default(pitch)),
             Velocity::new(velocity),
             articulation,
@@ -84,18 +85,18 @@ impl Engine {
     }
 
     /// update tone duration
-    pub fn set_tone_duration(&mut self, track_key: &str, entry_key: &str, duration: u32) {
+    pub fn set_tone_duration(&mut self, track_key: &str, entry_key: &str, duration: Ticks) {
         let track = self.score.tracks.get_mut(track_key).unwrap();
         let entry = track.entries.by_key.get_mut(entry_key).unwrap();
         if let Entry::Tone(tone) = entry {
-            tone.duration = Duration::new(duration);
+            tone.duration = duration;
         }
 
         self.emit();
     }
 
     /// move the tone
-    pub fn shift_tone(&mut self, track_key: &str, entry_key: &str, new_tick: u32) {
+    pub fn shift_tone(&mut self, track_key: &str, entry_key: &str, new_tick: Tick) {
         let track = self.score.tracks.get_mut(track_key).unwrap();
         track.shift(entry_key, new_tick);
         self.emit();
@@ -109,21 +110,21 @@ impl Engine {
     }
 
     /// Slice a tone
-    pub fn slice_tone(&mut self, track_key: &str, entry_key: &str, slice_at: u32) {
+    pub fn slice_tone(&mut self, track_key: &str, entry_key: &str, slice_at: Tick) {
         let track = self.score.tracks.get_mut(track_key).unwrap();
 
         let entry = track.entries.by_key.get_mut(entry_key).unwrap();
 
         if let Entry::Tone(tone) = entry {
-            let diff = tone.duration.int - (slice_at - tone.tick);
+            let diff = tone.duration - (slice_at - tone.tick);
             let pitch = tone.pitch.clone();
             let velocity = tone.velocity.clone();
             let articulation = tone.articulation.clone();
-            tone.duration.int = slice_at - tone.tick;
+            tone.duration = slice_at - tone.tick;
             track.insert(Entry::Tone(Tone::new(
                 shortid(),
                 slice_at,
-                Duration::new(diff),
+                diff,
                 pitch,
                 velocity,
                 articulation,
@@ -166,5 +167,25 @@ impl Engine {
         output.sort_unstable_by_key(|a| a.tick);
 
         JsValue::from_serde(&output).unwrap()
+    }
+}
+
+impl Track {
+    /// Returns the time signature entry at a given tick if it exists
+    pub fn get_tones_at_tick(&self, tick: Tick) -> Vec<Tone> {
+        let mut output: Vec<Tone> = Vec::new();
+
+        let entry_keys = match self.entries.by_tick.get(&tick) {
+            Some(entries) => entries,
+            None => return output,
+        };
+
+        for key in entry_keys.iter() {
+            if let Some(Entry::Tone(tone)) = self.entries.by_key.get(key) {
+                output.push(tone.clone());
+            }
+        }
+
+        output
     }
 }

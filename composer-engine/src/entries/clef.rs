@@ -1,4 +1,5 @@
 use crate::components::measurements::{BoundingBox, PaddingSpaces};
+use crate::components::misc::Tick;
 use crate::components::pitch::{Accidental, Pitch};
 use crate::utils::shortid;
 use wasm_bindgen::prelude::*;
@@ -16,14 +17,14 @@ pub enum ClefDrawType {
 #[derive(Debug, Clone)]
 pub struct Clef {
     pub key: String,
-    pub tick: u32,
+    pub tick: Tick,
     pub draw_as: ClefDrawType,
     pub pitch: Pitch, // the pitch that the clef sits on
     pub offset: i8,   // visual offset from middle stave line
 }
 
 impl Clef {
-    pub fn new(tick: u32, pitch: u8, offset: i8, draw_as: ClefDrawType) -> Self {
+    pub fn new(tick: Tick, pitch: u8, offset: i8, draw_as: ClefDrawType) -> Self {
         Self {
             key: shortid(),
             tick,

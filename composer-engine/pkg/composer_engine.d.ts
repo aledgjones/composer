@@ -17,6 +17,12 @@ export function get_full_path_from_partial(selection: any): any;
 export function def_tree(selection: any): any;
 /**
 */
+export enum KeySignatureMode {
+  Major,
+  Minor,
+}
+/**
+*/
 export enum BracketingApproach {
   None,
   Orchestral,
@@ -38,15 +44,6 @@ export enum LayoutType {
 }
 /**
 */
-export enum ClefDrawType {
-  Hidden,
-  G,
-  F,
-  C,
-  Percussion,
-}
-/**
-*/
 export enum NoteDuration {
   Whole,
   Half,
@@ -57,12 +54,12 @@ export enum NoteDuration {
 }
 /**
 */
-export enum Articulation {
-  None,
-  Staccato,
-  Staccatissimo,
-  Tenuto,
-  StaccatoTenuto,
+export enum ClefDrawType {
+  Hidden,
+  G,
+  F,
+  C,
+  Percussion,
 }
 /**
 */
@@ -82,6 +79,24 @@ export enum InstrumentType {
 }
 /**
 */
+export enum Articulation {
+  None,
+  Staccato,
+  Staccatissimo,
+  Tenuto,
+  StaccatoTenuto,
+}
+/**
+*/
+export enum TimeSignatureDrawType {
+  Hidden,
+  Normal,
+  CommonTime,
+  SplitCommonTime,
+  Open,
+}
+/**
+*/
 export enum PlayerType {
   Solo,
   Section,
@@ -97,26 +112,9 @@ export enum Accidental {
 }
 /**
 */
-export enum TimeSignatureDrawType {
-  Hidden,
-  Normal,
-  CommonTime,
-  SplitCommonTime,
-  Open,
-}
-/**
-*/
 export enum AutoCountStyle {
   Arabic,
   Roman,
-}
-/**
-*/
-export class Duration {
-  free(): void;
-/**
-*/
-  int: number;
 }
 /**
 */
@@ -129,6 +127,13 @@ export class Engine {
 * @param {Function} cb
 */
   listen(cb: Function): void;
+/**
+* @param {string} flow_key
+* @param {number} tick
+* @param {number} mode
+* @param {number} offset
+*/
+  create_key_signature(flow_key: string, tick: number, mode: number, offset: number): void;
 /**
 * Create an instrument
 * @param {string} id
@@ -360,6 +365,15 @@ export class Engine {
 */
   render(flow_key: string, px_per_mm: number, measure: Function): any;
 /**
+* @param {string} flow_key
+* @param {number} tick
+* @param {number} beats
+* @param {number} beat_type
+* @param {number} draw_type
+* @param {Uint8Array | undefined} groupings
+*/
+  create_time_signature(flow_key: string, tick: number, beats: number, beat_type: number, draw_type: number, groupings?: Uint8Array): void;
+/**
 * @param {number} player_type
 * @returns {string}
 */
@@ -404,15 +418,6 @@ export class Engine {
 * @returns {any}
 */
   get_player_instruments(player_key: string): any;
-/**
-* @param {string} flow_key
-* @param {number} tick
-* @param {number} beats
-* @param {number} beat_type
-* @param {number} draw_type
-* @param {Uint8Array | undefined} groupings
-*/
-  create_time_signature(flow_key: string, tick: number, beats: number, beat_type: number, draw_type: number, groupings?: Uint8Array): void;
 /**
 * @returns {string}
 */
@@ -561,6 +566,7 @@ export interface InitOutput {
   readonly engine_listen: (a: number, b: number) => void;
   readonly engine_state: (a: number, b: number) => void;
   readonly run: () => void;
+  readonly engine_create_key_signature: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly engine_create_instrument: (a: number, b: number, c: number, d: number) => void;
   readonly engine_remove_instrument: (a: number, b: number, c: number) => void;
   readonly engine_get_instrument_name: (a: number, b: number, c: number, d: number) => void;
@@ -604,7 +610,6 @@ export interface InitOutput {
   readonly engine_slice_tone: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly engine_get_tones: (a: number, b: number, c: number) => number;
   readonly engine_get_all_tones: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly engine_render: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly engine_application_version: (a: number, b: number) => void;
   readonly engine_set_application_version: (a: number, b: number, c: number) => void;
   readonly engine_title: (a: number, b: number) => void;
@@ -621,12 +626,11 @@ export interface InitOutput {
   readonly engine_set_copyright: (a: number, b: number, c: number) => void;
   readonly engine_created: (a: number) => number;
   readonly engine_set_created: (a: number, b: number) => void;
-  readonly __wbg_duration_free: (a: number) => void;
-  readonly __wbg_get_duration_int: (a: number) => number;
-  readonly __wbg_set_duration_int: (a: number, b: number) => void;
   readonly __wbg_velocity_free: (a: number) => void;
+  readonly engine_render: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly get_full_path_from_partial: (a: number) => number;
   readonly def_tree: (a: number) => number;
+  readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly engine_create_player: (a: number, b: number, c: number) => void;
   readonly engine_remove_player: (a: number, b: number, c: number) => void;
   readonly engine_reorder_players: (a: number, b: number, c: number) => void;
@@ -642,7 +646,6 @@ export interface InitOutput {
   readonly __wbg_set_pitch_int: (a: number, b: number) => void;
   readonly __wbg_get_pitch_accidental: (a: number) => number;
   readonly __wbg_set_pitch_accidental: (a: number, b: number) => void;
-  readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly engine_auto_count_style_solo: (a: number) => number;
   readonly engine_set_auto_count_style_solo: (a: number, b: number) => void;
   readonly engine_auto_count_style_section: (a: number) => number;

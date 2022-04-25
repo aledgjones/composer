@@ -4,14 +4,15 @@
   "description": "create an app to consume rust-generated wasm packages",
   "main": "bootstrap.ts",
   "scripts": {
-    "wasm:dev": "wasm-pack build ../composer-engine --target web --dev",
-    "wasm:release": "wasm-pack build ../composer-engine --target web --release",
-    "dev": "npm run wasm:dev && vite",
+    "wasm:test": "cd ../composer-engine && cargo test",
+    "wasm:build:dev": "wasm-pack build ../composer-engine --target web --dev",
+    "wasm:build:release": "wasm-pack build ../composer-engine --target web --release",
+    "dev": "npm run wasm:build:dev && vite",
     "build": "vite build",
     "deploy": "npm run deploy:patch",
-    "deploy:patch": "npm run wasm:release && npm version patch && git add -A && git commit -m release && git push",
-    "deploy:minor": "npm run wasm:release && npm version minor && git add -A && git commit -m release && git push",
-    "deploy:major": "npm run wasm:release && npm version major && git add -A && git commit -m release && git push"
+    "deploy:patch": "npm run wasm:build:release && npm version patch && git add -A && git commit -m release && git push",
+    "deploy:minor": "npm run wasm:build:release && npm version minor && git add -A && git commit -m release && git push",
+    "deploy:major": "npm run wasm:build:release && npm version major && git add -A && git commit -m release && git push"
   },
   "author": "Aled Jones <aledjones.viola@gmail.com>",
   "license": "(MIT OR Apache-2.0)",

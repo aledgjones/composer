@@ -27,7 +27,7 @@ export const OverviewTrack: FC<Props> = ({
   const blocks = tones.reduce<[number, number][]>((out, tone) => {
     const prev = out[out.length - 1];
     const start = tone.tick;
-    const stop = tone.tick + tone.duration.int;
+    const stop = tone.tick + tone.duration;
     if (prev) {
       const [, prevStop] = prev;
       if (start < prevStop && stop < prevStop) {
@@ -69,7 +69,7 @@ export const OverviewTrack: FC<Props> = ({
       })}
       {tones.map((tone) => {
         const start = tone.tick;
-        const stop = tone.tick + tone.duration.int;
+        const stop = tone.tick + tone.duration;
         return (
           <div
             key={tone.key}

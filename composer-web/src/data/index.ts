@@ -1,10 +1,17 @@
-import { Engine, NoteDuration, PlayerType } from "composer-engine";
+import {
+  Engine,
+  KeySignatureMode,
+  NoteDuration,
+  PlayerType,
+  TimeSignatureDrawType,
+} from "composer-engine";
 import { Store } from "pullstate";
 import { EngravePage, PlayerPage, State, Tool, View } from "./defs";
 
 export const engine = new Engine();
 
 export const store = new Store<State>({
+  selection: [],
   view: View.Setup,
   snap: NoteDuration.Sixteenth,
   audition: true,
@@ -32,27 +39,13 @@ export const store = new Store<State>({
 
 // TODO: remove: auto setiup score
 const instruments = [
-  "woodwinds.flute",
-  "woodwinds.oboe",
-  "woodwinds.clarinet.a",
-  "woodwinds.bassoon",
-  "keyboard.piano",
   "strings.violin",
-  "strings.violin",
-  "strings.viola",
-  "strings.violoncello",
+  // "strings.violin",
+  // "strings.viola",
+  // "strings.violoncello",
 ];
 instruments.forEach((id) => {
   const playerKey = engine.create_player(PlayerType.Solo);
   const instrumentKey = engine.create_instrument(id);
   engine.assign_instrument_to_player(playerKey, instrumentKey);
 });
-
-// const flowKey = engine.flows[0];
-// engine.create_time_signature(
-//   flowKey,
-//   0,
-//   5,
-//   NoteDuration.Eighth,
-//   TimeSignatureDrawType.Normal
-// );

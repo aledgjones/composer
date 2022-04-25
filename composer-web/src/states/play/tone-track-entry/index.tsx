@@ -78,10 +78,10 @@ export const ToneTrackEntry: FC<Props> = ({
   }, [tone, ticks, zoom]);
 
   const width = useMemo(() => {
-    if (tone.tick + tone.duration.int >= ticks.list.length) {
+    if (tone.tick + tone.duration >= ticks.list.length) {
       return ticks.width * zoom - left;
     } else {
-      return ticks.list[tone.tick + tone.duration.int].x * zoom - left;
+      return ticks.list[tone.tick + tone.duration].x * zoom - left;
     }
   }, [tone, ticks, left, zoom]);
 
@@ -98,7 +98,7 @@ export const ToneTrackEntry: FC<Props> = ({
       onRemove(tone.key);
     }
     if (tool === Tool.Slice) {
-      onSlice(e, tone.key, tone.tick, tone.duration.int);
+      onSlice(e, tone.key, tone.tick, tone.duration);
     }
   };
 
@@ -108,7 +108,7 @@ export const ToneTrackEntry: FC<Props> = ({
       tone.key,
       tone.tick,
       tone.pitch.int,
-      tone.duration.int,
+      tone.duration,
       false,
       false,
       true
@@ -121,7 +121,7 @@ export const ToneTrackEntry: FC<Props> = ({
       tone.key,
       tone.tick,
       tone.pitch.int,
-      tone.duration.int,
+      tone.duration,
       false,
       true,
       false
@@ -134,7 +134,7 @@ export const ToneTrackEntry: FC<Props> = ({
       tone.key,
       tone.tick,
       tone.pitch.int,
-      tone.duration.int,
+      tone.duration,
       true,
       false,
       true

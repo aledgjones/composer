@@ -1,5 +1,14 @@
-use serde::Serialize;
-use wasm_bindgen::prelude::*;
+use super::misc::Ticks;
+use wasm_bindgen::prelude::wasm_bindgen;
+
+pub const NOTE_DURATIONS: [NoteDuration; 6] = [
+    NoteDuration::Whole,
+    NoteDuration::Half,
+    NoteDuration::Quarter,
+    NoteDuration::Eighth,
+    NoteDuration::Sixteenth,
+    NoteDuration::ThirtySecond,
+];
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
@@ -13,20 +22,19 @@ pub enum NoteDuration {
 }
 
 impl NoteDuration {
-    pub fn to_int(&self) -> u8 {
+    pub fn to_quarters(&self) -> f32 {
         match self {
-            NoteDuration::Whole => 1,
-            NoteDuration::Half => 2,
-            NoteDuration::Quarter => 4,
-            NoteDuration::Eighth => 8,
-            NoteDuration::Sixteenth => 16,
-            NoteDuration::ThirtySecond => 32,
+            NoteDuration::Whole => 4.0,
+            NoteDuration::Half => 2.0,
+            NoteDuration::Quarter => 1.0,
+            NoteDuration::Eighth => 0.5,
+            NoteDuration::Sixteenth => 0.25,
+            NoteDuration::ThirtySecond => 0.125,
         }
     }
 
-    pub fn to_ticks(&self, subdivisions: u8) -> u8 {
-        let beat_type = self.to_int();
-        (subdivisions as f32 / (beat_type as f32 / 4 as f32)) as u8
+    pub fn to_ticks(&self, subdivisions: u8) -> Ticks {
+        (self.to_quarters() * subdivisions as f32) as Ticks
     }
 
     pub fn to_glyph(&self) -> &str {
@@ -63,17 +71,12 @@ impl NoteDuration {
     }
 }
 
-#[wasm_bindgen]
-#[derive(Debug, Clone, Serialize)]
-pub struct Duration {
-    // number of ticks in the duration
-    pub int: u32,
-    // TODO: this should include a way of specifying how the duration should be written
-    // ie. if the user wants it written differently to the parsing algorithm
-}
-
-impl Duration {
-    pub fn new(int: u32) -> Self {
-        Self { int }
+pub fn is_writable(duration: Ticks, subdivisions: u8) -> bool {
+    let quarters = duration as f32 / subdivisions as f32;
+    for option in NOTE_DURATIONS {
+        if quarters == option.to_quarters() {
+            return true;
+        }
     }
+    false
 }

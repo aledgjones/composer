@@ -1,9 +1,9 @@
 use super::instruments::defs::get_def;
 use super::instruments::Instrument;
-use super::players::Player;
 use super::stave::Stave;
 use super::tracks::Track;
 use crate::components::duration::NoteDuration;
+use crate::components::misc::Ticks;
 use crate::entries::clef::Clef;
 use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
 use crate::entries::Entry;
@@ -34,7 +34,7 @@ pub struct Flow {
     pub key: String,
     pub title: String,
     pub players: HashSet<String>, // purely for inclusion lookup -- order comes from score.players.order
-    pub length: u32,              // number of subdivision ticks in the flow
+    pub length: Ticks,            // number of subdivision ticks in the flow
 
     pub master: String,
     pub staves: HashMap<String, Stave>,
@@ -71,19 +71,18 @@ struct TickList {
 }
 
 impl Engine {
-    pub fn get_flow_players(
+    pub fn get_flow_instruments(
         &self,
         flow_key: &str,
-    ) -> (&Flow, Vec<&Player>, Vec<&Instrument>, Vec<&Stave>) {
-        let mut players: Vec<&Player> = Vec::new();
+    ) -> (&Flow, Vec<&Instrument>, Vec<&Stave>, Vec<&Track>) {
         let mut instruments: Vec<&Instrument> = Vec::new();
         let mut staves: Vec<&Stave> = Vec::new();
+        let mut tracks: Vec<&Track> = Vec::new();
 
         let flow = self.score.flows.by_key.get(flow_key).unwrap();
         for player_key in &self.score.players.order {
             if flow.players.contains(player_key) {
                 let player = self.score.players.by_key.get(player_key).unwrap();
-                players.push(player);
                 for instrument_key in &player.instruments {
                     let instrument = self.score.instruments.get(instrument_key).unwrap();
                     instruments.push(instrument);
@@ -91,11 +90,16 @@ impl Engine {
                     for stave_key in &instrument.staves {
                         let stave = flow.staves.get(stave_key).unwrap();
                         staves.push(stave);
+
+                        for track_key in &stave.tracks {
+                            let track = self.score.tracks.get(track_key).unwrap();
+                            tracks.push(track);
+                        }
                     }
                 }
             }
         }
-        (flow, players, instruments, staves)
+        (flow, instruments, staves, tracks)
     }
 }
 
@@ -168,7 +172,7 @@ impl Engine {
         self.emit();
     }
 
-    pub fn set_flow_length(&mut self, flow_key: &str, length: u32) {
+    pub fn set_flow_length(&mut self, flow_key: &str, length: Ticks) {
         let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
         flow.length = length;
 

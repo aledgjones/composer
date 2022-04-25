@@ -3,7 +3,7 @@ use super::measure_vertical_spacing::VerticalSpacing;
 use crate::components::units::Space;
 use crate::score::engrave::Engrave;
 
-pub fn measure_brackets_and_braces(
+pub fn measure_brackets(
     vertical_spacing: &VerticalSpacing,
     spans: &VerticalSpans,
     engrave: &Engrave,

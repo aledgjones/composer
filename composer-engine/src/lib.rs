@@ -1,13 +1,12 @@
-mod components;
-mod entries;
-mod parse;
-mod score;
-mod utils;
+pub mod components;
+pub mod entries;
+pub mod parse;
+pub mod score;
+pub mod utils;
 
 use js_sys::Function;
 use score::engrave::LayoutType;
 use score::Score;
-use utils::log;
 use wasm_bindgen::prelude::*;
 
 #[macro_use]

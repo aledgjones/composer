@@ -246,6 +246,9 @@ function getArrayU8FromWasm0(ptr, len) {
 }
 /**
 */
+export const KeySignatureMode = Object.freeze({ Major:0,"0":"Major",Minor:1,"1":"Minor", });
+/**
+*/
 export const BracketingApproach = Object.freeze({ None:0,"0":"None",Orchestral:1,"1":"Orchestral",SmallEnsemble:2,"2":"SmallEnsemble", });
 /**
 */
@@ -255,13 +258,10 @@ export const BracketStyle = Object.freeze({ None:0,"0":"None",Wing:1,"1":"Wing",
 export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",Custom:2,"2":"Custom", });
 /**
 */
-export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
-/**
-*/
 export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond", });
 /**
 */
-export const Articulation = Object.freeze({ None:0,"0":"None",Staccato:1,"1":"Staccato",Staccatissimo:2,"2":"Staccatissimo",Tenuto:3,"3":"Tenuto",StaccatoTenuto:4,"4":"StaccatoTenuto", });
+export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
 /**
 */
 export const Expression = Object.freeze({ Natural:0,"0":"Natural",Pizzicato:1,"1":"Pizzicato",Spiccato:2,"2":"Spiccato",Staccato:3,"3":"Staccato",Tremolo:4,"4":"Tremolo",Mute:5,"5":"Mute", });
@@ -270,44 +270,19 @@ export const Expression = Object.freeze({ Natural:0,"0":"Natural",Pizzicato:1,"1
 export const InstrumentType = Object.freeze({ Melodic:0,"0":"Melodic",Percussive:1,"1":"Percussive", });
 /**
 */
+export const Articulation = Object.freeze({ None:0,"0":"None",Staccato:1,"1":"Staccato",Staccatissimo:2,"2":"Staccatissimo",Tenuto:3,"3":"Tenuto",StaccatoTenuto:4,"4":"StaccatoTenuto", });
+/**
+*/
+export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Normal:1,"1":"Normal",CommonTime:2,"2":"CommonTime",SplitCommonTime:3,"3":"SplitCommonTime",Open:4,"4":"Open", });
+/**
+*/
 export const PlayerType = Object.freeze({ Solo:0,"0":"Solo",Section:1,"1":"Section", });
 /**
 */
 export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:1,"1":"Sharp",Natural:2,"2":"Natural",Flat:3,"3":"Flat",DoubleFlat:4,"4":"DoubleFlat", });
 /**
 */
-export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Normal:1,"1":"Normal",CommonTime:2,"2":"CommonTime",SplitCommonTime:3,"3":"SplitCommonTime",Open:4,"4":"Open", });
-/**
-*/
 export const AutoCountStyle = Object.freeze({ Arabic:0,"0":"Arabic",Roman:1,"1":"Roman", });
-/**
-*/
-export class Duration {
-
-    __destroy_into_raw() {
-        const ptr = this.ptr;
-        this.ptr = 0;
-
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_duration_free(ptr);
-    }
-    /**
-    */
-    get int() {
-        var ret = wasm.__wbg_get_duration_int(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set int(arg0) {
-        wasm.__wbg_set_duration_int(this.ptr, arg0);
-    }
-}
 /**
 */
 export class Engine {
@@ -356,6 +331,17 @@ export class Engine {
             wasm.__wbindgen_add_to_stack_pointer(16);
             wasm.__wbindgen_free(r0, r1);
         }
+    }
+    /**
+    * @param {string} flow_key
+    * @param {number} tick
+    * @param {number} mode
+    * @param {number} offset
+    */
+    create_key_signature(flow_key, tick, mode, offset) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.engine_create_key_signature(this.ptr, ptr0, len0, tick, mode, offset);
     }
     /**
     * Create an instrument
@@ -821,22 +807,6 @@ export class Engine {
         return takeObject(ret);
     }
     /**
-    * @param {string} flow_key
-    * @param {number} px_per_mm
-    * @param {Function} measure
-    * @returns {any}
-    */
-    render(flow_key, px_per_mm, measure) {
-        try {
-            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(measure));
-            return takeObject(ret);
-        } finally {
-            heap[stack_pointer++] = undefined;
-        }
-    }
-    /**
     * @returns {string}
     */
     get application_version() {
@@ -1011,6 +981,37 @@ export class Engine {
         wasm.engine_set_created(this.ptr, value);
     }
     /**
+    * @param {string} flow_key
+    * @param {number} px_per_mm
+    * @param {Function} measure
+    * @returns {any}
+    */
+    render(flow_key, px_per_mm, measure) {
+        try {
+            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(measure));
+            return takeObject(ret);
+        } finally {
+            heap[stack_pointer++] = undefined;
+        }
+    }
+    /**
+    * @param {string} flow_key
+    * @param {number} tick
+    * @param {number} beats
+    * @param {number} beat_type
+    * @param {number} draw_type
+    * @param {Uint8Array | undefined} groupings
+    */
+    create_time_signature(flow_key, tick, beats, beat_type, draw_type, groupings) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = isLikeNone(groupings) ? 0 : passArray8ToWasm0(groupings, wasm.__wbindgen_malloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_create_time_signature(this.ptr, ptr0, len0, tick, beats, beat_type, draw_type, ptr1, len1);
+    }
+    /**
     * @param {number} player_type
     * @returns {string}
     */
@@ -1117,21 +1118,6 @@ export class Engine {
         var len0 = WASM_VECTOR_LEN;
         var ret = wasm.engine_get_player_instruments(this.ptr, ptr0, len0);
         return takeObject(ret);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {number} tick
-    * @param {number} beats
-    * @param {number} beat_type
-    * @param {number} draw_type
-    * @param {Uint8Array | undefined} groupings
-    */
-    create_time_signature(flow_key, tick, beats, beat_type, draw_type, groupings) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = isLikeNone(groupings) ? 0 : passArray8ToWasm0(groupings, wasm.__wbindgen_malloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_create_time_signature(this.ptr, ptr0, len0, tick, beats, beat_type, draw_type, ptr1, len1);
     }
     /**
     * @returns {number}

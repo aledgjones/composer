@@ -156,7 +156,7 @@ impl NotationTrack {
     }
 
     pub fn is_empty(&self, start: Tick, stop: Tick) -> bool {
-        for tick in start..stop {
+        for tick in start + 1..stop {
             match self.track.get(&tick) {
                 Some(_) => return false,
                 None => continue,
@@ -182,7 +182,45 @@ impl NotationTrack {
 
         // if the unit is empty we stop the reccursion as there is no need for higher fidelity
         if self.is_empty(start, stop) {
+            let entry = self.track.get(&start).unwrap();
+            if is_full_bar && !entry.is_rest() && !entry.is_writable(subdivisions) {
+                let last_beat = *boundries.get(boundries.len() - 2).unwrap();
+                self.split(last_beat);
+            }
             return;
+        }
+
+        if boundries.len() == 2 || boundries.len() == 4 {}
+
+        if boundries.len() == 3 {
+            let first_beat = *boundries.get(0).unwrap();
+            let second_beat = *boundries.get(0).unwrap();
+            let third_beat = *boundries.get(0).unwrap();
+
+            // split all rests at beats
+            for boundry in boundries {
+                if let Some((_, entry)) = self.get_previous_notation(boundry) {
+                    if entry.is_rest() {
+                        self.split(boundry);
+                    }
+                }
+            }
+
+            // make sure it doesn't look compound! (c. at end of bar)
+            let middle = start + ((stop - start) as f32 / 2.0) as u32;
+            if self.track.contains_key(&middle) && self.is_empty(middle, stop) {
+                self.split(third_beat);
+            }
+
+            // sustain two beats into one
+            if !self.is_empty(first_beat, second_beat) {
+                self.split(second_beat);
+            }
+
+            // if we haven't made any splits we split at the first boundry
+            if !self.track.contains_key(&second_beat) && !self.track.contains_key(&third_beat) {
+                self.split(third_beat);
+            }
         }
     }
 

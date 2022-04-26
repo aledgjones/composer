@@ -88,15 +88,6 @@ export enum Articulation {
 }
 /**
 */
-export enum TimeSignatureDrawType {
-  Hidden,
-  Normal,
-  CommonTime,
-  SplitCommonTime,
-  Open,
-}
-/**
-*/
 export enum PlayerType {
   Solo,
   Section,
@@ -109,6 +100,15 @@ export enum Accidental {
   Natural,
   Flat,
   DoubleFlat,
+}
+/**
+*/
+export enum TimeSignatureDrawType {
+  Hidden,
+  Normal,
+  CommonTime,
+  SplitCommonTime,
+  Open,
 }
 /**
 */
@@ -365,15 +365,6 @@ export class Engine {
 */
   render(flow_key: string, px_per_mm: number, measure: Function): any;
 /**
-* @param {string} flow_key
-* @param {number} tick
-* @param {number} beats
-* @param {number} beat_type
-* @param {number} draw_type
-* @param {Uint8Array | undefined} groupings
-*/
-  create_time_signature(flow_key: string, tick: number, beats: number, beat_type: number, draw_type: number, groupings?: Uint8Array): void;
-/**
 * @param {number} player_type
 * @returns {string}
 */
@@ -418,6 +409,15 @@ export class Engine {
 * @returns {any}
 */
   get_player_instruments(player_key: string): any;
+/**
+* @param {string} flow_key
+* @param {number} tick
+* @param {number} beats
+* @param {number} beat_type
+* @param {number} draw_type
+* @param {Uint8Array | undefined} groupings
+*/
+  create_time_signature(flow_key: string, tick: number, beats: number, beat_type: number, draw_type: number, groupings?: Uint8Array): void;
 /**
 * @returns {string}
 */
@@ -630,7 +630,6 @@ export interface InitOutput {
   readonly engine_render: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly get_full_path_from_partial: (a: number) => number;
   readonly def_tree: (a: number) => number;
-  readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly engine_create_player: (a: number, b: number, c: number) => void;
   readonly engine_remove_player: (a: number, b: number, c: number) => void;
   readonly engine_reorder_players: (a: number, b: number, c: number) => void;
@@ -646,6 +645,7 @@ export interface InitOutput {
   readonly __wbg_set_pitch_int: (a: number, b: number) => void;
   readonly __wbg_get_pitch_accidental: (a: number) => number;
   readonly __wbg_set_pitch_accidental: (a: number, b: number) => void;
+  readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly engine_auto_count_style_solo: (a: number) => number;
   readonly engine_set_auto_count_style_solo: (a: number, b: number) => void;
   readonly engine_auto_count_style_section: (a: number) => number;

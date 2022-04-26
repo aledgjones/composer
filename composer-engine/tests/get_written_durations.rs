@@ -12,6 +12,7 @@ use composer_engine::utils::shortid;
 
 const QUARTER: u32 = 16;
 const EIGTH: u32 = 8;
+const SIXTEENTH: u32 = 4;
 
 fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) -> NotationTrack {
     let mut master = Track::new();
@@ -231,4 +232,257 @@ fn test_18() {
         format!("{:?}", result),
         "o_______________________o------------------------------:"
     );
+}
+
+#[test]
+/// "pattern in 6/8"
+fn test_19() {
+    let result = run(
+        EIGTH * 12,
+        (6, NoteDuration::Eighth),
+        vec![
+            (0, EIGTH * 3),
+            (EIGTH * 3, EIGTH),
+            (EIGTH * 4, EIGTH),
+            (EIGTH * 5, EIGTH),
+            (EIGTH * 6, EIGTH * 2),
+            (EIGTH * 8, EIGTH),
+            (EIGTH * 9, EIGTH * 3),
+        ],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "o----------------------:o------:o------:o------:o--------------:o------:o----------------------:"
+    );
+}
+
+#[test]
+/// "pattern in 3/4"
+fn test_20() {
+    let result = run(
+        EIGTH * 12,
+        (3, NoteDuration::Quarter),
+        vec![
+            (0, EIGTH * 3),
+            (EIGTH * 3, EIGTH),
+            (EIGTH * 4, EIGTH),
+            (EIGTH * 5, EIGTH),
+            (EIGTH * 6, EIGTH * 2),
+            (EIGTH * 8, EIGTH),
+            (EIGTH * 9, EIGTH * 3),
+        ],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "o----------------------:o------:o------:o------:o--------------:o------:o_______o--------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 4/4 [c---]"
+fn test_21() {
+    let result = run(QUARTER * 4, (4, NoteDuration::Quarter), vec![(0, QUARTER)]);
+    assert_eq!(
+        format!("{:?}", result),
+        "o--------------:r--------------:r------------------------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 4/4 [c--c]"
+fn test_22() {
+    let result = run(
+        QUARTER * 4,
+        (4, NoteDuration::Quarter),
+        vec![(0, QUARTER), (QUARTER * 3, QUARTER)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "o--------------:r--------------:r--------------:o--------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 4/4 [---c]"
+fn test_23() {
+    let result = run(
+        QUARTER * 4,
+        (4, NoteDuration::Quarter),
+        vec![(QUARTER * 3, QUARTER)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "r------------------------------:r--------------:o--------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 6/8 [q-----]"
+fn test_24() {
+    let result = run(EIGTH * 6, (6, NoteDuration::Eighth), vec![(0, EIGTH)]);
+    assert_eq!(
+        format!("{:?}", result),
+        "o------:r------:r------:r----------------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 6/8 [c--c]"
+fn test_25() {
+    let result = run(
+        EIGTH * 6,
+        (6, NoteDuration::Eighth),
+        vec![(0, QUARTER), (EIGTH * 4, QUARTER)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "o--------------:r------:r------:o--------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 6/8 [-----q]"
+fn test_26() {
+    let result = run(
+        EIGTH * 6,
+        (6, NoteDuration::Eighth),
+        vec![(EIGTH * 5, EIGTH)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "r----------------------:r------:r------:o------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 12/8 [q-----------]"
+fn test_27() {
+    let result = run(EIGTH * 12, (12, NoteDuration::Eighth), vec![(0, EIGTH)]);
+    assert_eq!(
+        format!("{:?}", result),
+        "o------:r------:r------:r----------------------:r----------------------------------------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 12/8 [q----------q]"
+fn test_28() {
+    let result = run(
+        EIGTH * 12,
+        (12, NoteDuration::Eighth),
+        vec![(0, EIGTH), (EIGTH * 11, EIGTH)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "o------:r------:r------:r----------------------:r----------------------:r------:r------:o------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 12/8 [-----------q]"
+fn test_29() {
+    let result = run(
+        EIGTH * 12,
+        (12, NoteDuration::Eighth),
+        vec![(EIGTH * 11, EIGTH)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "r----------------------------------------------:r----------------------:r------:r------:o------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 3/4 [c--]"
+fn test_30() {
+    let result = run(QUARTER * 3, (3, NoteDuration::Quarter), vec![(0, QUARTER)]);
+    assert_eq!(
+        format!("{:?}", result),
+        "o--------------:r--------------:r--------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 3/4 [c--]"
+fn test_31() {
+    let result = run(
+        QUARTER * 3,
+        (3, NoteDuration::Quarter),
+        vec![(QUARTER * 2, QUARTER)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "r--------------:r--------------:o--------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 9/8 [c.------]"
+fn test_32() {
+    let result = run(EIGTH * 9, (9, NoteDuration::Eighth), vec![(0, EIGTH * 3)]);
+    assert_eq!(
+        format!("{:?}", result),
+        "o----------------------:r----------------------:r----------------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 9/8 [------c.]"
+fn test_33() {
+    let result = run(
+        EIGTH * 9,
+        (9, NoteDuration::Eighth),
+        vec![(EIGTH * 6, EIGTH * 3)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "r----------------------:r----------------------:o----------------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 2/4 [----s]"
+fn test_34() {
+    let result = run(
+        QUARTER * 2,
+        (2, NoteDuration::Quarter),
+        vec![(SIXTEENTH * 7, SIXTEENTH)],
+    );
+    assert_eq!(format!("{:?}", result), "r--------------:r----------:o--:");
+}
+
+#[test]
+/// "renders correctly - 6/8 [c_ss---]"
+fn test_35() {
+    let result = run(
+        EIGTH * 6,
+        (6, NoteDuration::Eighth),
+        vec![(0, SIXTEENTH * 5), (SIXTEENTH * 5, SIXTEENTH)],
+    );
+    assert_eq!(
+        format!("{:?}", result),
+        "o_______________o--:o--:r----------------------:"
+    );
+}
+
+#[test]
+/// "renders correctly - 2/4 [qcq]"
+fn test_36() {
+    let result = run(
+        QUARTER * 2,
+        (2, NoteDuration::Quarter),
+        vec![(0, EIGTH), (EIGTH, QUARTER), (EIGTH * 3, EIGTH)],
+    );
+    assert_eq!(format!("{:?}", result), "o------:o--------------:o------:");
+}
+
+#[test]
+/// "renders correctly - 2/4 [sq._c]"
+fn test_37() {
+    let result = run(
+        QUARTER * 2,
+        (2, NoteDuration::Quarter),
+        vec![(0, SIXTEENTH), (SIXTEENTH, SIXTEENTH * 7)],
+    );
+    assert_eq!(format!("{:?}", result), "o--:o___________o--------------:");
 }

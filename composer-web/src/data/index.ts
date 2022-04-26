@@ -1,14 +1,10 @@
-import {
-  Engine,
-  KeySignatureMode,
-  NoteDuration,
-  PlayerType,
-  TimeSignatureDrawType,
-} from "composer-engine";
+import { Engine, NoteDuration, PlayerType } from "composer-engine";
 import { Store } from "pullstate";
 import { EngravePage, PlayerPage, State, Tool, View } from "./defs";
 
 export const engine = new Engine();
+
+(window as any).engine = engine;
 
 export const store = new Store<State>({
   selection: [],

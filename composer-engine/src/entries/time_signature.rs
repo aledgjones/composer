@@ -50,7 +50,7 @@ impl TimeSignature {
             beat_type,
             groupings: match groupings {
                 Some(groupings) => groupings,
-                None => TimeSignature::groupings(beats),
+                None => TimeSignature::groupings(beats, beat_type),
             },
             draw_type,
             subdivisions: 16,
@@ -75,9 +75,13 @@ impl TimeSignature {
         }
     }
 
-    fn groupings(beats: u8) -> Vec<u8> {
+    fn groupings(beats: u8, beat_type: NoteDuration) -> Vec<u8> {
         if beats > 0 && beats <= 3 {
-            vec![1; beats as usize]
+            if beat_type.to_quarters() < NoteDuration::Quarter.to_quarters() {
+                vec![beats]
+            } else {
+                vec![1; beats as usize]
+            }
         } else {
             match TimeSignature::kind_from_beats(beats) {
                 TimeSignatureType::Simple => vec![2; (beats as usize) / 2],
@@ -87,12 +91,12 @@ impl TimeSignature {
                     let mut remaining = beats;
                     while remaining > 4 {
                         out.push(3);
-                        remaining = remaining - 3;
+                        remaining -= 3;
                     }
                     out.push(remaining);
                     out
                 }
-                TimeSignatureType::Open => vec![],
+                TimeSignatureType::Open => vec![2, 2],
             }
         }
     }

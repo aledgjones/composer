@@ -11,7 +11,7 @@ pub const NOTE_DURATIONS: [NoteDuration; 6] = [
 ];
 
 #[wasm_bindgen]
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub enum NoteDuration {
     Whole,
     Half,

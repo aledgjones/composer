@@ -60,7 +60,7 @@ impl Engine {
         let master = self.score.tracks.get_mut(&flow.master).unwrap();
 
         // remove old key signative if defined
-        if let Some(old) = master.get_time_signature_at_tick(tick) {
+        if let Some(old) = master.get_time_signature_at_tick(&tick) {
             master.remove(&old.key);
         };
 
@@ -71,8 +71,8 @@ impl Engine {
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_key_signature_at_tick(&self, tick: Tick) -> Option<KeySignature> {
-        let entry_keys = match self.entries.by_tick.get(&tick) {
+    pub fn get_key_signature_at_tick(&self, tick: &Tick) -> Option<KeySignature> {
+        let entry_keys = match self.entries.by_tick.get(tick) {
             Some(entries) => entries,
             None => return None,
         };

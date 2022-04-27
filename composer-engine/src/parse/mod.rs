@@ -5,6 +5,7 @@ pub mod draw_staves;
 pub mod draw_sub_brackets;
 pub mod draw_systemic_barline;
 pub mod get_barlines;
+pub mod get_tone_vertical_offsets;
 pub mod get_vertical_spans;
 pub mod get_written_durations;
 pub mod measure_brackets_and_braces;
@@ -14,7 +15,6 @@ pub mod measure_vertical_spacing;
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
-use crate::utils::log;
 use crate::Engine;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
@@ -94,15 +94,6 @@ impl Engine {
             + padding_right;
         let height: Space = padding_top + vertical_spacing.height + padding_bottom;
 
-        draw_staves(
-            &staves,
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
-            &content_width,
-            &vertical_spacing,
-            &converter,
-            &mut instructions,
-        );
         draw_names(
             &instruments,
             &(padding_left + name_widths),
@@ -144,6 +135,15 @@ impl Engine {
             &vertical_spacing,
             &converter,
             engrave,
+            &mut instructions,
+        );
+        draw_staves(
+            &staves,
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            &content_width,
+            &vertical_spacing,
+            &converter,
             &mut instructions,
         );
 

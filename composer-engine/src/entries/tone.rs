@@ -172,10 +172,10 @@ impl Engine {
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_tones_at_tick(&self, tick: Tick) -> Vec<Tone> {
+    pub fn get_tones_at_tick(&self, tick: &Tick) -> Vec<Tone> {
         let mut output: Vec<Tone> = Vec::new();
 
-        let entry_keys = match self.entries.by_tick.get(&tick) {
+        let entry_keys = match self.entries.by_tick.get(tick) {
             Some(entries) => entries,
             None => return output,
         };

@@ -16,6 +16,8 @@ use players::Players;
 use std::collections::HashMap;
 use tracks::Track;
 
+use self::tracks::Tracks;
+
 #[derive(Debug)]
 pub struct Score {
     pub meta: Meta,
@@ -24,7 +26,7 @@ pub struct Score {
     pub players: Players,
     pub instruments: HashMap<String, Instrument>,
     pub flows: Flows,
-    pub tracks: HashMap<String, Track>,
+    pub tracks: Tracks,
 }
 
 impl Score {

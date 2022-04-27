@@ -188,7 +188,7 @@ impl Engine {
         let master = self.score.tracks.get_mut(&flow.master).unwrap();
 
         // remove old time signative if defined
-        if let Some(old) = master.get_time_signature_at_tick(tick) {
+        if let Some(old) = master.get_time_signature_at_tick(&tick) {
             master.remove(&old.key);
         };
 
@@ -210,7 +210,7 @@ impl Engine {
             flow.length += fill;
 
             for i in tick + 1..flow.length {
-                if let Some(old) = master.get_time_signature_at_tick(i) {
+                if let Some(old) = master.get_time_signature_at_tick(&i) {
                     master.shift(&old.key, old.tick + fill);
                 };
             }
@@ -220,7 +220,7 @@ impl Engine {
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_time_signature_at_tick(&self, tick: Tick) -> Option<TimeSignature> {
+    pub fn get_time_signature_at_tick(&self, tick: &Tick) -> Option<TimeSignature> {
         let entry_keys = match self.entries.by_tick.get(&tick) {
             Some(entries) => entries,
             None => return None,
@@ -242,7 +242,7 @@ impl Track {
         length: Ticks,
     ) -> Option<TimeSignature> {
         for i in tick + 1..length {
-            if let Some(time_signature) = self.get_time_signature_at_tick(i) {
+            if let Some(time_signature) = self.get_time_signature_at_tick(&i) {
                 return Some(time_signature);
             };
         }

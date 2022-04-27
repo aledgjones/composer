@@ -20,7 +20,7 @@ pub fn get_barlines(flow_length: Ticks, master: &Track) -> Barlines {
     );
 
     for tick in 0..flow_length {
-        if let Some(time_signature) = master.get_time_signature_at_tick(tick) {
+        if let Some(time_signature) = master.get_time_signature_at_tick(&tick) {
             time = time_signature;
         }
 

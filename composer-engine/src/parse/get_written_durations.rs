@@ -5,7 +5,6 @@ use crate::components::misc::Tick;
 use crate::components::misc::Ticks;
 use crate::entries::time_signature::TimeSignature;
 use crate::entries::time_signature::TimeSignatureDrawType;
-use crate::entries::time_signature::TimeSignatureType;
 use crate::entries::tone::Tone;
 use crate::score::tracks::Track;
 use crate::utils::log;
@@ -323,7 +322,7 @@ impl NotationTrack {
 
     pub fn split_at_tone_events(&mut self, track: &Track) {
         for tick in 0..self.length {
-            let tones = track.get_tones_at_tick(tick);
+            let tones = track.get_tones_at_tick(&tick);
             if !tones.is_empty() {
                 self.split(tick);
                 for tone in tones {

@@ -292,7 +292,7 @@ impl Engine {
         );
 
         for tick in 0..flow.length {
-            if let Some(entry) = master.get_time_signature_at_tick(tick) {
+            if let Some(entry) = master.get_time_signature_at_tick(&tick) {
                 time_signature = entry;
             }
 

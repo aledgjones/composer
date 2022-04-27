@@ -5,7 +5,7 @@ pub mod draw_staves;
 pub mod draw_sub_brackets;
 pub mod draw_systemic_barline;
 pub mod get_barlines;
-pub mod get_tone_vertical_offsets;
+pub mod get_tone_offsets;
 pub mod get_vertical_spans;
 pub mod get_written_durations;
 pub mod measure_brackets_and_braces;
@@ -15,6 +15,7 @@ pub mod measure_vertical_spacing;
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
+use crate::utils::log;
 use crate::Engine;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
@@ -23,6 +24,7 @@ use draw_staves::draw_staves;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
 use get_barlines::get_barlines;
+use get_tone_offsets::get_tone_offsets;
 use get_vertical_spans::get_vertical_spans;
 use get_written_durations::get_written_durations;
 use js_sys::Function;
@@ -81,8 +83,9 @@ impl Engine {
         let bracket_widths = measure_brackets(&vertical_spacing, &vertical_spans, engrave);
         let barlines = get_barlines(flow.length, flow_master);
         let notation_by_track = get_written_durations(flow.length, &tracks, &barlines);
+        let tone_offsets = get_tone_offsets(flow.length, &staves, &self.score.tracks);
 
-        // log(&format!("{:#?}", notation_by_track));
+        log(&format!("{:#?}", tone_offsets));
 
         let content_width: Space = 40.0;
 

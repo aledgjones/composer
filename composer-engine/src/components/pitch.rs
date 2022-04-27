@@ -19,7 +19,7 @@ impl Accidental {
     pub fn default(int: u8) -> Accidental {
         let step = (int - 12) % 12;
         match step {
-            0 | 2 | 4 | 5 | 7 | 9 | 10 => Accidental::Natural,
+            0 | 2 | 4 | 5 | 7 | 9 | 11 => Accidental::Natural,
             _ => Accidental::Sharp,
         }
     }
@@ -276,6 +276,17 @@ mod tests {
             Pitch::steps_between(
                 &Pitch::new(60, Accidental::Natural),
                 &Pitch::new(58, Accidental::Flat)
+            ),
+            -1
+        );
+    }
+
+    #[test]
+    fn steps_9() {
+        assert_eq!(
+            Pitch::steps_between(
+                &Pitch::new(60, Accidental::Natural),
+                &Pitch::new(59, Accidental::Natural)
             ),
             -1
         );

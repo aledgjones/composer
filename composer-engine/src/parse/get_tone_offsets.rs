@@ -3,14 +3,15 @@ use crate::components::pitch::Pitch;
 use crate::entries::clef::Clef;
 use crate::score::stave::Stave;
 use crate::score::tracks::Tracks;
+use crate::utils::log;
 use std::collections::HashMap;
 
 pub type ToneVerticalOffsets = HashMap<String, i8>;
 
-pub fn get_tone_vertical_offsets(
+pub fn get_tone_offsets(
     flow_length: Ticks,
-    staves: Vec<Stave>,
-    tracks: Tracks,
+    staves: &[&Stave],
+    tracks: &Tracks,
 ) -> ToneVerticalOffsets {
     let mut output: ToneVerticalOffsets = HashMap::new();
 
@@ -27,7 +28,8 @@ pub fn get_tone_vertical_offsets(
                 for stave_key in &stave.tracks {
                     let track = tracks.get(stave_key).unwrap();
                     for tone in track.get_tones_at_tick(&tick) {
-                        let offset = Pitch::steps_between(&tone.pitch, &clef.pitch);
+                        log(&format!("from: {:?} to: {:?}", clef.pitch, tone.pitch));
+                        let offset = Pitch::steps_between(&clef.pitch, &tone.pitch);
                         output.insert(tone.key.clone(), offset);
                     }
                 }

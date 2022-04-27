@@ -199,6 +199,22 @@ function debugString(val) {
     // TODO we could test for more things here, like `Set`s and `Map`s.
     return className;
 }
+
+function logError(f, args) {
+    try {
+        return f.apply(this, args);
+    } catch (e) {
+        let error = (function () {
+            try {
+                return e instanceof Error ? `${e.message}\n\nStack:\n${e.stack}` : e.toString();
+            } catch(_) {
+                return "<failed to stringify thrown value>";
+            }
+        }());
+        console.error("wasm-bindgen: imported JS function that was not marked as `catch` threw an error:", error);
+        throw e;
+    }
+}
 /**
 */
 export function run() {
@@ -247,22 +263,6 @@ export function def_tree(selection) {
     }
 }
 
-function logError(f, args) {
-    try {
-        return f.apply(this, args);
-    } catch (e) {
-        let error = (function () {
-            try {
-                return e instanceof Error ? `${e.message}\n\nStack:\n${e.stack}` : e.toString();
-            } catch(_) {
-                return "<failed to stringify thrown value>";
-            }
-        }());
-        console.error("wasm-bindgen: imported JS function that was not marked as `catch` threw an error:", error);
-        throw e;
-    }
-}
-
 function handleError(f, args) {
     try {
         return f.apply(this, args);
@@ -294,10 +294,10 @@ export const BracketStyle = Object.freeze({ None:0,"0":"None",Wing:1,"1":"Wing",
 export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",Custom:2,"2":"Custom", });
 /**
 */
-export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond",SixtyFourth:6,"6":"SixtyFourth", });
+export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:1,"1":"Sharp",Natural:2,"2":"Natural",Flat:3,"3":"Flat",DoubleFlat:4,"4":"DoubleFlat", });
 /**
 */
-export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:1,"1":"Sharp",Natural:2,"2":"Natural",Flat:3,"3":"Flat",DoubleFlat:4,"4":"DoubleFlat", });
+export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond",SixtyFourth:6,"6":"SixtyFourth", });
 /**
 */
 export const Articulation = Object.freeze({ None:0,"0":"None",Staccato:1,"1":"Staccato",Staccatissimo:2,"2":"Staccatissimo",Tenuto:3,"3":"Tenuto",StaccatoTenuto:4,"4":"StaccatoTenuto", });
@@ -581,161 +581,6 @@ export class Engine {
         wasm.engine_create_time_signature(this.ptr, ptr0, len0, tick, beats, beat_type, draw_type, ptr1, len1);
     }
     /**
-    * Create a tone
-    * @param {string} track_key
-    * @param {number} tick
-    * @param {number} duration
-    * @param {number} pitch
-    * @param {number} velocity
-    * @param {number} articulation
-    * @returns {string}
-    */
-    create_tone(track_key, tick, duration, pitch, velocity, articulation) {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertNum(this.ptr);
-            var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            _assertNum(tick);
-            _assertNum(duration);
-            _assertNum(pitch);
-            _assertNum(velocity);
-            _assertNum(articulation);
-            wasm.engine_create_tone(retptr, this.ptr, ptr0, len0, tick, duration, pitch, velocity, articulation);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * update tone pitch
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} pitch
-    */
-    set_tone_pitch(track_key, entry_key, pitch) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        _assertNum(pitch);
-        wasm.engine_set_tone_pitch(this.ptr, ptr0, len0, ptr1, len1, pitch);
-    }
-    /**
-    * update tone duration
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} duration
-    */
-    set_tone_duration(track_key, entry_key, duration) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        _assertNum(duration);
-        wasm.engine_set_tone_duration(this.ptr, ptr0, len0, ptr1, len1, duration);
-    }
-    /**
-    * move the tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} new_tick
-    */
-    shift_tone(track_key, entry_key, new_tick) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        _assertNum(new_tick);
-        wasm.engine_shift_tone(this.ptr, ptr0, len0, ptr1, len1, new_tick);
-    }
-    /**
-    * Remove the tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    */
-    remove_tone(track_key, entry_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_remove_tone(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * Slice a tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} slice_at
-    */
-    slice_tone(track_key, entry_key, slice_at) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        _assertNum(slice_at);
-        wasm.engine_slice_tone(this.ptr, ptr0, len0, ptr1, len1, slice_at);
-    }
-    /**
-    * @param {string} track_key
-    * @returns {any}
-    */
-    get_tones(track_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_tones(this.ptr, ptr0, len0);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {string} instrument_key
-    * @returns {any}
-    */
-    get_all_tones(flow_key, instrument_key) {
-        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-        _assertNum(this.ptr);
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_all_tones(this.ptr, ptr0, len0, ptr1, len1);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {number} px_per_mm
-    * @param {Function} measure
-    * @returns {any}
-    */
-    render(flow_key, px_per_mm, measure) {
-        try {
-            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
-            _assertNum(this.ptr);
-            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            _assertNum(px_per_mm);
-            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(measure));
-            return takeObject(ret);
-        } finally {
-            heap[stack_pointer++] = undefined;
-        }
-    }
-    /**
     * @param {number} layout_type
     * @param {string} name
     */
@@ -990,6 +835,161 @@ export class Engine {
         var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.engine_set_space(this.ptr, ptr0, len0, value);
+    }
+    /**
+    * Create a tone
+    * @param {string} track_key
+    * @param {number} tick
+    * @param {number} duration
+    * @param {number} pitch
+    * @param {number} velocity
+    * @param {number} articulation
+    * @returns {string}
+    */
+    create_tone(track_key, tick, duration, pitch, velocity, articulation) {
+        try {
+            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            _assertNum(this.ptr);
+            var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            _assertNum(tick);
+            _assertNum(duration);
+            _assertNum(pitch);
+            _assertNum(velocity);
+            _assertNum(articulation);
+            wasm.engine_create_tone(retptr, this.ptr, ptr0, len0, tick, duration, pitch, velocity, articulation);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * update tone pitch
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} pitch
+    */
+    set_tone_pitch(track_key, entry_key, pitch) {
+        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+        _assertNum(this.ptr);
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        _assertNum(pitch);
+        wasm.engine_set_tone_pitch(this.ptr, ptr0, len0, ptr1, len1, pitch);
+    }
+    /**
+    * update tone duration
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} duration
+    */
+    set_tone_duration(track_key, entry_key, duration) {
+        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+        _assertNum(this.ptr);
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        _assertNum(duration);
+        wasm.engine_set_tone_duration(this.ptr, ptr0, len0, ptr1, len1, duration);
+    }
+    /**
+    * move the tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} new_tick
+    */
+    shift_tone(track_key, entry_key, new_tick) {
+        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+        _assertNum(this.ptr);
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        _assertNum(new_tick);
+        wasm.engine_shift_tone(this.ptr, ptr0, len0, ptr1, len1, new_tick);
+    }
+    /**
+    * Remove the tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    */
+    remove_tone(track_key, entry_key) {
+        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+        _assertNum(this.ptr);
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_remove_tone(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * Slice a tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} slice_at
+    */
+    slice_tone(track_key, entry_key, slice_at) {
+        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+        _assertNum(this.ptr);
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        _assertNum(slice_at);
+        wasm.engine_slice_tone(this.ptr, ptr0, len0, ptr1, len1, slice_at);
+    }
+    /**
+    * @param {string} track_key
+    * @returns {any}
+    */
+    get_tones(track_key) {
+        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+        _assertNum(this.ptr);
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_tones(this.ptr, ptr0, len0);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {string} instrument_key
+    * @returns {any}
+    */
+    get_all_tones(flow_key, instrument_key) {
+        if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+        _assertNum(this.ptr);
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_all_tones(this.ptr, ptr0, len0, ptr1, len1);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {number} px_per_mm
+    * @param {Function} measure
+    * @returns {any}
+    */
+    render(flow_key, px_per_mm, measure) {
+        try {
+            if (this.ptr == 0) throw new Error('Attempt to use a moved value');
+            _assertNum(this.ptr);
+            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            _assertNum(px_per_mm);
+            var ret = wasm.engine_render(this.ptr, ptr0, len0, px_per_mm, addBorrowedObject(measure));
+            return takeObject(ret);
+        } finally {
+            heap[stack_pointer++] = undefined;
+        }
     }
     /**
     * Create an instrument
@@ -1652,6 +1652,9 @@ async function init(input) {
     }
     const imports = {};
     imports.wbg = {};
+    imports.wbg.__wbg_log_d717d0092fbccf13 = function() { return logError(function (arg0, arg1) {
+        console.log(getStringFromWasm0(arg0, arg1));
+    }, arguments) };
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
         var ret = getStringFromWasm0(arg0, arg1);
         return addHeapObject(ret);

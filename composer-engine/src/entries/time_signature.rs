@@ -50,7 +50,7 @@ impl TimeSignature {
             beat_type,
             groupings: match groupings {
                 Some(groupings) => groupings,
-                None => TimeSignature::groupings(beats, beat_type),
+                None => TimeSignature::default_groupings(beats),
             },
             draw_type,
             subdivisions: 16,
@@ -75,13 +75,9 @@ impl TimeSignature {
         }
     }
 
-    fn groupings(beats: u8, beat_type: NoteDuration) -> Vec<u8> {
+    fn default_groupings(beats: u8) -> Vec<u8> {
         if beats > 0 && beats <= 3 {
-            if beat_type.to_quarters() < NoteDuration::Quarter.to_quarters() {
-                vec![beats]
-            } else {
-                vec![1; beats as usize]
-            }
+            vec![beats]
         } else {
             match TimeSignature::kind_from_beats(beats) {
                 TimeSignatureType::Simple => vec![2; (beats as usize) / 2],
@@ -134,30 +130,38 @@ impl TimeSignature {
         self.distance_from_barline(tick) == 0
     }
 
+    pub fn get_tick_at_beat(&self, start: &Tick, beat: u8) -> Tick {
+        start + (((beat - 1) as Tick) * self.ticks_per_beat())
+    }
+
     // Returns true is the tick is on a beat group boundry
     pub fn is_on_grouping_boundry(&self, tick: Tick) -> bool {
         match self.kind() {
             TimeSignatureType::Open => false,
             _ => {
-                let ticks_per_beat = self.ticks_per_beat();
-                let bar_length = self.ticks_per_bar();
-                let distance_from_first_beat = (tick - self.tick) % bar_length;
-
-                if distance_from_first_beat == 0 {
-                    return true;
-                }
-
-                let mut offset: Ticks = 0;
-                for group in &self.groupings {
-                    offset += *group as u32 * ticks_per_beat;
-                    if distance_from_first_beat == offset {
+                let start = tick - self.distance_from_barline(tick);
+                for boundry in self.groupings_to_ticks(&start) {
+                    if boundry == tick {
                         return true;
+                    } else {
+                        continue;
                     }
                 }
-
                 false
             }
         }
+    }
+
+    pub fn groupings_to_ticks(&self, start: &Tick) -> Vec<Tick> {
+        let mut output = vec![*start];
+
+        let mut acc = *start;
+        for group in &self.groupings {
+            acc += *group as u32 * self.ticks_per_beat();
+            output.push(acc);
+        }
+
+        output
     }
 
     pub fn metrics(&self) -> BoundingBox {

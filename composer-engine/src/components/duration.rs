@@ -1,13 +1,14 @@
 use super::misc::Ticks;
 use wasm_bindgen::prelude::wasm_bindgen;
 
-pub const NOTE_DURATIONS: [NoteDuration; 6] = [
+pub const NOTE_DURATIONS: [NoteDuration; 7] = [
     NoteDuration::Whole,
     NoteDuration::Half,
     NoteDuration::Quarter,
     NoteDuration::Eighth,
     NoteDuration::Sixteenth,
     NoteDuration::ThirtySecond,
+    NoteDuration::SixtyFourth,
 ];
 
 #[wasm_bindgen]
@@ -19,6 +20,7 @@ pub enum NoteDuration {
     Eighth,
     Sixteenth,
     ThirtySecond,
+    SixtyFourth,
 }
 
 impl NoteDuration {
@@ -30,6 +32,7 @@ impl NoteDuration {
             NoteDuration::Eighth => 0.5,
             NoteDuration::Sixteenth => 0.25,
             NoteDuration::ThirtySecond => 0.125,
+            NoteDuration::SixtyFourth => 0.0625,
         }
     }
 
@@ -45,6 +48,7 @@ impl NoteDuration {
             NoteDuration::Eighth => "\u{1D160}",
             NoteDuration::Sixteenth => "\u{1D161}",
             NoteDuration::ThirtySecond => "\u{1D162}",
+            NoteDuration::SixtyFourth => "\u{1D162}",
         }
     }
 
@@ -56,6 +60,7 @@ impl NoteDuration {
             NoteDuration::Eighth => NoteDuration::Quarter,
             NoteDuration::Sixteenth => NoteDuration::Eighth,
             NoteDuration::ThirtySecond => NoteDuration::Sixteenth,
+            NoteDuration::SixtyFourth => NoteDuration::ThirtySecond,
         }
     }
 
@@ -66,7 +71,8 @@ impl NoteDuration {
             NoteDuration::Quarter => NoteDuration::Eighth,
             NoteDuration::Eighth => NoteDuration::Sixteenth,
             NoteDuration::Sixteenth => NoteDuration::ThirtySecond,
-            NoteDuration::ThirtySecond => NoteDuration::ThirtySecond,
+            NoteDuration::ThirtySecond => NoteDuration::SixtyFourth,
+            NoteDuration::SixtyFourth => NoteDuration::SixtyFourth,
         }
     }
 }

@@ -1,10 +1,11 @@
 use super::get_barlines::Barlines;
 use crate::components::duration::is_writable;
-use crate::components::duration::NoteDuration;
+use crate::components::duration::NOTE_DURATIONS;
 use crate::components::misc::Tick;
 use crate::components::misc::Ticks;
 use crate::entries::time_signature::TimeSignature;
 use crate::entries::time_signature::TimeSignatureDrawType;
+use crate::entries::time_signature::TimeSignatureType;
 use crate::entries::tone::Tone;
 use crate::score::tracks::Track;
 use crate::utils::log;
@@ -35,24 +36,10 @@ impl Notation {
     }
 
     pub fn longest_written_duration(&self, subdivisions: u8) -> Ticks {
-        let options = [
-            // (NoteDuration::Whole.to_ticks(subdivisions) as f32 * 1.5) as Ticks,
-            NoteDuration::Whole.to_ticks(subdivisions),
-            // (NoteDuration::Half.to_ticks(subdivisions) as f32 * 1.5) as Ticks,
-            NoteDuration::Half.to_ticks(subdivisions),
-            // (NoteDuration::Quarter.to_ticks(subdivisions) as f32 * 1.5) as Ticks,
-            NoteDuration::Quarter.to_ticks(subdivisions),
-            // (NoteDuration::Eighth.to_ticks(subdivisions) as f32 * 1.5) as Ticks,
-            NoteDuration::Eighth.to_ticks(subdivisions),
-            // (NoteDuration::Sixteenth.to_ticks(subdivisions) as f32 * 1.5) as Ticks,
-            NoteDuration::Sixteenth.to_ticks(subdivisions),
-            // (NoteDuration::ThirtySecond.to_ticks(subdivisions) as f32 * 1.5) as Ticks,
-            NoteDuration::ThirtySecond.to_ticks(subdivisions),
-        ];
-
-        for option in options {
-            if option < self.duration {
-                return option;
+        for option in NOTE_DURATIONS {
+            let ticks = option.to_ticks(subdivisions);
+            if ticks < self.duration {
+                return ticks;
             }
         }
 
@@ -211,8 +198,12 @@ impl NotationTrack {
 
         let is_allowed_with_rest = !self.is_tick_rest(&beat_one)
             && self.is_tick_rest(&beat_four)
-            && self.track.get(&beat_one).unwrap().duration
-                != (original_time_signature.ticks_per_beat() as f32 * 1.5) as u32;
+            && match self.track.get(&beat_one) {
+                Some(entry) => {
+                    entry.duration != (original_time_signature.ticks_per_beat() as f32 * 1.5) as u32
+                }
+                None => false,
+            };
 
         let intersect_beat = original_time_signature.is_on_beat(middle);
 
@@ -228,14 +219,16 @@ impl NotationTrack {
     ) {
         let stop = start + time_signature.ticks_per_bar();
 
-        self.debug(*start, stop);
+        // self.debug(*start, stop);
 
+        // we stop once there are no events in the range
         if self.is_range_empty(start, &stop) {
             return;
         }
 
-        match time_signature.beats {
-            2 => self.split_unit(
+        // convert 2 beats to 4 at hgher fidelity
+        if time_signature.beats == 2 {
+            return self.split_unit(
                 start,
                 &TimeSignature::new(
                     time_signature.tick,
@@ -245,9 +238,54 @@ impl NotationTrack {
                     None,
                 ),
                 original_time_signature,
-            ),
+            );
+        }
+
+        match time_signature.beats {
+            3 => {
+                let beat_one = *start;
+                let beat_two = time_signature.get_tick_at_beat(start, 2);
+                let beat_three = time_signature.get_tick_at_beat(start, 3);
+
+                // split all rests at beats
+                for beat in [beat_one, beat_two, beat_three] {
+                    if let Some((_, entry)) = self.get_previous_notation(beat) {
+                        if entry.is_rest() {
+                            self.split(beat);
+                        }
+                    }
+                }
+
+                // make sure it doesn't look compound! (c. at end of bar)
+                let middle = start + (time_signature.ticks_per_bar() / 2);
+                if !self.is_tick_empty(&middle) && self.is_range_empty(&middle, &stop) {
+                    self.split(beat_three);
+                };
+
+                // allow sustaining two beats into one
+                if !self.is_range_empty(&beat_one, &beat_two) {
+                    self.split(beat_two);
+                }
+
+                // if we haven't made any splits we split at the third beat
+                if !self.is_tick_empty(&beat_two) && !self.is_tick_empty(&beat_three) {
+                    self.split(beat_three);
+                }
+
+                let next = TimeSignature::new(
+                    time_signature.tick,
+                    4,
+                    time_signature.beat_type.half().half(),
+                    TimeSignatureDrawType::Normal,
+                    None,
+                );
+
+                self.split_unit(&beat_one, &next, original_time_signature);
+                self.split_unit(&beat_two, &next, original_time_signature);
+                self.split_unit(&beat_three, &next, original_time_signature);
+            }
             4 => {
-                let middle = start + ((stop - start) / 2);
+                let middle = start + (time_signature.ticks_per_bar() / 2);
 
                 if !self.is_qhq_pattern(start, time_signature)
                     && !self.is_qmdot_pattern(start, time_signature)

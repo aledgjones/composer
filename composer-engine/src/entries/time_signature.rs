@@ -7,7 +7,7 @@ use crate::utils::shortid;
 use crate::Engine;
 use wasm_bindgen::prelude::*;
 
-enum TimeSignatureType {
+pub enum TimeSignatureType {
     Simple,
     Compound,
     Complex,
@@ -58,7 +58,7 @@ impl TimeSignature {
     }
 
     /// Return the time signature type Open, Compound, Simple or Complex.
-    fn kind(&self) -> TimeSignatureType {
+    pub fn kind(&self) -> TimeSignatureType {
         TimeSignature::kind_from_beats(self.beats)
     }
 

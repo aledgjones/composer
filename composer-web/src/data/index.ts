@@ -1,9 +1,4 @@
-import {
-  Engine,
-  NoteDuration,
-  PlayerType,
-  TimeSignatureDrawType,
-} from "composer-engine";
+import { Engine, NoteDuration, PlayerType } from "composer-engine";
 import { Store } from "pullstate";
 import { EngravePage, PlayerPage, State, Tool, View } from "./defs";
 
@@ -50,12 +45,3 @@ instruments.forEach((id) => {
   const instrumentKey = engine.create_instrument(id);
   engine.assign_instrument_to_player(playerKey, instrumentKey);
 });
-
-const flow = engine.flows[0];
-engine.create_time_signature(
-  flow,
-  0,
-  2,
-  NoteDuration.Quarter,
-  TimeSignatureDrawType.Normal
-);

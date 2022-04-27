@@ -228,6 +228,8 @@ impl NotationTrack {
     ) {
         let stop = start + time_signature.ticks_per_bar();
 
+        self.debug(*start, stop);
+
         if self.is_range_empty(start, &stop) {
             return;
         }

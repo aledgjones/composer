@@ -57,6 +57,17 @@ impl TimeSignature {
         }
     }
 
+    /// create a default open time signature
+    pub fn default() -> Self {
+        Self::new(
+            0,
+            0,
+            NoteDuration::Quarter,
+            TimeSignatureDrawType::Hidden,
+            None,
+        )
+    }
+
     /// Return the time signature type Open, Compound, Simple or Complex.
     pub fn kind(&self) -> TimeSignatureType {
         TimeSignature::kind_from_beats(self.beats)

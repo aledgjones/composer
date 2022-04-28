@@ -283,13 +283,7 @@ impl Engine {
         let flow = self.score.flows.by_key.get(flow_key).unwrap();
         let master = self.score.tracks.get(&flow.master).unwrap();
 
-        let mut time_signature: TimeSignature = TimeSignature::new(
-            0,
-            4,
-            NoteDuration::Quarter,
-            TimeSignatureDrawType::Hidden,
-            None,
-        );
+        let mut time_signature: TimeSignature = TimeSignature::default();
 
         for tick in 0..flow.length {
             if let Some(entry) = master.get_time_signature_at_tick(&tick) {

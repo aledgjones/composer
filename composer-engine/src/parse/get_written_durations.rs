@@ -1,5 +1,6 @@
 use super::get_barlines::Barlines;
 use crate::components::duration::is_writable;
+use crate::components::duration::NoteDuration;
 use crate::components::duration::NOTE_DURATIONS;
 use crate::components::misc::Tick;
 use crate::components::misc::Ticks;
@@ -45,18 +46,34 @@ impl Notation {
         0
     }
 
-    pub fn is_writable(&self, subdivisions: u8) -> bool {
+    // gets base duration from a possibly dotted duration
+    pub fn base_duration(&self, subdivisions: u8) -> Option<Ticks> {
         if is_writable(self.duration, subdivisions) {
-            true
+            // original duration is directly writable
+            Some(self.duration)
         } else {
-            let dotted = (self.duration as f32 / 3.0) * 2.0;
-            // ensure we don't get a false match when we lose a fraction
-            // while converting to u32
-            if dotted.fract() == 0.0 {
-                is_writable(dotted as u32, subdivisions)
+            // see if duration is dotted
+            let base_duration = (self.duration as f32 / 3.0) * 2.0;
+            if base_duration.fract() == 0.0 && is_writable(base_duration as u32, subdivisions) {
+                Some(base_duration as Tick)
             } else {
-                false
+                None
             }
+        }
+    }
+
+    pub fn is_writable(&self, subdivisions: u8) -> bool {
+        self.base_duration(subdivisions).is_some()
+    }
+
+    pub fn is_beamable(&self, subdivisions: u8) -> bool {
+        if self.tones.is_empty() {
+            return false;
+        }
+
+        match self.base_duration(subdivisions) {
+            Some(base) => base <= NoteDuration::Eighth.to_ticks(subdivisions),
+            None => false,
         }
     }
 }

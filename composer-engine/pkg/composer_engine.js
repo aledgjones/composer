@@ -246,13 +246,10 @@ function getArrayU8FromWasm0(ptr, len) {
 }
 /**
 */
-export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond",SixtyFourth:6,"6":"SixtyFourth", });
-/**
-*/
 export const KeySignatureMode = Object.freeze({ Major:0,"0":"Major",Minor:1,"1":"Minor", });
 /**
 */
-export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
+export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond",SixtyFourth:6,"6":"SixtyFourth", });
 /**
 */
 export const BracketingApproach = Object.freeze({ None:0,"0":"None",Orchestral:1,"1":"Orchestral",SmallEnsemble:2,"2":"SmallEnsemble", });
@@ -267,10 +264,7 @@ export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",
 export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:1,"1":"Sharp",Natural:2,"2":"Natural",Flat:3,"3":"Flat",DoubleFlat:4,"4":"DoubleFlat", });
 /**
 */
-export const Articulation = Object.freeze({ None:0,"0":"None",Staccato:1,"1":"Staccato",Staccatissimo:2,"2":"Staccatissimo",Tenuto:3,"3":"Tenuto",StaccatoTenuto:4,"4":"StaccatoTenuto", });
-/**
-*/
-export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Normal:1,"1":"Normal",CommonTime:2,"2":"CommonTime",SplitCommonTime:3,"3":"SplitCommonTime",Open:4,"4":"Open", });
+export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:2,"2":"F",C:3,"3":"C",Percussion:4,"4":"Percussion", });
 /**
 */
 export const Expression = Object.freeze({ Natural:0,"0":"Natural",Pizzicato:1,"1":"Pizzicato",Spiccato:2,"2":"Spiccato",Staccato:3,"3":"Staccato",Tremolo:4,"4":"Tremolo",Mute:5,"5":"Mute", });
@@ -279,7 +273,13 @@ export const Expression = Object.freeze({ Natural:0,"0":"Natural",Pizzicato:1,"1
 export const InstrumentType = Object.freeze({ Melodic:0,"0":"Melodic",Percussive:1,"1":"Percussive", });
 /**
 */
+export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Normal:1,"1":"Normal",CommonTime:2,"2":"CommonTime",SplitCommonTime:3,"3":"SplitCommonTime",Open:4,"4":"Open", });
+/**
+*/
 export const PlayerType = Object.freeze({ Solo:0,"0":"Solo",Section:1,"1":"Section", });
+/**
+*/
+export const Articulation = Object.freeze({ None:0,"0":"None",Staccato:1,"1":"Staccato",Staccatissimo:2,"2":"Staccatissimo",Tenuto:3,"3":"Tenuto",StaccatoTenuto:4,"4":"StaccatoTenuto", });
 /**
 */
 export const AutoCountStyle = Object.freeze({ Arabic:0,"0":"Arabic",Roman:1,"1":"Roman", });
@@ -342,117 +342,6 @@ export class Engine {
         var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.engine_create_key_signature(this.ptr, ptr0, len0, tick, mode, offset);
-    }
-    /**
-    * Create a tone
-    * @param {string} track_key
-    * @param {number} tick
-    * @param {number} duration
-    * @param {number} pitch
-    * @param {number} velocity
-    * @param {number} articulation
-    * @returns {string}
-    */
-    create_tone(track_key, tick, duration, pitch, velocity, articulation) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            wasm.engine_create_tone(retptr, this.ptr, ptr0, len0, tick, duration, pitch, velocity, articulation);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * update tone pitch
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} pitch
-    */
-    set_tone_pitch(track_key, entry_key, pitch) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_set_tone_pitch(this.ptr, ptr0, len0, ptr1, len1, pitch);
-    }
-    /**
-    * update tone duration
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} duration
-    */
-    set_tone_duration(track_key, entry_key, duration) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_set_tone_duration(this.ptr, ptr0, len0, ptr1, len1, duration);
-    }
-    /**
-    * move the tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} new_tick
-    */
-    shift_tone(track_key, entry_key, new_tick) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_shift_tone(this.ptr, ptr0, len0, ptr1, len1, new_tick);
-    }
-    /**
-    * Remove the tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    */
-    remove_tone(track_key, entry_key) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_remove_tone(this.ptr, ptr0, len0, ptr1, len1);
-    }
-    /**
-    * Slice a tone
-    * @param {string} track_key
-    * @param {string} entry_key
-    * @param {number} slice_at
-    */
-    slice_tone(track_key, entry_key, slice_at) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.engine_slice_tone(this.ptr, ptr0, len0, ptr1, len1, slice_at);
-    }
-    /**
-    * @param {string} track_key
-    * @returns {any}
-    */
-    get_tones(track_key) {
-        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_tones(this.ptr, ptr0, len0);
-        return takeObject(ret);
-    }
-    /**
-    * @param {string} flow_key
-    * @param {string} instrument_key
-    * @returns {any}
-    */
-    get_all_tones(flow_key, instrument_key) {
-        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        var ret = wasm.engine_get_all_tones(this.ptr, ptr0, len0, ptr1, len1);
-        return takeObject(ret);
     }
     /**
     * Create an instrument
@@ -599,6 +488,117 @@ export class Engine {
     */
     calculate_counts() {
         wasm.engine_calculate_counts(this.ptr);
+    }
+    /**
+    * Create a tone
+    * @param {string} track_key
+    * @param {number} tick
+    * @param {number} duration
+    * @param {number} pitch
+    * @param {number} velocity
+    * @param {number} articulation
+    * @returns {string}
+    */
+    create_tone(track_key, tick, duration, pitch, velocity, articulation) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm.engine_create_tone(retptr, this.ptr, ptr0, len0, tick, duration, pitch, velocity, articulation);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * update tone pitch
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} pitch
+    */
+    set_tone_pitch(track_key, entry_key, pitch) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_set_tone_pitch(this.ptr, ptr0, len0, ptr1, len1, pitch);
+    }
+    /**
+    * update tone duration
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} duration
+    */
+    set_tone_duration(track_key, entry_key, duration) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_set_tone_duration(this.ptr, ptr0, len0, ptr1, len1, duration);
+    }
+    /**
+    * move the tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} new_tick
+    */
+    shift_tone(track_key, entry_key, new_tick) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_shift_tone(this.ptr, ptr0, len0, ptr1, len1, new_tick);
+    }
+    /**
+    * Remove the tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    */
+    remove_tone(track_key, entry_key) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_remove_tone(this.ptr, ptr0, len0, ptr1, len1);
+    }
+    /**
+    * Slice a tone
+    * @param {string} track_key
+    * @param {string} entry_key
+    * @param {number} slice_at
+    */
+    slice_tone(track_key, entry_key, slice_at) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(entry_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.engine_slice_tone(this.ptr, ptr0, len0, ptr1, len1, slice_at);
+    }
+    /**
+    * @param {string} track_key
+    * @returns {any}
+    */
+    get_tones(track_key) {
+        var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_tones(this.ptr, ptr0, len0);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} flow_key
+    * @param {string} instrument_key
+    * @returns {any}
+    */
+    get_all_tones(flow_key, instrument_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(instrument_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_all_tones(this.ptr, ptr0, len0, ptr1, len1);
+        return takeObject(ret);
     }
     /**
     * @param {number} layout_type

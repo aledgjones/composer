@@ -17,6 +17,12 @@ export function get_full_path_from_partial(selection: any): any;
 export function def_tree(selection: any): any;
 /**
 */
+export enum KeySignatureMode {
+  Major,
+  Minor,
+}
+/**
+*/
 export enum NoteDuration {
   Whole,
   Half,
@@ -25,21 +31,6 @@ export enum NoteDuration {
   Sixteenth,
   ThirtySecond,
   SixtyFourth,
-}
-/**
-*/
-export enum KeySignatureMode {
-  Major,
-  Minor,
-}
-/**
-*/
-export enum ClefDrawType {
-  Hidden,
-  G,
-  F,
-  C,
-  Percussion,
 }
 /**
 */
@@ -73,21 +64,12 @@ export enum Accidental {
 }
 /**
 */
-export enum Articulation {
-  None,
-  Staccato,
-  Staccatissimo,
-  Tenuto,
-  StaccatoTenuto,
-}
-/**
-*/
-export enum TimeSignatureDrawType {
+export enum ClefDrawType {
   Hidden,
-  Normal,
-  CommonTime,
-  SplitCommonTime,
-  Open,
+  G,
+  F,
+  C,
+  Percussion,
 }
 /**
 */
@@ -107,9 +89,27 @@ export enum InstrumentType {
 }
 /**
 */
+export enum TimeSignatureDrawType {
+  Hidden,
+  Normal,
+  CommonTime,
+  SplitCommonTime,
+  Open,
+}
+/**
+*/
 export enum PlayerType {
   Solo,
   Section,
+}
+/**
+*/
+export enum Articulation {
+  None,
+  Staccato,
+  Staccatissimo,
+  Tenuto,
+  StaccatoTenuto,
 }
 /**
 */
@@ -135,62 +135,6 @@ export class Engine {
 * @param {number} offset
 */
   create_key_signature(flow_key: string, tick: number, mode: number, offset: number): void;
-/**
-* Create a tone
-* @param {string} track_key
-* @param {number} tick
-* @param {number} duration
-* @param {number} pitch
-* @param {number} velocity
-* @param {number} articulation
-* @returns {string}
-*/
-  create_tone(track_key: string, tick: number, duration: number, pitch: number, velocity: number, articulation: number): string;
-/**
-* update tone pitch
-* @param {string} track_key
-* @param {string} entry_key
-* @param {number} pitch
-*/
-  set_tone_pitch(track_key: string, entry_key: string, pitch: number): void;
-/**
-* update tone duration
-* @param {string} track_key
-* @param {string} entry_key
-* @param {number} duration
-*/
-  set_tone_duration(track_key: string, entry_key: string, duration: number): void;
-/**
-* move the tone
-* @param {string} track_key
-* @param {string} entry_key
-* @param {number} new_tick
-*/
-  shift_tone(track_key: string, entry_key: string, new_tick: number): void;
-/**
-* Remove the tone
-* @param {string} track_key
-* @param {string} entry_key
-*/
-  remove_tone(track_key: string, entry_key: string): void;
-/**
-* Slice a tone
-* @param {string} track_key
-* @param {string} entry_key
-* @param {number} slice_at
-*/
-  slice_tone(track_key: string, entry_key: string, slice_at: number): void;
-/**
-* @param {string} track_key
-* @returns {any}
-*/
-  get_tones(track_key: string): any;
-/**
-* @param {string} flow_key
-* @param {string} instrument_key
-* @returns {any}
-*/
-  get_all_tones(flow_key: string, instrument_key: string): any;
 /**
 * Create an instrument
 * @param {string} id
@@ -253,6 +197,62 @@ export class Engine {
 /**
 */
   calculate_counts(): void;
+/**
+* Create a tone
+* @param {string} track_key
+* @param {number} tick
+* @param {number} duration
+* @param {number} pitch
+* @param {number} velocity
+* @param {number} articulation
+* @returns {string}
+*/
+  create_tone(track_key: string, tick: number, duration: number, pitch: number, velocity: number, articulation: number): string;
+/**
+* update tone pitch
+* @param {string} track_key
+* @param {string} entry_key
+* @param {number} pitch
+*/
+  set_tone_pitch(track_key: string, entry_key: string, pitch: number): void;
+/**
+* update tone duration
+* @param {string} track_key
+* @param {string} entry_key
+* @param {number} duration
+*/
+  set_tone_duration(track_key: string, entry_key: string, duration: number): void;
+/**
+* move the tone
+* @param {string} track_key
+* @param {string} entry_key
+* @param {number} new_tick
+*/
+  shift_tone(track_key: string, entry_key: string, new_tick: number): void;
+/**
+* Remove the tone
+* @param {string} track_key
+* @param {string} entry_key
+*/
+  remove_tone(track_key: string, entry_key: string): void;
+/**
+* Slice a tone
+* @param {string} track_key
+* @param {string} entry_key
+* @param {number} slice_at
+*/
+  slice_tone(track_key: string, entry_key: string, slice_at: number): void;
+/**
+* @param {string} track_key
+* @returns {any}
+*/
+  get_tones(track_key: string): any;
+/**
+* @param {string} flow_key
+* @param {string} instrument_key
+* @returns {any}
+*/
+  get_all_tones(flow_key: string, instrument_key: string): any;
 /**
 * @param {number} layout_type
 * @param {string} name
@@ -568,14 +568,6 @@ export interface InitOutput {
   readonly engine_state: (a: number, b: number) => void;
   readonly run: () => void;
   readonly engine_create_key_signature: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly engine_create_tone: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
-  readonly engine_set_tone_pitch: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly engine_set_tone_duration: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly engine_shift_tone: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly engine_remove_tone: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly engine_slice_tone: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly engine_get_tones: (a: number, b: number, c: number) => number;
-  readonly engine_get_all_tones: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly engine_create_instrument: (a: number, b: number, c: number, d: number) => void;
   readonly engine_remove_instrument: (a: number, b: number, c: number) => void;
   readonly engine_get_instrument_name: (a: number, b: number, c: number, d: number) => void;
@@ -589,6 +581,14 @@ export interface InitOutput {
   readonly engine_get_instrument_staves: (a: number, b: number, c: number) => number;
   readonly engine_get_instrument_tracks: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly engine_calculate_counts: (a: number) => void;
+  readonly engine_create_tone: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
+  readonly engine_set_tone_pitch: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly engine_set_tone_duration: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly engine_shift_tone: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly engine_remove_tone: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly engine_slice_tone: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly engine_get_tones: (a: number, b: number, c: number) => number;
+  readonly engine_get_all_tones: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly engine_create_engrave: (a: number, b: number, c: number, d: number) => void;
   readonly engine_engraves: (a: number) => number;
   readonly engine_get_systemic_barline_single_instrument_system: (a: number, b: number, c: number) => number;

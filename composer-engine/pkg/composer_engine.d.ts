@@ -34,6 +34,15 @@ export enum NoteDuration {
 }
 /**
 */
+export enum ClefDrawType {
+  Hidden,
+  G,
+  F,
+  C,
+  Percussion,
+}
+/**
+*/
 export enum BracketingApproach {
   None,
   Orchestral,
@@ -64,12 +73,21 @@ export enum Accidental {
 }
 /**
 */
-export enum ClefDrawType {
+export enum TimeSignatureDrawType {
   Hidden,
-  G,
-  F,
-  C,
-  Percussion,
+  Normal,
+  CommonTime,
+  SplitCommonTime,
+  Open,
+}
+/**
+*/
+export enum Articulation {
+  None,
+  Staccato,
+  Staccatissimo,
+  Tenuto,
+  StaccatoTenuto,
 }
 /**
 */
@@ -86,24 +104,6 @@ export enum Expression {
 export enum InstrumentType {
   Melodic,
   Percussive,
-}
-/**
-*/
-export enum Articulation {
-  None,
-  Staccato,
-  Staccatissimo,
-  Tenuto,
-  StaccatoTenuto,
-}
-/**
-*/
-export enum TimeSignatureDrawType {
-  Hidden,
-  Normal,
-  CommonTime,
-  SplitCommonTime,
-  Open,
 }
 /**
 */
@@ -360,13 +360,6 @@ export class Engine {
   set_space(key: string, value: number): void;
 /**
 * @param {string} flow_key
-* @param {number} px_per_mm
-* @param {Function} measure
-* @returns {any}
-*/
-  render(flow_key: string, px_per_mm: number, measure: Function): any;
-/**
-* @param {string} flow_key
 * @param {number} tick
 * @param {number} beats
 * @param {number} beat_type
@@ -374,6 +367,13 @@ export class Engine {
 * @param {Uint8Array | undefined} groupings
 */
   create_time_signature(flow_key: string, tick: number, beats: number, beat_type: number, draw_type: number, groupings?: Uint8Array): void;
+/**
+* @param {string} flow_key
+* @param {number} px_per_mm
+* @param {Function} measure
+* @returns {any}
+*/
+  render(flow_key: string, px_per_mm: number, measure: Function): any;
 /**
 * @param {number} player_type
 * @returns {string}
@@ -632,9 +632,9 @@ export interface InitOutput {
   readonly __wbg_set_pitch_int: (a: number, b: number) => void;
   readonly __wbg_get_pitch_accidental: (a: number) => number;
   readonly __wbg_set_pitch_accidental: (a: number, b: number) => void;
+  readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly engine_render: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly __wbg_velocity_free: (a: number) => void;
-  readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly get_full_path_from_partial: (a: number) => number;
   readonly def_tree: (a: number) => number;
   readonly engine_create_player: (a: number, b: number, c: number) => void;

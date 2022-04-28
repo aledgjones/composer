@@ -46,7 +46,7 @@ impl Flow {
             key: shortid(),
             title: String::from(""),
             players: HashSet::new(),
-            length: 16 * 4, // 4 * 4/4
+            length: 16 * 4 * 4, // 4 * 4/4
 
             master: master.key.clone(),
             staves: HashMap::new(),

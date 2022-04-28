@@ -50,12 +50,3 @@ instruments.forEach((id) => {
   const instrumentKey = engine.create_instrument(id);
   engine.assign_instrument_to_player(playerKey, instrumentKey);
 });
-
-const flow = engine.flows[0];
-engine.create_time_signature(
-  flow,
-  0,
-  3,
-  NoteDuration.Quarter,
-  TimeSignatureDrawType.Normal
-);

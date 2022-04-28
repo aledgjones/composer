@@ -6,6 +6,7 @@ pub mod draw_sub_brackets;
 pub mod draw_systemic_barline;
 pub mod get_barlines;
 pub mod get_beams;
+pub mod get_stem_directions;
 pub mod get_tone_offsets;
 pub mod get_vertical_spans;
 pub mod get_written_durations;
@@ -26,6 +27,7 @@ use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
 use get_barlines::get_barlines;
 use get_beams::get_beams;
+use get_stem_directions::get_stem_directions;
 use get_tone_offsets::get_tone_offsets;
 use get_vertical_spans::get_vertical_spans;
 use get_written_durations::get_written_durations;
@@ -84,11 +86,12 @@ impl Engine {
         let name_widths = measure_instrument_names(&instruments, engrave, &converter, measure);
         let bracket_widths = measure_brackets(&vertical_spacing, &vertical_spans, engrave);
         let barlines = get_barlines(flow.length, flow_master);
-        let notation_by_track = get_written_durations(flow.length, &tracks, &barlines);
+        let notations = get_written_durations(flow.length, &tracks, &barlines);
         let tone_offsets = get_tone_offsets(flow.length, &staves, &self.score.tracks);
-        let beams_by_track = get_beams(flow.length, &notation_by_track, &barlines);
+        let beams = get_beams(flow.length, &notations, &barlines);
+        let stem_directions = get_stem_directions(flow.length, &notations, &tone_offsets, &beams);
 
-        // log(&format!("{:#?}", beams_by_track));
+        log(&format!("{:#?}", tone_offsets));
 
         let content_width: Space = 40.0;
 

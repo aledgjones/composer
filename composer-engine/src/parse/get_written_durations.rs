@@ -1,6 +1,5 @@
 use super::get_barlines::Barlines;
 use crate::components::duration::is_writable;
-use crate::components::duration::NoteDuration;
 use crate::components::duration::NOTE_DURATIONS;
 use crate::components::misc::Tick;
 use crate::components::misc::Ticks;
@@ -23,14 +22,6 @@ pub struct Notation {
 }
 
 impl Notation {
-    pub fn new(length: Ticks) -> Self {
-        Self {
-            tones: Vec::new(),
-            duration: length,
-            ties: HashSet::new(),
-        }
-    }
-
     pub fn is_rest(&self) -> bool {
         self.tones.is_empty()
     }
@@ -64,17 +55,6 @@ impl Notation {
 
     pub fn is_writable(&self, subdivisions: u8) -> bool {
         self.base_duration(subdivisions).is_some()
-    }
-
-    pub fn is_beamable(&self, subdivisions: u8) -> bool {
-        if self.tones.is_empty() {
-            return false;
-        }
-
-        match self.base_duration(subdivisions) {
-            Some(base) => base <= NoteDuration::Eighth.to_ticks(subdivisions),
-            None => false,
-        }
     }
 }
 

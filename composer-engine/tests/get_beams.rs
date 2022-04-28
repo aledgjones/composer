@@ -1,6 +1,5 @@
 use composer_engine::components::articulation::Articulation;
 use composer_engine::components::duration::NoteDuration;
-use composer_engine::components::pitch::Accidental;
 use composer_engine::components::pitch::Pitch;
 use composer_engine::components::velocity::Velocity;
 use composer_engine::entries::time_signature::TimeSignature;
@@ -33,7 +32,7 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
             shortid(),
             tick,
             duration,
-            Pitch::new(60, Accidental::Natural),
+            Pitch::from_int(60),
             Velocity::new(100),
             Articulation::None,
         )));
@@ -41,7 +40,7 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
 
     let barlines = get_barlines(length, &master);
     let notation = track.to_notation_track(length, &barlines);
-    get_beams_in_track(length, &notation, &barlines)
+    get_beams_in_track(&notation, &barlines)
 }
 
 #[test]

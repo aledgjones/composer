@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::get_barlines::Barlines;
-use super::get_written_durations::{NotationTrack, NotationTracks};
+use super::get_written_durations::{Notation, NotationTrack, NotationTracks};
 use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
 use crate::entries::time_signature::TimeSignature;
@@ -10,7 +10,12 @@ pub type Beam = Vec<Tick>;
 pub type Beams = Vec<Beam>;
 pub type BeamsByTrack = HashMap<String, Beams>;
 
-fn group_is_beamable(notation: &NotationTrack, start: Tick, stop: Tick, sixteenth: Ticks) -> bool {
+fn grouping_is_beamable(
+    notation: &NotationTrack,
+    start: Tick,
+    stop: Tick,
+    sixteenth: Ticks,
+) -> bool {
     for tick in start..stop {
         if let Some(entry) = notation.track.get(&tick) {
             // TODO: make this more sophisticated, -eee | eee- can be beamed -ee- cannot, for example
@@ -32,11 +37,7 @@ fn assign_span(spans: &mut Beams, span: Beam) -> Beam {
     Vec::new()
 }
 
-pub fn get_beams_in_track(
-    flow_length: Ticks,
-    notation: &NotationTrack,
-    barlines: &Barlines,
-) -> Beams {
+pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Barlines) -> Beams {
     let mut output: Beams = Vec::new();
 
     let mut current_span: Beam = Vec::new();
@@ -44,7 +45,7 @@ pub fn get_beams_in_track(
     let mut boundries = time_signature.groupings_to_ticks(&0);
     let mut break_at_beats = false;
 
-    for tick in 0..flow_length {
+    for tick in 0..notation.length {
         if let Some(entry) = barlines.get(&tick) {
             time_signature = entry;
             boundries = time_signature.groupings_to_ticks(&tick);
@@ -58,7 +59,7 @@ pub fn get_beams_in_track(
                     let i = boundries.iter().position(|entry| entry == &tick).unwrap();
                     let stop = boundries.get(i + 1).unwrap();
                     let sixteenth = NoteDuration::Sixteenth.to_ticks(time_signature.subdivisions);
-                    !group_is_beamable(notation, tick, *stop, sixteenth)
+                    !grouping_is_beamable(notation, tick, *stop, sixteenth)
                 }
                 // larger beats break, smaller don't
                 _ => {
@@ -86,13 +87,26 @@ pub fn get_beams_in_track(
     output
 }
 
-pub fn get_beams(flow_length: Ticks, tracks: &NotationTracks, barlines: &Barlines) -> BeamsByTrack {
+pub fn get_beams(tracks: &NotationTracks, barlines: &Barlines) -> BeamsByTrack {
     let mut output: BeamsByTrack = HashMap::new();
 
     for (track_key, track) in tracks {
-        let beams = get_beams_in_track(flow_length, track, barlines);
+        let beams = get_beams_in_track(track, barlines);
         output.insert(track_key.clone(), beams);
     }
 
     output
+}
+
+impl Notation {
+    pub fn is_beamable(&self, subdivisions: u8) -> bool {
+        if self.is_rest() {
+            false
+        } else {
+            match self.base_duration(subdivisions) {
+                Some(base) => base <= NoteDuration::Eighth.to_ticks(subdivisions),
+                None => false,
+            }
+        }
+    }
 }

@@ -49,6 +49,10 @@ impl Pitch {
         Pitch { int, accidental }
     }
 
+    pub fn from_int(int: u8) -> Self {
+        Pitch::new(int, Accidental::default(int))
+    }
+
     /// gets the base note pitch (natural) for an accidental note
     /// ie 61 (C#) -> 60 (C), 61 (D flat) -> 62 (D)
     fn base(&self) -> u8 {

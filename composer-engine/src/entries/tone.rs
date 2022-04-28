@@ -1,6 +1,6 @@
 use crate::components::articulation::Articulation;
 use crate::components::misc::{Tick, Ticks};
-use crate::components::pitch::{Accidental, Pitch};
+use crate::components::pitch::Pitch;
 use crate::components::velocity::Velocity;
 use crate::entries::Entry;
 use crate::score::tracks::Track;
@@ -63,7 +63,7 @@ impl Engine {
             key.clone(),
             tick,
             duration,
-            Pitch::new(pitch, Accidental::default(pitch)),
+            Pitch::from_int(pitch),
             Velocity::new(velocity),
             articulation,
         )));
@@ -78,7 +78,7 @@ impl Engine {
         let track = self.score.tracks.get_mut(track_key).unwrap();
         let entry = track.entries.by_key.get_mut(entry_key).unwrap();
         if let Entry::Tone(tone) = entry {
-            tone.pitch = Pitch::new(pitch, Accidental::default(pitch));
+            tone.pitch = Pitch::from_int(pitch);
         }
 
         self.emit();

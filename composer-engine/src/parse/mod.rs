@@ -88,8 +88,8 @@ impl Engine {
         let barlines = get_barlines(flow.length, flow_master);
         let notations = get_written_durations(flow.length, &tracks, &barlines);
         let tone_offsets = get_tone_offsets(flow.length, &staves, &self.score.tracks);
-        let beams = get_beams(flow.length, &notations, &barlines);
-        let stem_directions = get_stem_directions(flow.length, &notations, &tone_offsets, &beams);
+        let beams = get_beams(&notations, &barlines);
+        let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
 
         log(&format!("{:#?}", tone_offsets));
 

@@ -1,6 +1,6 @@
 use crate::components::measurements::{BoundingBox, PaddingSpaces};
 use crate::components::misc::Tick;
-use crate::components::pitch::{Accidental, Pitch};
+use crate::components::pitch::Pitch;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
 use wasm_bindgen::prelude::*;
@@ -32,7 +32,7 @@ impl Clef {
             key: shortid(),
             tick,
             draw_as,
-            pitch: Pitch::new(pitch, Accidental::Natural),
+            pitch: Pitch::from_int(pitch),
             offset,
         }
     }

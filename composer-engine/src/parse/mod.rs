@@ -6,6 +6,7 @@ pub mod draw_sub_brackets;
 pub mod draw_systemic_barline;
 pub mod get_barlines;
 pub mod get_beams;
+pub mod get_note_positions;
 pub mod get_stem_directions;
 pub mod get_tone_offsets;
 pub mod get_vertical_spans;
@@ -17,7 +18,6 @@ pub mod measure_vertical_spacing;
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
-use crate::utils::log;
 use crate::Engine;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
@@ -27,6 +27,7 @@ use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
 use get_barlines::get_barlines;
 use get_beams::get_beams;
+use get_note_positions::get_note_positions;
 use get_stem_directions::get_stem_directions;
 use get_tone_offsets::get_tone_offsets;
 use get_vertical_spans::get_vertical_spans;
@@ -81,17 +82,22 @@ impl Engine {
         let (flow, instruments, staves, tracks) = self.get_flow_instruments(flow_key);
         let flow_master = self.score.tracks.get(&flow.master).unwrap();
 
+        // TODO: all these are indipendant -- can they be parralised?
         let vertical_spans = get_vertical_spans(&instruments, engrave);
         let vertical_spacing = measure_vertical_spacing(&instruments, &flow.staves, engrave);
         let name_widths = measure_instrument_names(&instruments, engrave, &converter, measure);
         let bracket_widths = measure_brackets(&vertical_spacing, &vertical_spans, engrave);
         let barlines = get_barlines(flow.length, flow_master);
-        let notations = get_written_durations(flow.length, &tracks, &barlines);
         let tone_offsets = get_tone_offsets(flow.length, &staves, &self.score.tracks);
+
+        let notations = get_written_durations(flow.length, &tracks, &barlines);
+
+        // TDDO: all these rely on the written notation - can they be parralised?
         let beams = get_beams(&notations, &barlines);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
+        let note_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
 
-        log(&format!("{:#?}", tone_offsets));
+        // log(&format!("{:#?}", notations));
 
         let content_width: Space = 40.0;
 

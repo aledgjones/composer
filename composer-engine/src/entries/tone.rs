@@ -40,6 +40,17 @@ impl Tone {
             articulation,
         }
     }
+
+    pub fn tester(key: &str) -> Self {
+        Self::new(
+            key.to_string(),
+            0,
+            0,
+            Pitch::from_int(60),
+            Velocity::new(100),
+            Articulation::None,
+        )
+    }
 }
 
 #[wasm_bindgen]

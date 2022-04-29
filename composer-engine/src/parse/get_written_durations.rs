@@ -1,4 +1,5 @@
 use super::get_barlines::Barlines;
+use super::get_tone_offsets::ToneVerticalOffsets;
 use crate::components::duration::is_writable;
 use crate::components::duration::NOTE_DURATIONS;
 use crate::components::misc::Tick;
@@ -13,6 +14,10 @@ use std::fmt::Debug;
 use std::fmt::Formatter;
 use std::fmt::Result;
 use std::iter::FromIterator;
+
+pub type Clusters<'a> = Vec<Cluster<'a>>;
+pub type Cluster<'a> = Vec<&'a Tone>;
+pub type NotationTracks = HashMap<String, NotationTrack>;
 
 #[derive(Debug, Clone)]
 pub struct Notation {
@@ -55,6 +60,48 @@ impl Notation {
 
     pub fn is_writable(&self, subdivisions: u8) -> bool {
         self.base_duration(subdivisions).is_some()
+    }
+
+    /// creates a new vec of sort tones by offset -- ascending *pitch*
+    pub fn sort_tones(&self, tone_offsets: &ToneVerticalOffsets) -> Vec<Tone> {
+        let mut tones = self.tones.clone();
+        tones.sort_by(|a, b| {
+            let a = tone_offsets.get(&a.key).unwrap();
+            let b = tone_offsets.get(&b.key).unwrap();
+            b.cmp(a)
+        });
+        tones
+    }
+
+    pub fn get_clusters(&self, tone_offsets: &ToneVerticalOffsets) -> Clusters {
+        let tones = self.sort_tones(tone_offsets);
+
+        let mut clusters: Clusters = Vec::new();
+        let mut cluster: Cluster = Vec::new();
+        let mut previous_tone = self.tones.first().unwrap();
+
+        for i in 1..tones.len() {
+            let current_tone = self.tones.get(i).unwrap();
+            let current_offset = tone_offsets.get(&current_tone.key).unwrap();
+            let previous_offset = tone_offsets.get(&previous_tone.key).unwrap();
+
+            cluster.push(previous_tone);
+
+            // if not a cluster
+            if previous_offset - current_offset > 1 {
+                clusters.push(cluster);
+                cluster = Vec::new();
+            }
+
+            previous_tone = current_tone;
+        }
+
+        if !tones.is_empty() {
+            cluster.push(previous_tone);
+            clusters.push(cluster);
+        }
+
+        clusters
     }
 }
 
@@ -391,8 +438,6 @@ impl Debug for NotationTrack {
     }
 }
 
-pub type NotationTracks = HashMap<String, NotationTrack>;
-
 pub fn get_written_durations(
     flow_length: Ticks,
     tracks: &[&Track],
@@ -416,5 +461,79 @@ impl Track {
         notation.split_as_per_meter(barlines);
         notation.split_unwritable(barlines);
         notation
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::entries::tone::Tone;
+    use crate::parse::get_written_durations::Clusters;
+    use crate::parse::get_written_durations::Notation;
+    use std::collections::HashSet;
+
+    #[test]
+    fn sort_tones_test() {
+        let notation = Notation {
+            tones: vec![
+                Tone::tester("a"),
+                Tone::tester("b"),
+                Tone::tester("c"),
+                Tone::tester("d"),
+                Tone::tester("e"),
+            ],
+            duration: 0,
+            ties: HashSet::new(),
+        };
+
+        let tone_offsets = hashmap! {
+            String::from("a") => 0,
+            String::from("b") => 1,
+            String::from("c") => -1,
+            String::from("d") => 2,
+            String::from("e") => -2
+        };
+
+        let result = notation.sort_tones(&tone_offsets);
+        let expected = ["d", "b", "a", "c", "e"];
+        for (i, tone) in result.iter().enumerate() {
+            assert_eq!(&tone.key, expected[i]);
+        }
+    }
+
+    #[test]
+    fn get_clusters_test() {
+        let notation = Notation {
+            tones: vec![
+                Tone::tester("a"),
+                Tone::tester("b"),
+                Tone::tester("c"),
+                Tone::tester("d"),
+                Tone::tester("e"),
+                Tone::tester("f"),
+            ],
+            duration: 0,
+            ties: HashSet::new(),
+        };
+
+        let tone_offsets = hashmap! {
+            String::from("a") => 2,
+            String::from("b") => 1,
+            String::from("c") => -1,
+            String::from("d") => -3,
+            String::from("e") => -4,
+            String::from("f") => -5
+        };
+
+        let result: Clusters = notation.get_clusters(&tone_offsets);
+        assert_eq!(result.len(), 3);
+
+        let expected: Vec<Vec<&str>> = vec![vec!["a", "b"], vec!["c"], vec!["d", "e", "f"]];
+        for (i, expected_cluster) in expected.iter().enumerate() {
+            let result_cluster = result.get(i).unwrap();
+            for (ii, expected_key) in expected_cluster.iter().enumerate() {
+                let result_tone = result_cluster.get(ii).unwrap();
+                assert_eq!(&result_tone.key, expected_key);
+            }
+        }
     }
 }

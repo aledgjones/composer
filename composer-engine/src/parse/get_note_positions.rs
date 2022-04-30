@@ -21,7 +21,7 @@ pub enum Position {
     PaddingEnd,
 }
 
-type TonePositions = HashMap<String, Position>;
+type TonePositions = HashMap<(Tick, String), Position>;
 
 pub fn note_positions_in_chord(
     tick: &Tick,
@@ -53,7 +53,7 @@ pub fn note_positions_in_chord(
                 false => Position::NoteSlot,
             };
 
-            shunts.insert(format!("{}-{}", tick, tone.key), position);
+            shunts.insert((*tick, tone.key.clone()), position);
         }
     }
 
@@ -111,14 +111,20 @@ mod tests {
     /// no shunts (1 tone, up)
     fn notehead_positions_in_chord_test_1() {
         let result = run(vec![("a", 0)], &StemDirection::Up);
-        assert_eq!(result, hashmap! {String::from("0-a") => Position::NoteSlot});
+        assert_eq!(
+            result,
+            hashmap! {(0,String::from("a")) => Position::NoteSlot}
+        );
     }
 
     #[test]
     /// no shunts (1 tone, down)
     fn notehead_positions_in_chord_test_2() {
         let result = run(vec![("a", 0)], &StemDirection::Down);
-        assert_eq!(result, hashmap! {String::from("0-a") => Position::NoteSlot});
+        assert_eq!(
+            result,
+            hashmap! {(0,String::from("a")) => Position::NoteSlot}
+        );
     }
 
     #[test]
@@ -127,7 +133,7 @@ mod tests {
         let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Up);
         assert_eq!(
             result,
-            hashmap! {String::from("0-a") => Position::NoteSlot, String::from("0-b") => Position::PostNoteSlot}
+            hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PostNoteSlot}
         );
     }
 
@@ -137,7 +143,7 @@ mod tests {
         let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Down);
         assert_eq!(
             result,
-            hashmap! {String::from("0-a") => Position::PreNoteSlot, String::from("0-b") => Position::NoteSlot}
+            hashmap! {(0,String::from("a")) => Position::PreNoteSlot, (0,String::from("b")) => Position::NoteSlot}
         );
     }
 
@@ -147,7 +153,7 @@ mod tests {
         let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Up);
         assert_eq!(
             result,
-            hashmap! {String::from("0-a") => Position::NoteSlot, String::from("0-b") => Position::PostNoteSlot, String::from("0-c") => Position::NoteSlot}
+            hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PostNoteSlot, (0,String::from("c")) => Position::NoteSlot}
         );
     }
 
@@ -157,7 +163,7 @@ mod tests {
         let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Down);
         assert_eq!(
             result,
-            hashmap! {String::from("0-a") => Position::NoteSlot, String::from("0-b") => Position::PreNoteSlot, String::from("0-c") => Position::NoteSlot}
+            hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PreNoteSlot, (0,String::from("c")) => Position::NoteSlot}
         );
     }
 
@@ -167,7 +173,7 @@ mod tests {
         let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Up);
         assert_eq!(
             result,
-            hashmap! {String::from("0-a") => Position::NoteSlot, String::from("0-b") => Position::NoteSlot, String::from("0-c") => Position::PostNoteSlot}
+            hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::NoteSlot, (0,String::from("c")) => Position::PostNoteSlot}
         );
     }
 
@@ -177,7 +183,7 @@ mod tests {
         let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Down);
         assert_eq!(
             result,
-            hashmap! {String::from("0-a") => Position::NoteSlot, String::from("0-b") => Position::PreNoteSlot, String::from("0-c") => Position::NoteSlot}
+            hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PreNoteSlot, (0,String::from("c")) => Position::NoteSlot}
         );
     }
 }

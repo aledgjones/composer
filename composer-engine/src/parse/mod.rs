@@ -4,6 +4,7 @@ pub mod draw_names;
 pub mod draw_staves;
 pub mod draw_sub_brackets;
 pub mod draw_systemic_barline;
+pub mod get_accidentals;
 pub mod get_barlines;
 pub mod get_beams;
 pub mod get_note_positions;
@@ -25,6 +26,7 @@ use draw_names::draw_names;
 use draw_staves::draw_staves;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
+use get_accidentals::get_accidentals;
 use get_barlines::get_barlines;
 use get_beams::get_beams;
 use get_note_positions::get_note_positions;
@@ -96,8 +98,15 @@ impl Engine {
         let beams = get_beams(&notations, &barlines);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
         let note_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
+        let accidentals = get_accidentals(
+            flow,
+            &self.score.tracks,
+            &notations,
+            &barlines,
+            &tone_offsets,
+        );
 
-        // log(&format!("{:#?}", notations));
+        // log(&format!("{:#?}", accidentals));
 
         let content_width: Space = 40.0;
 

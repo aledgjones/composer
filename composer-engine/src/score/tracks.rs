@@ -4,13 +4,13 @@ use crate::utils::shortid;
 use std::collections::HashMap;
 
 pub type Tracks = HashMap<String, Track>;
-pub type TracksByTick = HashMap<Tick, Vec<String>>;
-pub type TracksByKey = HashMap<String, Entry>;
+pub type EntriesByTick = HashMap<Tick, Vec<String>>;
+pub type EntriesByKey = HashMap<String, Entry>;
 
 #[derive(Debug)]
 pub struct Entries {
-    pub by_tick: TracksByTick,
-    pub by_key: TracksByKey, // we can iterate the hashmap directly, so no order/by_key needed
+    pub by_tick: EntriesByTick,
+    pub by_key: EntriesByKey, // we can iterate the hashmap directly, so no order/by_key needed
 }
 
 #[derive(Debug)]

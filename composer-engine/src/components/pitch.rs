@@ -4,7 +4,7 @@ use wasm_bindgen::prelude::*;
 const C0: u8 = 12;
 
 #[wasm_bindgen]
-#[derive(Debug, Clone, Copy, Serialize)]
+#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq, Hash)]
 pub enum Accidental {
     DoubleSharp,
     Sharp,
@@ -37,7 +37,7 @@ impl Accidental {
 }
 
 #[wasm_bindgen]
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq, Hash)]
 pub struct Pitch {
     pub int: u8, // the midi number
     pub accidental: Accidental,
@@ -85,8 +85,8 @@ impl Pitch {
 
     /// Gets the base note letter for a pitch
     /// ie 61 (C#) -> C, 61 (D flat) -> D
-    pub fn letter(&self) -> &str {
-        match self.half_steps() {
+    pub fn letter(&self) -> String {
+        String::from(match self.half_steps() {
             0 => "C",
             2 => "D",
             4 => "E",
@@ -95,7 +95,7 @@ impl Pitch {
             9 => "A",
             11 => "B",
             _ => "",
-        }
+        })
     }
 
     pub fn octave(&self) -> u8 {

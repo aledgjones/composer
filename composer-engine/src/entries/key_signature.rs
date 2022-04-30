@@ -1,10 +1,74 @@
 use crate::components::measurements::{BoundingBox, PaddingSpaces};
 use crate::components::misc::Tick;
+use crate::components::pitch::{Accidental, Pitch};
 use crate::entries::Entry;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
 use crate::Engine;
+use std::collections::HashSet;
 use wasm_bindgen::prelude::*;
+
+const SHARPS: [Pitch; 7] = [
+    Pitch {
+        int: 66,
+        accidental: Accidental::Sharp,
+    },
+    Pitch {
+        int: 61,
+        accidental: Accidental::Sharp,
+    },
+    Pitch {
+        int: 68,
+        accidental: Accidental::Sharp,
+    },
+    Pitch {
+        int: 63,
+        accidental: Accidental::Sharp,
+    },
+    Pitch {
+        int: 70,
+        accidental: Accidental::Sharp,
+    },
+    Pitch {
+        int: 65,
+        accidental: Accidental::Sharp,
+    },
+    Pitch {
+        int: 72,
+        accidental: Accidental::Sharp,
+    },
+];
+
+const FLATS: [Pitch; 7] = [
+    Pitch {
+        int: 70,
+        accidental: Accidental::Flat,
+    },
+    Pitch {
+        int: 63,
+        accidental: Accidental::Flat,
+    },
+    Pitch {
+        int: 68,
+        accidental: Accidental::Flat,
+    },
+    Pitch {
+        int: 61,
+        accidental: Accidental::Flat,
+    },
+    Pitch {
+        int: 66,
+        accidental: Accidental::Flat,
+    },
+    Pitch {
+        int: 71,
+        accidental: Accidental::Flat,
+    },
+    Pitch {
+        int: 64,
+        accidental: Accidental::Flat,
+    },
+];
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
@@ -29,6 +93,24 @@ impl KeySignature {
             mode,
             offset,
         }
+    }
+
+    pub fn accidentals(&self) -> HashSet<&Pitch> {
+        let mut output = HashSet::new();
+
+        if self.offset > 0 {
+            for i in 0..self.offset.abs() {
+                output.insert(&SHARPS[i as usize]);
+            }
+        }
+
+        if self.offset < 0 {
+            for i in 0..self.offset.abs() {
+                output.insert(&FLATS[i as usize]);
+            }
+        }
+
+        output
     }
 
     pub fn metrics(&self) -> BoundingBox {
@@ -84,5 +166,56 @@ impl Track {
         }
 
         None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::components::pitch::Accidental;
+    use crate::components::pitch::Pitch;
+    use crate::entries::key_signature::KeySignature;
+    use crate::entries::key_signature::KeySignatureMode;
+    use std::collections::HashSet;
+
+    #[test]
+    fn accidentals_test_1() {
+        let key = KeySignature::new(0, KeySignatureMode::Major, 0);
+        assert_eq!(key.accidentals(), HashSet::new());
+    }
+
+    #[test]
+    fn accidentals_test_2() {
+        let key = KeySignature::new(0, KeySignatureMode::Major, 2);
+        assert_eq!(
+            key.accidentals(),
+            hashset! {
+                &Pitch {
+                    int: 66,
+                    accidental: Accidental::Sharp,
+                },
+                &Pitch {
+                    int: 61,
+                    accidental: Accidental::Sharp,
+                }
+            }
+        );
+    }
+
+    #[test]
+    fn accidentals_test_3() {
+        let key = KeySignature::new(0, KeySignatureMode::Major, -2);
+        assert_eq!(
+            key.accidentals(),
+            hashset! {
+                &Pitch {
+                    int: 70,
+                    accidental: Accidental::Flat,
+                },
+                &Pitch {
+                    int: 63,
+                    accidental: Accidental::Flat,
+                }
+            }
+        );
     }
 }

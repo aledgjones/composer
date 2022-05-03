@@ -71,17 +71,32 @@ impl Notation {
     }
 
     pub fn glyph(&self, subdivisions: Ticks) -> String {
-        match self.base_to_note_duration(subdivisions) {
-            Some(base) => match base {
-                NoteDuration::Whole => String::from("\u{E0A4}"),
-                NoteDuration::Half => String::from("\u{E0A3}"),
-                NoteDuration::Quarter => String::from("\u{E0A4}"),
-                NoteDuration::Eighth => String::from("\u{E0A4}"),
-                NoteDuration::Sixteenth => String::from("\u{E0A4}"),
-                NoteDuration::ThirtySecond => String::from("\u{E0A4}"),
-                NoteDuration::SixtyFourth => String::from("\u{E0A4}"),
-            },
-            None => String::from("\u{E0A4}"),
+        if self.is_rest() {
+            match self.base_to_note_duration(subdivisions) {
+                Some(base) => match base {
+                    NoteDuration::Whole => String::from("\u{E4E3}"),
+                    NoteDuration::Half => String::from("\u{E4E4}"),
+                    NoteDuration::Quarter => String::from("\u{E4E5}"),
+                    NoteDuration::Eighth => String::from("\u{E4E6}"),
+                    NoteDuration::Sixteenth => String::from("\u{E4E7}"),
+                    NoteDuration::ThirtySecond => String::from("\u{E4E8}"),
+                    NoteDuration::SixtyFourth => todo!(),
+                },
+                None => String::from("\u{E4E5}"),
+            }
+        } else {
+            match self.base_to_note_duration(subdivisions) {
+                Some(base) => match base {
+                    NoteDuration::Whole => String::from("\u{E0A4}"),
+                    NoteDuration::Half => String::from("\u{E0A3}"),
+                    NoteDuration::Quarter => String::from("\u{E0A4}"),
+                    NoteDuration::Eighth => String::from("\u{E0A4}"),
+                    NoteDuration::Sixteenth => String::from("\u{E0A4}"),
+                    NoteDuration::ThirtySecond => String::from("\u{E0A4}"),
+                    NoteDuration::SixtyFourth => String::from("\u{E0A4}"),
+                },
+                None => String::from("\u{E0A4}"),
+            }
         }
     }
 
@@ -124,9 +139,11 @@ impl Notation {
     ) -> f32 {
         let mut min_space = engraving.minimum_note_space;
 
+        let is_dotted = self.is_dotted(subdivisions);
+
         if self.has_tie() {
             min_space = engraving.minimum_tie_space;
-            if self.is_dotted(subdivisions) {
+            if is_dotted {
                 min_space += 1.0;
             }
         }
@@ -138,9 +155,8 @@ impl Notation {
 
         match self.base_to_note_duration(subdivisions) {
             Some(base) => {
-                log(&format!("{:?}", base));
-                let space =
-                    engraving.base_note_space * base.spacing_ratio(engraving.note_space_ratio);
+                let space = engraving.base_note_space
+                    * base.spacing_ratio(engraving.note_space_ratio, is_dotted);
                 if space > min_space {
                     space
                 } else {

@@ -4,6 +4,7 @@ pub mod draw_clefs;
 pub mod draw_key_signatures;
 pub mod draw_names;
 pub mod draw_noteheads;
+pub mod draw_rests;
 pub mod draw_staves;
 pub mod draw_sub_brackets;
 pub mod draw_systemic_barline;
@@ -31,6 +32,7 @@ use draw_clefs::draw_clefs;
 use draw_key_signatures::draw_key_signatures;
 use draw_names::draw_names;
 use draw_noteheads::draw_noteheads;
+use draw_rests::draw_rests;
 use draw_staves::draw_staves;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
@@ -219,6 +221,19 @@ impl Engine {
             &self.score.tracks,
             &vertical_spacing,
             &horizontal_spacing,
+            &converter,
+            &mut instructions,
+        );
+
+        draw_rests(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            flow,
+            &staves,
+            &notations,
+            &horizontal_spacing,
+            &vertical_spacing,
+            &barlines,
             &converter,
             &mut instructions,
         );

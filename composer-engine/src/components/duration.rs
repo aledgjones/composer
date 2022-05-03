@@ -55,8 +55,8 @@ impl NoteDuration {
         (self.to_quarters() * subdivisions as f32) as Ticks
     }
 
-    pub fn spacing_ratio(&self, ratio: f32) -> f32 {
-        match self {
+    pub fn spacing_ratio(&self, ratio: f32, is_dotted: bool) -> f32 {
+        let base = match self {
             NoteDuration::Whole => ratio * 2.0,
             NoteDuration::Half => ratio,
             NoteDuration::Quarter => 1.0,
@@ -65,6 +65,12 @@ impl NoteDuration {
             NoteDuration::ThirtySecond => 1.0 / (ratio * 4.0),
             NoteDuration::SixtyFourth => 1.0 / (ratio * 8.0),
             _ => 1.0,
+        };
+
+        if is_dotted {
+            base * 1.2
+        } else {
+            base
         }
     }
 

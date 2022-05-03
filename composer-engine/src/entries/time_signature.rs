@@ -15,7 +15,7 @@ pub enum TimeSignatureType {
 }
 
 #[wasm_bindgen]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TimeSignatureDrawType {
     Hidden,          // always hidden
     Normal,          // 4/4 etc
@@ -176,10 +176,27 @@ impl TimeSignature {
     }
 
     pub fn metrics(&self) -> BoundingBox {
-        BoundingBox {
-            width: 0.75,
-            height: 4.0,
-            padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+        if self.draw_type == TimeSignatureDrawType::Hidden {
+            return BoundingBox {
+                width: 0.0,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 0.0, 0.0, 0.0),
+            };
+        }
+
+        let is_wide = self.beats > 9 || self.beat_type.to_quarters() < 0.5;
+        if is_wide {
+            BoundingBox {
+                width: 3.0,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 2.0, 0.0, 0.0),
+            }
+        } else {
+            BoundingBox {
+                width: 1.7,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 2.0, 0.0, 0.0),
+            }
         }
     }
 }
@@ -231,8 +248,8 @@ impl Engine {
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_time_signature_at_tick(&self, tick: &Tick) -> Option<TimeSignature> {
-        let entry_keys = match self.entries.by_tick.get(&tick) {
+    pub fn get_time_signature_at_tick(&self, at: &Tick) -> Option<TimeSignature> {
+        let entry_keys = match self.entries.by_tick.get(at) {
             Some(entries) => entries,
             None => return None,
         };

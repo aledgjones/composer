@@ -1,6 +1,6 @@
 use super::get_barlines::Barlines;
 use super::get_written_durations::{Notation, NotationTrack};
-use super::{get_tone_offsets::ToneVerticalOffsets, get_written_durations::NotationTracks};
+use super::{get_tone_offsets::ToneVerticalOffsets, get_written_durations::NotationByTrack};
 use crate::components::misc::Tick;
 use crate::components::pitch::{Accidental, Pitch};
 use crate::entries::key_signature::{KeySignature, KeySignatureMode};
@@ -213,7 +213,7 @@ pub fn get_accidentals_in_track(
 pub fn get_accidentals(
     flow: &Flow,
     tracks: &Tracks,
-    notation: &NotationTracks,
+    notation: &NotationByTrack,
     barlines: &Barlines,
     tone_offsets: &ToneVerticalOffsets,
 ) -> Accidentals {

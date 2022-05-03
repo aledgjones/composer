@@ -7,7 +7,7 @@ use wasm_bindgen::prelude::*;
 
 use super::Entry;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
 #[wasm_bindgen]
 pub enum ClefDrawType {
     Hidden,

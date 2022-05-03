@@ -17,7 +17,7 @@ use std::iter::FromIterator;
 
 pub type Clusters<'a> = Vec<Cluster<'a>>;
 pub type Cluster<'a> = Vec<&'a Tone>;
-pub type NotationTracks = HashMap<String, NotationTrack>;
+pub type NotationByTrack = HashMap<String, NotationTrack>;
 
 #[derive(Debug, Clone)]
 pub struct Notation {
@@ -442,8 +442,8 @@ pub fn get_written_durations(
     flow_length: Ticks,
     tracks: &[&Track],
     barlines: &Barlines,
-) -> NotationTracks {
-    let mut entries = NotationTracks::new();
+) -> NotationByTrack {
+    let mut entries = NotationByTrack::new();
 
     for track in tracks {
         let notation = track.to_notation_track(flow_length, barlines);

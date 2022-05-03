@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::get_barlines::Barlines;
-use super::get_written_durations::{Notation, NotationTrack, NotationTracks};
+use super::get_written_durations::{Notation, NotationByTrack, NotationTrack};
 use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
 use crate::entries::time_signature::TimeSignature;
@@ -87,7 +87,7 @@ pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Barlines) -> Beam
     output
 }
 
-pub fn get_beams(tracks: &NotationTracks, barlines: &Barlines) -> BeamsByTrack {
+pub fn get_beams(tracks: &NotationByTrack, barlines: &Barlines) -> BeamsByTrack {
     let mut output: BeamsByTrack = HashMap::new();
 
     for (track_key, track) in tracks {

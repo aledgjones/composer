@@ -8,6 +8,21 @@ pub struct BoundingBox {
     pub padding: PaddingSpaces,
 }
 
+impl BoundingBox {
+    pub fn none() -> Self {
+        BoundingBox {
+            width: 0.0,
+            height: 0.0,
+            padding: PaddingSpaces {
+                top: 0.0,
+                right: 0.0,
+                bottom: 0.0,
+                left: 0.0,
+            },
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct PaddingSpaces {
     pub top: Space,

@@ -34,6 +34,16 @@ impl Accidental {
             Accidental::DoubleFlat => "${double-flat}",
         }
     }
+
+    pub fn to_glyph(&self) -> String {
+        match self {
+            Accidental::DoubleSharp => String::from("\u{E263}"),
+            Accidental::Sharp => String::from("\u{E262}"),
+            Accidental::Natural => String::from("\u{E261}"),
+            Accidental::Flat => String::from("\u{E260}"),
+            Accidental::DoubleFlat => String::from("\u{E264}"),
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -99,9 +109,8 @@ impl Pitch {
     }
 
     pub fn octave(&self) -> u8 {
-        const C0: f32 = 12.0;
-        let natural = self.base() as f32;
-        ((natural - C0) / 12.0).floor() as u8
+        let natural = self.base();
+        ((natural - C0) / 12) as u8
     }
 
     /// Get the scientific notation parts for the pitch in form (pitch: String, accidental: Accidental, octave: u8)

@@ -1,5 +1,6 @@
 pub mod draw_braces;
 pub mod draw_brackets;
+pub mod draw_key_signatures;
 pub mod draw_names;
 pub mod draw_staves;
 pub mod draw_sub_brackets;
@@ -13,6 +14,7 @@ pub mod get_tone_offsets;
 pub mod get_vertical_spans;
 pub mod get_written_durations;
 pub mod measure_brackets_and_braces;
+pub mod measure_horizontal_spacing;
 pub mod measure_instrument_names;
 pub mod measure_vertical_spacing;
 
@@ -22,6 +24,7 @@ use crate::score::engrave::LayoutType;
 use crate::Engine;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
+use draw_key_signatures::draw_key_signatures;
 use draw_names::draw_names;
 use draw_staves::draw_staves;
 use draw_sub_brackets::draw_sub_brackets;
@@ -36,6 +39,7 @@ use get_vertical_spans::get_vertical_spans;
 use get_written_durations::get_written_durations;
 use js_sys::Function;
 use measure_brackets_and_braces::measure_brackets;
+use measure_horizontal_spacing::measure_horizontal_spacing;
 use measure_instrument_names::measure_instrument_names;
 use measure_vertical_spacing::measure_vertical_spacing;
 use serde::Serialize;
@@ -97,7 +101,7 @@ impl Engine {
         // TDDO: all these rely on the written notation - can they be parralised?
         let beams = get_beams(&notations, &barlines);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
-        let note_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
+        let tone_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
         let accidentals = get_accidentals(
             flow,
             &self.score.tracks,
@@ -106,9 +110,18 @@ impl Engine {
             &tone_offsets,
         );
 
-        // log(&format!("{:#?}", accidentals));
-
-        let content_width: Space = 40.0;
+        let (horizontal_spacing, content_width) = measure_horizontal_spacing(
+            flow,
+            &staves,
+            &self.score.tracks,
+            &barlines,
+            &notations,
+            &tone_positions,
+            &beams,
+            &stem_directions,
+            &accidentals,
+            engrave,
+        );
 
         let width: Space = padding_left
             + name_widths
@@ -167,6 +180,18 @@ impl Engine {
             &padding_top,
             &content_width,
             &vertical_spacing,
+            &converter,
+            &mut instructions,
+        );
+
+        draw_key_signatures(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            flow,
+            &staves,
+            &self.score.tracks,
+            &vertical_spacing,
+            &horizontal_spacing,
             &converter,
             &mut instructions,
         );

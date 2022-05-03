@@ -4,8 +4,8 @@ use super::get_beams::BeamsByTrack;
 use super::get_tone_offsets::get_tone_offset_info;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::Notation;
+use super::get_written_durations::NotationByTrack;
 use super::get_written_durations::NotationTrack;
-use super::get_written_durations::NotationTracks;
 use crate::components::misc::Tick;
 use crate::entries::tone::Tone;
 use std::cmp::Ordering;
@@ -93,7 +93,7 @@ pub fn get_stem_directions_in_track(
 }
 
 pub fn get_stem_directions(
-    tracks: &NotationTracks,
+    tracks: &NotationByTrack,
     tone_offsets: &ToneVerticalOffsets,
     beams_by_track: &BeamsByTrack,
 ) -> StemDirectionsByTrack {

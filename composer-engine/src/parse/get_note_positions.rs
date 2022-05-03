@@ -1,12 +1,13 @@
 use super::get_stem_directions::{StemDirection, StemDirectionsByTrack};
 use super::get_tone_offsets::ToneVerticalOffsets;
-use super::get_written_durations::{Notation, NotationTracks};
+use super::get_written_durations::{Notation, NotationByTrack};
 use crate::components::misc::Tick;
 use std::collections::HashMap;
+use std::ops::{Index, IndexMut};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Hash, PartialEq, Eq)]
 pub enum Position {
-    PaddingStart,
+    PaddingStart = 0,
     EndRepeat,
     Clef,
     Barline,
@@ -21,7 +22,42 @@ pub enum Position {
     PaddingEnd,
 }
 
-type TonePositions = HashMap<(Tick, String), Position>;
+impl From<usize> for Position {
+    fn from(int: usize) -> Position {
+        match int {
+            0 => Position::PaddingStart,
+            1 => Position::EndRepeat,
+            2 => Position::Clef,
+            3 => Position::Barline,
+            4 => Position::KeySignature,
+            5 => Position::TimeSignature,
+            6 => Position::StartRepeat,
+            7 => Position::Accidentals,
+            8 => Position::PreNoteSlot,
+            9 => Position::NoteSlot,
+            10 => Position::PostNoteSlot,
+            11 => Position::NoteSpacing,
+            12 => Position::PaddingEnd,
+            _ => Position::PaddingStart,
+        }
+    }
+}
+
+impl Index<Position> for [f32] {
+    type Output = f32;
+
+    fn index(&self, position: Position) -> &Self::Output {
+        &self[position as usize]
+    }
+}
+
+impl IndexMut<Position> for [f32] {
+    fn index_mut(&mut self, position: Position) -> &mut f32 {
+        &mut self[position as usize]
+    }
+}
+
+pub type TonePositions = HashMap<(Tick, String), Position>;
 
 pub fn note_positions_in_chord(
     tick: &Tick,
@@ -61,7 +97,7 @@ pub fn note_positions_in_chord(
 }
 
 pub fn get_note_positions(
-    notation_by_track: &NotationTracks,
+    notation_by_track: &NotationByTrack,
     tone_offsets: &ToneVerticalOffsets,
     stem_directions_by_track: &StemDirectionsByTrack,
 ) -> TonePositions {

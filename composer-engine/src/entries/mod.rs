@@ -1,3 +1,4 @@
+pub mod barline;
 pub mod clef;
 pub mod key_signature;
 pub mod time_signature;
@@ -10,8 +11,11 @@ use tone::Tone;
 
 use crate::components::misc::Tick;
 
+use self::barline::Barline;
+
 #[derive(Debug, Clone)]
 pub enum Entry {
+    Barline(Barline),
     Clef(Clef),
     KeySignature(KeySignature),
     TimeSignature(TimeSignature),
@@ -22,6 +26,7 @@ impl Entry {
     /// Get the entries key without having to manually unwrap the entry
     pub fn key(&self) -> String {
         match self {
+            Entry::Barline(barline) => barline.key.clone(),
             Entry::Clef(clef) => clef.key.clone(),
             Entry::KeySignature(key_signature) => key_signature.key.clone(),
             Entry::TimeSignature(time_signature) => time_signature.key.clone(),
@@ -32,6 +37,7 @@ impl Entry {
     /// Get the entries tick without having to manually unwrap the entry
     pub fn tick(&self) -> Tick {
         match self {
+            Entry::Barline(barline) => barline.tick,
             Entry::Clef(clef) => clef.tick,
             Entry::KeySignature(key_signature) => key_signature.tick,
             Entry::TimeSignature(time_signature) => time_signature.tick,
@@ -45,6 +51,7 @@ impl Entry {
     /// Track interface.
     pub fn set_tick(&mut self, tick: Tick) {
         match self {
+            Entry::Barline(barline) => barline.tick = tick,
             Entry::Clef(clef) => clef.tick = tick,
             Entry::KeySignature(key_signature) => key_signature.tick = tick,
             Entry::TimeSignature(time_signature) => time_signature.tick = tick,

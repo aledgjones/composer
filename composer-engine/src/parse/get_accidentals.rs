@@ -32,6 +32,12 @@ impl Accidentals {
     }
 }
 
+impl Default for Accidentals {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub fn fits_in_slot(
     i: u8,
     accidental_offset: &i8,

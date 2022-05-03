@@ -47,6 +47,17 @@ export enum KeySignatureMode {
 }
 /**
 */
+export enum NoteDuration {
+  Whole,
+  Half,
+  Quarter,
+  Eighth,
+  Sixteenth,
+  ThirtySecond,
+  SixtyFourth,
+}
+/**
+*/
 export enum BracketingApproach {
   None,
   Orchestral,
@@ -68,14 +79,13 @@ export enum LayoutType {
 }
 /**
 */
-export enum NoteDuration {
-  Whole,
-  Half,
-  Quarter,
-  Eighth,
-  Sixteenth,
-  ThirtySecond,
-  SixtyFourth,
+export enum BarlineType {
+  Double,
+  EndRepeat,
+  EndStartRepeat,
+  Final,
+  Normal,
+  StartRepeat,
 }
 /**
 */
@@ -85,16 +95,6 @@ export enum Accidental {
   Natural,
   Flat,
   DoubleFlat,
-}
-/**
-*/
-export enum BarlineType {
-  Double,
-  EndRepeat,
-  EndStartRepeat,
-  Final,
-  Normal,
-  StartRepeat,
 }
 /**
 */
@@ -638,11 +638,6 @@ export interface InitOutput {
   readonly engine_set_note_space_ratio: (a: number, b: number, c: number, d: number) => void;
   readonly engine_get_space: (a: number, b: number, c: number) => number;
   readonly engine_set_space: (a: number, b: number, c: number, d: number) => void;
-  readonly __wbg_pitch_free: (a: number) => void;
-  readonly __wbg_get_pitch_int: (a: number) => number;
-  readonly __wbg_set_pitch_int: (a: number, b: number) => void;
-  readonly __wbg_get_pitch_accidental: (a: number) => number;
-  readonly __wbg_set_pitch_accidental: (a: number, b: number) => void;
   readonly engine_render: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly engine_application_version: (a: number, b: number) => void;
   readonly engine_set_application_version: (a: number, b: number, c: number) => void;
@@ -660,6 +655,11 @@ export interface InitOutput {
   readonly engine_set_copyright: (a: number, b: number, c: number) => void;
   readonly engine_created: (a: number) => number;
   readonly engine_set_created: (a: number, b: number) => void;
+  readonly __wbg_pitch_free: (a: number) => void;
+  readonly __wbg_get_pitch_int: (a: number) => number;
+  readonly __wbg_set_pitch_int: (a: number, b: number) => void;
+  readonly __wbg_get_pitch_accidental: (a: number) => number;
+  readonly __wbg_set_pitch_accidental: (a: number, b: number) => void;
   readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly __wbg_velocity_free: (a: number) => void;
   readonly get_full_path_from_partial: (a: number) => number;

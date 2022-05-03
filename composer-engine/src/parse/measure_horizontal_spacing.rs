@@ -24,7 +24,7 @@ pub fn measure_horizontal_spacing(
     staves: &[&Stave],
     tracks: &HashMap<String, Track>,
     barlines: &Barlines,
-    notation: &NotationByTrack,
+    notations: &NotationByTrack,
     tone_positions: &TonePositions,
     beams: &BeamsByTrack,
     stem_directions: &StemDirectionsByTrack,
@@ -69,9 +69,26 @@ pub fn measure_horizontal_spacing(
 
         for stave in staves {
             let stave_master = tracks.get(&stave.master).unwrap();
+
+            // CLEF
             if let Some(clef) = stave_master.get_clef_at_tick(&tick) {
                 let metrics = clef.metrics();
                 spacing[Position::Clef] = metrics.width + metrics.padding.right;
+            }
+
+            for track_key in &stave.tracks {
+                let notation = notations.get(track_key).unwrap();
+                if let Some(entry) = notation.track.get(&tick) {
+                    let notehead_width: Space = 1.175;
+                    if entry.is_rest() {
+                        spacing[Position::NoteSlot] = notehead_width;
+                    } else {
+                        for tone in &entry.tones {
+                            let position = tone_positions.get(&(tick, tone.key.clone())).unwrap();
+                            spacing[position.clone()] = notehead_width;
+                        }
+                    }
+                };
             }
         }
     }

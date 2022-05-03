@@ -258,6 +258,9 @@ export const ClefDrawType = Object.freeze({ Hidden:0,"0":"Hidden",G:1,"1":"G",F:
 export const KeySignatureMode = Object.freeze({ Major:0,"0":"Major",Minor:1,"1":"Minor", });
 /**
 */
+export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond",SixtyFourth:6,"6":"SixtyFourth", });
+/**
+*/
 export const BracketingApproach = Object.freeze({ None:0,"0":"None",Orchestral:1,"1":"Orchestral",SmallEnsemble:2,"2":"SmallEnsemble", });
 /**
 */
@@ -267,13 +270,10 @@ export const BracketStyle = Object.freeze({ None:0,"0":"None",Wing:1,"1":"Wing",
 export const LayoutType = Object.freeze({ Score:0,"0":"Score",Part:1,"1":"Part",Custom:2,"2":"Custom", });
 /**
 */
-export const NoteDuration = Object.freeze({ Whole:0,"0":"Whole",Half:1,"1":"Half",Quarter:2,"2":"Quarter",Eighth:3,"3":"Eighth",Sixteenth:4,"4":"Sixteenth",ThirtySecond:5,"5":"ThirtySecond",SixtyFourth:6,"6":"SixtyFourth", });
+export const BarlineType = Object.freeze({ Double:0,"0":"Double",EndRepeat:1,"1":"EndRepeat",EndStartRepeat:2,"2":"EndStartRepeat",Final:3,"3":"Final",Normal:4,"4":"Normal",StartRepeat:5,"5":"StartRepeat", });
 /**
 */
 export const Accidental = Object.freeze({ DoubleSharp:0,"0":"DoubleSharp",Sharp:1,"1":"Sharp",Natural:2,"2":"Natural",Flat:3,"3":"Flat",DoubleFlat:4,"4":"DoubleFlat", });
-/**
-*/
-export const BarlineType = Object.freeze({ Double:0,"0":"Double",EndRepeat:1,"1":"EndRepeat",EndStartRepeat:2,"2":"EndStartRepeat",Final:3,"3":"Final",Normal:4,"4":"Normal",StartRepeat:5,"5":"StartRepeat", });
 /**
 */
 export const TimeSignatureDrawType = Object.freeze({ Hidden:0,"0":"Hidden",Regular:1,"1":"Regular",CommonTime:2,"2":"CommonTime",SplitCommonTime:3,"3":"SplitCommonTime",Open:4,"4":"Open", });

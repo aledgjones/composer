@@ -37,11 +37,28 @@ impl Clef {
         }
     }
 
-    fn metrics(&self) -> BoundingBox {
-        BoundingBox {
-            width: 2.8,
-            height: 4.0,
-            padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+    pub fn glyph(&self) -> Option<String> {
+        match self.draw_as {
+            ClefDrawType::Hidden => None,
+            ClefDrawType::G => Some(String::from("\u{E050}")),
+            ClefDrawType::F => Some(String::from("\u{E062}")),
+            ClefDrawType::C => Some(String::from("\u{E05C}")),
+            ClefDrawType::Percussion => Some(String::from("\u{E069}")),
+        }
+    }
+
+    pub fn metrics(&self) -> BoundingBox {
+        match self.draw_as {
+            ClefDrawType::Hidden => BoundingBox {
+                width: 0.0,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 0.0, 0.0, 0.0),
+            },
+            _ => BoundingBox {
+                width: 2.8,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+            },
         }
     }
 }

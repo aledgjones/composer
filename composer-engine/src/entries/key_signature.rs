@@ -1,3 +1,4 @@
+use super::clef::{Clef, ClefDrawType};
 use crate::components::measurements::{BoundingBox, PaddingSpaces};
 use crate::components::misc::Tick;
 use crate::components::pitch::{Accidental, Pitch};
@@ -8,8 +9,6 @@ use crate::Engine;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use wasm_bindgen::prelude::*;
-
-use super::clef::{Clef, ClefDrawType};
 
 const SHARPS: [Pitch; 7] = [
     Pitch {
@@ -130,7 +129,7 @@ impl KeySignature {
     pub fn pattern(&self, clef: &Clef) -> Option<[i8; 7]> {
         match clef.draw_as {
             ClefDrawType::C => match clef.offset {
-                2 => match self.offset.cmp(&0) {
+                -2 => match self.offset.cmp(&0) {
                     Ordering::Greater => Some([2, -2, 1, -3, 0, -4, -1]),
                     Ordering::Less => Some([-1, -4, 0, -3, 1, -2, 2]),
                     Ordering::Equal => None,
@@ -143,7 +142,7 @@ impl KeySignature {
                 _ => None,
             },
             ClefDrawType::F => match clef.offset {
-                2 => match self.offset.cmp(&0) {
+                -2 => match self.offset.cmp(&0) {
                     Ordering::Greater => Some([-2, 1, -3, 0, 3, -1, 2]),
                     Ordering::Less => Some([2, -1, 3, 0, 4, 1, 5]),
                     Ordering::Equal => None,
@@ -151,7 +150,7 @@ impl KeySignature {
                 _ => None,
             },
             ClefDrawType::G => match clef.offset {
-                -2 => match self.offset.cmp(&0) {
+                2 => match self.offset.cmp(&0) {
                     Ordering::Greater => Some([-4, -1, -5, -2, 1, -3, 0]),
                     Ordering::Less => Some([0, -3, 1, -2, 2, -1, 3]),
                     Ordering::Equal => None,

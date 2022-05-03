@@ -5,6 +5,7 @@ use super::tracks::Track;
 use crate::components::duration::NoteDuration;
 use crate::components::misc::Ticks;
 use crate::entries::clef::Clef;
+use crate::entries::key_signature::{KeySignature, KeySignatureMode};
 use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
 use crate::entries::Entry;
 use crate::utils::shortid;
@@ -46,7 +47,7 @@ impl Flow {
             key: shortid(),
             title: String::from(""),
             players: HashSet::new(),
-            length: 16 * 4, // 4 * 4/4
+            length: 16 * 4 * 4, // 4 * 4/4
 
             master: master.key.clone(),
             staves: HashMap::new(),
@@ -113,8 +114,14 @@ impl Engine {
             0,
             4,
             NoteDuration::Quarter,
-            TimeSignatureDrawType::Normal,
+            TimeSignatureDrawType::Regular,
             None,
+        )));
+
+        master.insert(Entry::KeySignature(KeySignature::new(
+            0,
+            KeySignatureMode::Major,
+            -3,
         )));
 
         self.score.tracks.insert(master.key.clone(), master);

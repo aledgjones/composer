@@ -18,10 +18,10 @@ pub enum TimeSignatureType {
 #[derive(Debug, Clone, PartialEq)]
 pub enum TimeSignatureDrawType {
     Hidden,          // always hidden
-    Normal,          // 4/4 etc
-    CommonTime,      // 'C'
-    SplitCommonTime, // '¢'
-    Open,
+    Regular,         // 4/4 etc
+    CommonTime,      // C
+    SplitCommonTime, // ¢
+    Open,            // X
 }
 
 #[derive(Debug, Clone)]

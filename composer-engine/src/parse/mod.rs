@@ -1,10 +1,12 @@
 pub mod draw_braces;
 pub mod draw_brackets;
+pub mod draw_clefs;
 pub mod draw_key_signatures;
 pub mod draw_names;
 pub mod draw_staves;
 pub mod draw_sub_brackets;
 pub mod draw_systemic_barline;
+pub mod draw_time_signatures;
 pub mod get_accidentals;
 pub mod get_barlines;
 pub mod get_beams;
@@ -24,11 +26,13 @@ use crate::score::engrave::LayoutType;
 use crate::Engine;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
+use draw_clefs::draw_clefs;
 use draw_key_signatures::draw_key_signatures;
 use draw_names::draw_names;
 use draw_staves::draw_staves;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
+use draw_time_signatures::draw_time_signatures;
 use get_accidentals::get_accidentals;
 use get_barlines::get_barlines;
 use get_beams::get_beams;
@@ -185,6 +189,28 @@ impl Engine {
         );
 
         draw_key_signatures(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            flow,
+            &staves,
+            &self.score.tracks,
+            &vertical_spacing,
+            &horizontal_spacing,
+            &converter,
+            &mut instructions,
+        );
+        draw_time_signatures(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            flow,
+            &staves,
+            &self.score.tracks,
+            &vertical_spacing,
+            &horizontal_spacing,
+            &converter,
+            &mut instructions,
+        );
+        draw_clefs(
             &(padding_left + name_widths + instrument_name_gap + bracket_widths),
             &padding_top,
             flow,

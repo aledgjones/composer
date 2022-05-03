@@ -47,7 +47,7 @@ lazy_static! {
                 short_name: "B. Tbn.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/bass-trombone/natural.json"
@@ -64,7 +64,7 @@ lazy_static! {
                 short_name: "F Hn.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/horn/natural.json",
@@ -85,7 +85,7 @@ lazy_static! {
                 short_name: "Tbn.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/trombone/natural.json",
@@ -104,7 +104,7 @@ lazy_static! {
                 short_name: "B${flat} Tpt.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/trumpet/natural.json",
@@ -125,7 +125,7 @@ lazy_static! {
                 short_name: "C Tpt.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/trumpet/natural.json",
@@ -146,7 +146,7 @@ lazy_static! {
                 short_name: "Tba.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/tuba/natural.json",
@@ -165,7 +165,7 @@ lazy_static! {
                 short_name: "A. Gtr.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/acoustic-guitar/natural.json",
@@ -182,7 +182,7 @@ lazy_static! {
                 short_name: "B. Gtr.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/bass-guitar/natural.json",
@@ -199,7 +199,7 @@ lazy_static! {
                 short_name: "Gtr.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/distortion-guitar/natural.json",
@@ -284,7 +284,7 @@ lazy_static! {
                 short_name: "Glock.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/glockenspiel/natural.json"
@@ -302,11 +302,11 @@ lazy_static! {
                 staves: vec![
                     StaveDef {
                         lines: vec![1, 1, 1, 1, 1],
-                        clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                        clef: Clef::new(0, 67, 2, ClefDrawType::G),
                     },
                     StaveDef {
                         lines: vec![1, 1, 1, 1, 1],
-                        clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                        clef: Clef::new(0, 53, -2, ClefDrawType::F),
                     },
                 ],
                 solo_patches: hashmap! {
@@ -325,11 +325,11 @@ lazy_static! {
                 staves: vec![
                     StaveDef {
                         lines: vec![1, 1, 1, 1, 1],
-                        clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                        clef: Clef::new(0, 67, 2, ClefDrawType::G),
                     },
                     StaveDef {
                         lines: vec![1, 1, 1, 1, 1],
-                        clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                        clef: Clef::new(0, 53, -2, ClefDrawType::F),
                     },
                 ],
                 solo_patches: hashmap! {
@@ -347,7 +347,7 @@ lazy_static! {
                 short_name: "Timp.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/timpani/natural.json",
@@ -366,7 +366,7 @@ lazy_static! {
                 short_name: "Vib.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/vibraphone/natural.json"
@@ -383,7 +383,7 @@ lazy_static! {
                 short_name: "Xyl.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 79, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 79, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/xylophone/natural.json"
@@ -401,11 +401,11 @@ lazy_static! {
                 staves: vec![
                     StaveDef {
                         lines: vec![1, 1, 1, 1, 1],
-                        clef: Clef::new(0, 79, -2, ClefDrawType::G),
+                        clef: Clef::new(0, 79, 2, ClefDrawType::G),
                     },
                     StaveDef {
                         lines: vec![1, 1, 1, 1, 1],
-                        clef: Clef::new(0, 65, 2, ClefDrawType::F),
+                        clef: Clef::new(0, 65, -2, ClefDrawType::F),
                     },
                 ],
                 solo_patches: hashmap! {
@@ -424,11 +424,11 @@ lazy_static! {
                 staves: vec![
                     StaveDef {
                         lines: vec![1, 1, 1, 1, 1],
-                        clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                        clef: Clef::new(0, 67, 2, ClefDrawType::G),
                     },
                     StaveDef {
                         lines: vec![1, 1, 1, 1, 1],
-                        clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                        clef: Clef::new(0, 53, -2, ClefDrawType::F),
                     },
                 ],
                 solo_patches: hashmap! {
@@ -446,7 +446,7 @@ lazy_static! {
                 short_name: "Cb.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 41, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 41, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/contrabass/natural.json",
@@ -488,7 +488,7 @@ lazy_static! {
                 short_name: "Vln.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/violin/natural.json",
@@ -511,7 +511,7 @@ lazy_static! {
                 short_name: "Vc.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/violoncello/natural.json",
@@ -532,7 +532,7 @@ lazy_static! {
                 short_name: "A. Fl.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/alto-flute/natural.json",
@@ -549,7 +549,7 @@ lazy_static! {
                 short_name: "A. Sax.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/alto-saxophone/natural.json",
@@ -568,7 +568,7 @@ lazy_static! {
                 short_name: "Bsn.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/bassoon/natural.json",
@@ -587,7 +587,7 @@ lazy_static! {
                 short_name: "B. Cl.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 53, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/bass-clarinet/natural.json",
@@ -606,7 +606,7 @@ lazy_static! {
                 short_name: "A Cl.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/clarinet/natural.json",
@@ -625,7 +625,7 @@ lazy_static! {
                 short_name: "B${flat} Cl.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/clarinet/natural.json",
@@ -644,7 +644,7 @@ lazy_static! {
                 short_name: "Cbsn.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 53, 2, ClefDrawType::F),
+                    clef: Clef::new(0, 53, -2, ClefDrawType::F),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/contrabassoon/natural.json"
@@ -661,7 +661,7 @@ lazy_static! {
                 short_name: "E Hn.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/cor-anglais/natural.json",
@@ -680,7 +680,7 @@ lazy_static! {
                 short_name: "Fl.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/flute/natural.json",
@@ -699,7 +699,7 @@ lazy_static! {
                 short_name: "Ob.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 67, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 67, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/oboe/natural.json",
@@ -718,7 +718,7 @@ lazy_static! {
                 short_name: "Pc.",
                 staves: vec![StaveDef {
                     lines: vec![1, 1, 1, 1, 1],
-                    clef: Clef::new(0, 79, -2, ClefDrawType::G),
+                    clef: Clef::new(0, 79, 2, ClefDrawType::G),
                 }],
                 solo_patches: hashmap! {
                     Expression::Natural => "/patches/piccolo/natural.json",

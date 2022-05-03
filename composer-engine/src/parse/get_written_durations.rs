@@ -277,7 +277,7 @@ impl NotationTrack {
                     time_signature.tick,
                     4,
                     time_signature.beat_type.half(),
-                    TimeSignatureDrawType::Normal,
+                    TimeSignatureDrawType::Regular,
                     None,
                 ),
                 original_time_signature,
@@ -319,7 +319,7 @@ impl NotationTrack {
                     time_signature.tick,
                     4,
                     time_signature.beat_type.half().half(),
-                    TimeSignatureDrawType::Normal,
+                    TimeSignatureDrawType::Regular,
                     None,
                 );
 
@@ -341,7 +341,7 @@ impl NotationTrack {
                     time_signature.tick,
                     4,
                     time_signature.beat_type.half(),
-                    TimeSignatureDrawType::Normal,
+                    TimeSignatureDrawType::Regular,
                     None,
                 );
 

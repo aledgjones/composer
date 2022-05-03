@@ -28,7 +28,7 @@ pub fn get_tone_offsets(
                 for stave_key in &stave.tracks {
                     let track = tracks.get(stave_key).unwrap();
                     for tone in track.get_tones_at_tick(&tick) {
-                        let offset = Pitch::steps_between(&clef.pitch, &tone.pitch) + clef.offset;
+                        let offset = Pitch::steps_between(&tone.pitch, &clef.pitch) + clef.offset;
                         output.insert(tone.key.clone(), offset);
                     }
                 }
@@ -45,49 +45,109 @@ pub fn get_tone_offset_info(tones: &[Tone], tone_offsets: &ToneVerticalOffsets) 
         return (0, 0, 0);
     }
 
-    let mut minimum: Option<i8> = None;
-    let mut maximum: Option<i8> = None;
+    let mut highest: Option<i8> = None;
+    let mut lowest: Option<i8> = None;
 
     for tone in tones {
         let offset = *tone_offsets.get(&tone.key).unwrap();
-        match minimum {
+        match highest {
             Some(value) => {
                 if offset < value {
-                    minimum = Some(offset)
+                    highest = Some(offset)
                 }
             }
-            None => minimum = Some(offset),
+            None => highest = Some(offset),
         };
-        match maximum {
+        match lowest {
             Some(value) => {
                 if offset > value {
-                    maximum = Some(offset)
+                    lowest = Some(offset)
                 }
             }
-            None => maximum = Some(offset),
+            None => lowest = Some(offset),
         };
     }
 
-    let min = minimum.unwrap();
-    let max = maximum.unwrap();
+    let highest = highest.unwrap();
+    let lowest = lowest.unwrap();
 
-    let furthest = if max.abs() > min.abs() { max } else { min };
+    let furthest = if lowest.abs() > highest.abs() {
+        lowest
+    } else {
+        highest
+    };
 
-    (min, max, furthest)
+    (highest, lowest, furthest)
 }
 
 #[cfg(test)]
 mod tests {
     use super::get_tone_offset_info;
+    use super::get_tone_offsets;
     use super::ToneVerticalOffsets;
     use crate::components::articulation::Articulation;
     use crate::components::pitch::Pitch;
     use crate::components::velocity::Velocity;
+    use crate::entries::clef::Clef;
+    use crate::entries::clef::ClefDrawType;
     use crate::entries::tone::Tone;
+    use crate::entries::Entry;
     use crate::parse::get_written_durations::Notation;
+    use crate::score::instruments::defs::StaveDef;
+    use crate::score::stave::Stave;
+    use crate::score::tracks::Track;
     use std::collections::{HashMap, HashSet};
 
-    fn run(tones: Vec<(&str, i8)>) -> (i8, i8, i8) {
+    fn run_get_tone_offsets(clef: Clef, tone: (&str, u8)) -> ToneVerticalOffsets {
+        let mut track = Track::new();
+        track.insert(Entry::Tone(Tone::new(
+            String::from(tone.0),
+            0,
+            16,
+            Pitch::from_int(tone.1),
+            Velocity::new(100),
+            Articulation::None,
+        )));
+
+        let mut master = Track::new();
+        master.insert(Entry::Clef(clef.clone()));
+
+        let mut stave = Stave::new(
+            String::from("a"),
+            &StaveDef {
+                lines: vec![1, 1, 1, 1, 1],
+                clef,
+            },
+            &master,
+        );
+        stave.tracks.push(track.key.clone());
+
+        get_tone_offsets(
+            16,
+            &[&stave],
+            &hashmap! {track.key.clone() => track, master.key.clone() => master},
+        )
+    }
+
+    #[test]
+    fn get_tone_offsets_test_1() {
+        let result = run_get_tone_offsets(Clef::new(0, 60, 0, ClefDrawType::C), ("a", 60));
+        assert_eq!(result, hashmap! {String::from("a") => 0});
+    }
+
+    #[test]
+    fn get_tone_offsets_test_2() {
+        let result = run_get_tone_offsets(Clef::new(0, 60, 0, ClefDrawType::C), ("a", 64));
+        assert_eq!(result, hashmap! {String::from("a") => -2});
+    }
+
+    #[test]
+    fn get_tone_offsets_test_3() {
+        let result = run_get_tone_offsets(Clef::new(0, 60, 0, ClefDrawType::C), ("a", 57));
+        assert_eq!(result, hashmap! {String::from("a") => 2});
+    }
+
+    fn run_get_tone_offset_info(tones: Vec<(&str, i8)>) -> (i8, i8, i8) {
         let mut notation = Notation {
             tones: Vec::new(),
             duration: 0,
@@ -112,75 +172,75 @@ mod tests {
 
     #[test]
     fn empty() {
-        let result = run(Vec::new());
+        let result = run_get_tone_offset_info(Vec::new());
         assert_eq!(result, (0, 0, 0));
     }
 
     #[test]
     /// middle of stave
     fn single_tone_1() {
-        let result = run(vec![("a", 0)]);
+        let result = run_get_tone_offset_info(vec![("a", 0)]);
         assert_eq!(result, (0, 0, 0));
     }
 
     #[test]
     /// above middle
     fn single_tone_2() {
-        let result = run(vec![("a", 2)]);
+        let result = run_get_tone_offset_info(vec![("a", 2)]);
         assert_eq!(result, (2, 2, 2));
     }
 
     #[test]
     /// below middle
     fn single_tone_3() {
-        let result = run(vec![("a", -2)]);
+        let result = run_get_tone_offset_info(vec![("a", -2)]);
         assert_eq!(result, (-2, -2, -2));
     }
 
     #[test]
     /// same pitch - middle
     fn multi_tone_1() {
-        let result = run(vec![("a", 0), ("b", 0)]);
+        let result = run_get_tone_offset_info(vec![("a", 0), ("b", 0)]);
         assert_eq!(result, (0, 0, 0));
     }
 
     #[test]
     /// same pitch - high
     fn multi_tone_2() {
-        let result = run(vec![("a", 2), ("b", 2)]);
+        let result = run_get_tone_offset_info(vec![("a", 2), ("b", 2)]);
         assert_eq!(result, (2, 2, 2));
     }
 
     #[test]
     /// same pitch - low
     fn multi_tone_3() {
-        let result = run(vec![("a", -2), ("b", -2)]);
+        let result = run_get_tone_offset_info(vec![("a", -2), ("b", -2)]);
         assert_eq!(result, (-2, -2, -2));
     }
 
     #[test]
     /// same pitch - even spread
     fn multi_tone_4() {
-        let result = run(vec![("a", 2), ("b", -2)]);
+        let result = run_get_tone_offset_info(vec![("a", 2), ("b", -2)]);
         assert_eq!(result, (-2, 2, -2));
     }
 
     #[test]
     /// same pitch - even spread
     fn multi_tone_5() {
-        let result = run(vec![("a", -2), ("b", 2)]);
+        let result = run_get_tone_offset_info(vec![("a", -2), ("b", 2)]);
         assert_eq!(result, (-2, 2, -2));
     }
 
     #[test]
     fn multi_tone_6() {
-        let result = run(vec![("a", 1), ("b", -2), ("c", -1)]);
+        let result = run_get_tone_offset_info(vec![("a", 1), ("b", -2), ("c", -1)]);
         assert_eq!(result, (-2, 1, -2));
     }
 
     #[test]
     fn multi_tone_7() {
-        let result = run(vec![("a", -1), ("b", 2), ("c", 1)]);
+        let result = run_get_tone_offset_info(vec![("a", -1), ("b", 2), ("c", 1)]);
         assert_eq!(result, (-1, 2, 2));
     }
 }

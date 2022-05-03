@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use super::get_accidentals::Accidentals;
 use super::get_note_positions::{Position, TonePositions};
 use super::get_stem_directions::StemDirectionsByTrack;
@@ -8,11 +6,11 @@ use super::{get_barlines::Barlines, get_beams::BeamsByTrack};
 use crate::components::measurements::BoundingBox;
 use crate::components::misc::Tick;
 use crate::components::units::Space;
-use crate::entries::barline::{Barline, BarlineType};
 use crate::score::engrave::Engrave;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 use crate::score::tracks::Track;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Spacing {
@@ -49,12 +47,6 @@ pub fn measure_horizontal_spacing(
         let key_signature = flow_master.get_key_signature_at_tick(&tick);
         let barline = flow_master.get_barline_at_tick(&tick);
 
-        // TIME SIGNATURE
-        if let Some(time) = time_signature {
-            let metrics = time.metrics();
-            spacing[Position::TimeSignature] = metrics.width + metrics.padding.right;
-        };
-
         // KEY SIGNATURE
         if let Some(key) = key_signature.clone() {
             let metrics = if key.offset == 0 {
@@ -68,6 +60,20 @@ pub fn measure_horizontal_spacing(
             };
             spacing[Position::KeySignature] = metrics.width + metrics.padding.right;
         };
+
+        // TIME SIGNATURE
+        if let Some(time) = time_signature {
+            let metrics = time.metrics();
+            spacing[Position::TimeSignature] = metrics.width + metrics.padding.right;
+        };
+
+        for stave in staves {
+            let stave_master = tracks.get(&stave.master).unwrap();
+            if let Some(clef) = stave_master.get_clef_at_tick(&tick) {
+                let metrics = clef.metrics();
+                spacing[Position::Clef] = metrics.width + metrics.padding.right;
+            }
+        }
     }
 
     // assign the spacing to hashmap for easy lookup & accumulate widths to get x positions

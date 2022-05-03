@@ -1,9 +1,8 @@
-use std::cmp::Ordering;
-
 use super::get_note_positions::Position;
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
+use crate::components::pitch::Accidental;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::entries::clef::{Clef, ClefDrawType};
@@ -11,7 +10,6 @@ use crate::entries::key_signature::KeySignature;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 use crate::score::tracks::Tracks;
-use crate::utils::log;
 
 fn draw_key_signature(
     x: f32,
@@ -20,8 +18,13 @@ fn draw_key_signature(
     key_signature: &KeySignature,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
+    negate: bool,
 ) {
-    let glyph = key_signature.glyph();
+    let glyph = if negate {
+        Accidental::Natural.to_glyph()
+    } else {
+        key_signature.glyph()
+    };
     if let Some(pattern) = key_signature.pattern(clef) {
         for i in 0..key_signature.offset.abs() {
             instructions.push(Instruction::Text(Text {
@@ -53,21 +56,37 @@ pub fn draw_key_signatures(
 
     for stave in staves {
         let stave_master = tracks.get(&stave.master).unwrap();
+        let top = vertical_spacing.staves.get(&stave.key).unwrap();
         let mut clef = Clef::new(0, 60, 0, ClefDrawType::C);
 
         for tick in 0..flow.length {
-            let key_signature = flow_master.get_key_signature_at_tick(&tick);
             if let Some(found) = stave_master.get_clef_at_tick(&tick) {
                 clef = found;
             };
 
-            if let Some(key) = key_signature {
-                let top = vertical_spacing.staves.get(&stave.key).unwrap();
+            if let Some(key_signature) = flow_master.get_key_signature_at_tick(&tick) {
+                let is_offset_zero = key_signature.offset == 0;
                 let left = horizontal_spacing
                     .get(&(tick, Position::KeySignature))
                     .unwrap();
 
-                draw_key_signature(x + left.x, y + top.y, &clef, &key, converter, instructions)
+                let key_signature = if is_offset_zero {
+                    flow_master.get_key_signature_before_tick(tick)
+                } else {
+                    Some(key_signature)
+                };
+
+                if let Some(time_signature) = key_signature {
+                    draw_key_signature(
+                        x + left.x,
+                        y + top.y,
+                        &clef,
+                        &time_signature,
+                        converter,
+                        instructions,
+                        is_offset_zero,
+                    )
+                }
             }
         }
     }

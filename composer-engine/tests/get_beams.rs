@@ -22,7 +22,7 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
         0,
         time_signature.0,
         time_signature.1,
-        TimeSignatureDrawType::Normal,
+        TimeSignatureDrawType::Regular,
         None,
     )));
 

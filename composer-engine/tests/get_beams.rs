@@ -9,8 +9,10 @@ use composer_engine::entries::Entry;
 use composer_engine::parse::get_barlines::get_barlines;
 use composer_engine::parse::get_beams::get_beams_in_track;
 use composer_engine::parse::get_beams::Beams;
+use composer_engine::score::flows::Flow;
 use composer_engine::score::tracks::Track;
 use composer_engine::utils::shortid;
+use maplit::hashmap;
 
 const QUARTER: u32 = 16;
 const EIGHTH: u32 = 8;
@@ -38,9 +40,12 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
         )));
     }
 
-    let barlines = get_barlines(length, &master);
-    let notation = track.to_notation_track(length, &barlines);
-    get_beams_in_track(&notation, &barlines)
+    let mut flow = Flow::new(&master);
+    flow.length = length;
+
+    let barlines = get_barlines(&flow, &hashmap! {flow.master.clone() => master});
+    let notation = track.to_notation_track(flow.length, &barlines, flow.subdivisions);
+    get_beams_in_track(&notation, &barlines, flow.subdivisions)
 }
 
 #[test]

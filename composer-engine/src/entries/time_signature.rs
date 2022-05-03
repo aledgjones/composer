@@ -32,7 +32,6 @@ pub struct TimeSignature {
     pub beat_type: NoteDuration,
     pub draw_type: TimeSignatureDrawType,
     pub groupings: Vec<u8>,
-    pub subdivisions: u8,
 }
 
 impl TimeSignature {
@@ -53,7 +52,6 @@ impl TimeSignature {
                 None => TimeSignature::default_groupings(beats),
             },
             draw_type,
-            subdivisions: 16,
         }
     }
 
@@ -109,49 +107,54 @@ impl TimeSignature {
     }
 
     /// Get the number of ticks per the time signatures bar
-    pub fn ticks_per_bar(&self) -> Ticks {
-        self.ticks_per_beat() * self.beats as u32
+    pub fn ticks_per_bar(&self, subdivisions: Ticks) -> Ticks {
+        self.ticks_per_beat(subdivisions) * self.beats as u32
     }
 
     /// Get the number of ticks per the time signatures beat type
-    pub fn ticks_per_beat(&self) -> Ticks {
-        self.beat_type.to_ticks(self.subdivisions)
+    pub fn ticks_per_beat(&self, subdivisions: Ticks) -> Ticks {
+        self.beat_type.to_ticks(subdivisions)
     }
 
     /// Returns how far away the tick is from the nearest barline
-    pub fn distance_from_barline(&self, tick: Tick) -> Ticks {
+    pub fn distance_from_barline(&self, tick: Tick, subdivisions: Ticks) -> Ticks {
         match self.kind() {
             TimeSignatureType::Open => tick - self.tick,
-            _ => (tick - self.tick) % self.ticks_per_bar(),
+            _ => (tick - self.tick) % self.ticks_per_bar(subdivisions),
         }
     }
 
     // Returns true if the tick is on a beat
-    pub fn is_on_beat(&self, tick: Tick) -> bool {
-        self.is_on_beat_type(tick, &self.beat_type)
+    pub fn is_on_beat(&self, tick: Tick, subdivisions: Ticks) -> bool {
+        self.is_on_beat_type(tick, &self.beat_type, subdivisions)
     }
 
     /// Return true if a tick is on an arbitrary beat type
-    pub fn is_on_beat_type(&self, tick: Tick, beat_type: &NoteDuration) -> bool {
-        let ticks_per_beat = beat_type.to_ticks(self.subdivisions);
+    pub fn is_on_beat_type(
+        &self,
+        tick: Tick,
+        beat_type: &NoteDuration,
+        subdivisions: Ticks,
+    ) -> bool {
+        let ticks_per_beat = beat_type.to_ticks(subdivisions);
         ((tick - self.tick) % ticks_per_beat) == 0
     }
 
-    pub fn is_on_first_beat(&self, tick: Tick) -> bool {
-        self.distance_from_barline(tick) == 0
+    pub fn is_on_first_beat(&self, tick: Tick, subdivisions: Ticks) -> bool {
+        self.distance_from_barline(tick, subdivisions) == 0
     }
 
-    pub fn get_tick_at_beat(&self, start: &Tick, beat: u8) -> Tick {
-        start + (((beat - 1) as Tick) * self.ticks_per_beat())
+    pub fn get_tick_at_beat(&self, start: &Tick, beat: u8, subdivisions: Ticks) -> Tick {
+        start + (((beat - 1) as Tick) * self.ticks_per_beat(subdivisions))
     }
 
     // Returns true is the tick is on a beat group boundry
-    pub fn is_on_grouping_boundry(&self, tick: Tick) -> bool {
+    pub fn is_on_grouping_boundry(&self, tick: Tick, subdivisions: Ticks) -> bool {
         match self.kind() {
             TimeSignatureType::Open => false,
             _ => {
-                let start = tick - self.distance_from_barline(tick);
-                for boundry in self.groupings_to_ticks(&start) {
+                let start = tick - self.distance_from_barline(tick, subdivisions);
+                for boundry in self.groupings_to_ticks(&start, subdivisions) {
                     if boundry == tick {
                         return true;
                     } else {
@@ -163,12 +166,12 @@ impl TimeSignature {
         }
     }
 
-    pub fn groupings_to_ticks(&self, start: &Tick) -> Vec<Tick> {
+    pub fn groupings_to_ticks(&self, start: &Tick, subdivisions: Ticks) -> Vec<Tick> {
         let mut output = vec![*start];
 
         let mut acc = *start;
         for group in &self.groupings {
-            acc += *group as u32 * self.ticks_per_beat();
+            acc += *group as u32 * self.ticks_per_beat(subdivisions);
             output.push(acc);
         }
 
@@ -222,7 +225,7 @@ impl Engine {
 
         // insert the new time signature
         let new = TimeSignature::new(tick, beats, beat_type, draw_type, groupings);
-        let ticks_per_bar = new.ticks_per_bar();
+        let ticks_per_bar = new.ticks_per_bar(flow.subdivisions);
         master.insert(Entry::TimeSignature(new));
 
         // calculate diff

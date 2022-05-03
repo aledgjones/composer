@@ -1,12 +1,17 @@
 use super::get_barlines::Barlines;
+use super::get_beams::Beams;
+use super::get_stem_directions::StemDirection;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use crate::components::duration::is_writable;
+use crate::components::duration::NoteDuration;
 use crate::components::duration::NOTE_DURATIONS;
 use crate::components::misc::Tick;
 use crate::components::misc::Ticks;
 use crate::entries::time_signature::TimeSignature;
 use crate::entries::time_signature::TimeSignatureDrawType;
 use crate::entries::tone::Tone;
+use crate::score::engrave::Engrave;
+use crate::score::flows::Flow;
 use crate::score::tracks::Track;
 use crate::utils::log;
 use std::collections::{HashMap, HashSet};
@@ -31,7 +36,7 @@ impl Notation {
         self.tones.is_empty()
     }
 
-    pub fn longest_written_duration(&self, subdivisions: u8) -> Ticks {
+    pub fn longest_written_duration(&self, subdivisions: Ticks) -> Ticks {
         for option in NOTE_DURATIONS {
             let ticks = option.to_ticks(subdivisions);
             if ticks < self.duration {
@@ -43,7 +48,7 @@ impl Notation {
     }
 
     // gets base duration from a possibly dotted duration
-    pub fn base_duration(&self, subdivisions: u8) -> Option<Ticks> {
+    pub fn base_to_ticks(&self, subdivisions: Ticks) -> Option<Ticks> {
         if is_writable(self.duration, subdivisions) {
             // original duration is directly writable
             Some(self.duration)
@@ -58,8 +63,92 @@ impl Notation {
         }
     }
 
-    pub fn is_writable(&self, subdivisions: u8) -> bool {
-        self.base_duration(subdivisions).is_some()
+    pub fn base_to_note_duration(&self, subdivisions: Ticks) -> Option<NoteDuration> {
+        match self.base_to_ticks(subdivisions) {
+            Some(base) => NoteDuration::from_ticks(&base, subdivisions),
+            None => None,
+        }
+    }
+
+    pub fn glyph(&self, subdivisions: Ticks) -> String {
+        match self.base_to_note_duration(subdivisions) {
+            Some(base) => match base {
+                NoteDuration::Whole => String::from("\u{E0A4}"),
+                NoteDuration::Half => String::from("\u{E0A3}"),
+                NoteDuration::Quarter => String::from("\u{E0A4}"),
+                NoteDuration::Eighth => String::from("\u{E0A4}"),
+                NoteDuration::Sixteenth => String::from("\u{E0A4}"),
+                NoteDuration::ThirtySecond => String::from("\u{E0A4}"),
+                NoteDuration::SixtyFourth => String::from("\u{E0A4}"),
+            },
+            None => String::from("\u{E0A4}"),
+        }
+    }
+
+    pub fn is_writable(&self, subdivisions: Ticks) -> bool {
+        self.base_to_ticks(subdivisions).is_some()
+    }
+
+    pub fn is_dotted(&self, subdivisions: Ticks) -> bool {
+        if is_writable(self.duration, subdivisions) {
+            false
+        } else {
+            let base_duration = (self.duration as f32 / 3.0) * 2.0;
+            base_duration.fract() == 0.0 && is_writable(base_duration as u32, subdivisions)
+        }
+    }
+
+    pub fn has_beam(&self, at: &Tick, beams: &Beams) -> bool {
+        for beam in beams {
+            for tick in beam {
+                if tick == at {
+                    return true;
+                }
+            }
+        }
+
+        false
+    }
+
+    pub fn has_tie(&self) -> bool {
+        !self.ties.is_empty()
+    }
+
+    pub fn spacing(
+        &self,
+        tick: &Tick,
+        engraving: &Engrave,
+        subdivisions: Ticks,
+        stem_direction: &Option<&StemDirection>,
+        beams: &Beams,
+    ) -> f32 {
+        let mut min_space = engraving.minimum_note_space;
+
+        if self.has_tie() {
+            min_space = engraving.minimum_tie_space;
+            if self.is_dotted(subdivisions) {
+                min_space += 1.0;
+            }
+        }
+
+        // TODO: work out why this is needed!
+        // if stem_direction == &StemDirection::Up && !self.has_beam(tick, beams) {
+        //     min_width += 1.0;
+        // };
+
+        match self.base_to_note_duration(subdivisions) {
+            Some(base) => {
+                log(&format!("{:?}", base));
+                let space =
+                    engraving.base_note_space * base.spacing_ratio(engraving.note_space_ratio);
+                if space > min_space {
+                    space
+                } else {
+                    min_space
+                }
+            }
+            None => min_space,
+        }
     }
 
     /// creates a new vec of sort tones by offset -- ascending *pitch*
@@ -194,10 +283,15 @@ impl NotationTrack {
     }
 
     // [qhq] patterns dont't split middle
-    pub fn is_qhq_pattern(&self, start: &Tick, time_signature: &TimeSignature) -> bool {
+    pub fn is_qhq_pattern(
+        &self,
+        start: &Tick,
+        time_signature: &TimeSignature,
+        subdivisions: Ticks,
+    ) -> bool {
         let beat_one = *start;
-        let beat_two = time_signature.get_tick_at_beat(start, 2);
-        let beat_four = time_signature.get_tick_at_beat(start, 4);
+        let beat_two = time_signature.get_tick_at_beat(start, 2, subdivisions);
+        let beat_four = time_signature.get_tick_at_beat(start, 4, subdivisions);
 
         !self.is_tick_empty(&beat_one)
             && !self.is_tick_empty(&beat_two)
@@ -209,10 +303,15 @@ impl NotationTrack {
     }
 
     /// [qm.] patterns don't split middle
-    pub fn is_qmdot_pattern(&self, start: &Tick, time_signature: &TimeSignature) -> bool {
+    pub fn is_qmdot_pattern(
+        &self,
+        start: &Tick,
+        time_signature: &TimeSignature,
+        subdivisions: Ticks,
+    ) -> bool {
         let beat_one = *start;
-        let beat_two = time_signature.get_tick_at_beat(start, 2);
-        let end = start + time_signature.ticks_per_bar();
+        let beat_two = time_signature.get_tick_at_beat(start, 2, subdivisions);
+        let end = start + time_signature.ticks_per_bar(subdivisions);
 
         !self.is_tick_empty(&beat_one)
             && !self.is_tick_empty(&beat_two)
@@ -227,11 +326,12 @@ impl NotationTrack {
         start: &Tick,
         time_signature: &TimeSignature,
         original_time_signature: &TimeSignature,
+        subdivisions: Ticks,
     ) -> bool {
         let beat_one = *start;
-        let beat_four = time_signature.get_tick_at_beat(start, 4);
+        let beat_four = time_signature.get_tick_at_beat(start, 4, subdivisions);
 
-        let middle = start + (time_signature.ticks_per_bar() / 2);
+        let middle = start + (time_signature.ticks_per_bar(subdivisions) / 2);
 
         let is_pattern = !self.is_tick_empty(&beat_one)
             && !self.is_tick_empty(&beat_four)
@@ -243,12 +343,14 @@ impl NotationTrack {
             && self.is_tick_rest(&beat_four)
             && match self.track.get(&beat_one) {
                 Some(entry) => {
-                    entry.duration != (original_time_signature.ticks_per_beat() as f32 * 1.5) as u32
+                    entry.duration
+                        != (original_time_signature.ticks_per_beat(subdivisions) as f32 * 1.5)
+                            as u32
                 }
                 None => false,
             };
 
-        let intersect_beat = original_time_signature.is_on_beat(middle);
+        let intersect_beat = original_time_signature.is_on_beat(middle, subdivisions);
 
         is_pattern && (are_both_notes || is_allowed_with_rest || !intersect_beat)
     }
@@ -259,8 +361,9 @@ impl NotationTrack {
         start: &u32,
         time_signature: &TimeSignature,
         original_time_signature: &TimeSignature,
+        subdivisions: Ticks,
     ) {
-        let stop = start + time_signature.ticks_per_bar();
+        let stop = start + time_signature.ticks_per_bar(subdivisions);
 
         // self.debug(*start, stop);
 
@@ -281,14 +384,15 @@ impl NotationTrack {
                     None,
                 ),
                 original_time_signature,
+                subdivisions,
             );
         }
 
         match time_signature.beats {
             3 => {
                 let beat_one = *start;
-                let beat_two = time_signature.get_tick_at_beat(start, 2);
-                let beat_three = time_signature.get_tick_at_beat(start, 3);
+                let beat_two = time_signature.get_tick_at_beat(start, 2, subdivisions);
+                let beat_three = time_signature.get_tick_at_beat(start, 3, subdivisions);
 
                 // split all rests at beats
                 for beat in [beat_one, beat_two, beat_three] {
@@ -300,7 +404,7 @@ impl NotationTrack {
                 }
 
                 // make sure it doesn't look compound! (c. at end of bar)
-                let middle = start + (time_signature.ticks_per_bar() / 2);
+                let middle = start + (time_signature.ticks_per_bar(subdivisions) / 2);
                 if !self.is_tick_empty(&middle) && self.is_range_empty(&middle, &stop) {
                     self.split(beat_three);
                 };
@@ -323,16 +427,21 @@ impl NotationTrack {
                     None,
                 );
 
-                self.split_unit(&beat_one, &next, original_time_signature);
-                self.split_unit(&beat_two, &next, original_time_signature);
-                self.split_unit(&beat_three, &next, original_time_signature);
+                self.split_unit(&beat_one, &next, original_time_signature, subdivisions);
+                self.split_unit(&beat_two, &next, original_time_signature, subdivisions);
+                self.split_unit(&beat_three, &next, original_time_signature, subdivisions);
             }
             4 => {
-                let middle = start + (time_signature.ticks_per_bar() / 2);
+                let middle = start + (time_signature.ticks_per_bar(subdivisions) / 2);
 
-                if !self.is_qhq_pattern(start, time_signature)
-                    && !self.is_qmdot_pattern(start, time_signature)
-                    && !self.is_mdotq_pattern(start, time_signature, original_time_signature)
+                if !self.is_qhq_pattern(start, time_signature, subdivisions)
+                    && !self.is_qmdot_pattern(start, time_signature, subdivisions)
+                    && !self.is_mdotq_pattern(
+                        start,
+                        time_signature,
+                        original_time_signature,
+                        subdivisions,
+                    )
                 {
                     self.split(middle);
                 }
@@ -345,16 +454,16 @@ impl NotationTrack {
                     None,
                 );
 
-                self.split_unit(start, &next, original_time_signature);
-                self.split_unit(&middle, &next, original_time_signature);
+                self.split_unit(start, &next, original_time_signature, subdivisions);
+                self.split_unit(&middle, &next, original_time_signature, subdivisions);
             }
             _ => (),
         }
     }
 
-    pub fn split_as_per_meter(&mut self, barlines: &Barlines) {
+    pub fn split_as_per_meter(&mut self, barlines: &Barlines, subdivisions: Ticks) {
         for (tick, time_signature) in barlines {
-            self.split_unit(tick, time_signature, time_signature);
+            self.split_unit(tick, time_signature, time_signature, subdivisions);
         }
     }
 
@@ -377,12 +486,12 @@ impl NotationTrack {
         }
     }
 
-    pub fn split_unwritable(&mut self, barlines: &Barlines) {
+    pub fn split_unwritable(&mut self, barlines: &Barlines, subdivisions: Ticks) {
         for (i, time) in barlines {
-            for tick in *i..*i + time.ticks_per_bar() {
+            for tick in *i..*i + time.ticks_per_bar(subdivisions) {
                 if let Some(entry) = self.track.get(&tick) {
-                    if !entry.is_rest() && !entry.is_writable(time.subdivisions) {
-                        let longest = entry.longest_written_duration(time.subdivisions);
+                    if !entry.is_rest() && !entry.is_writable(subdivisions) {
+                        let longest = entry.longest_written_duration(subdivisions);
                         self.split(tick + longest);
                     }
                 };
@@ -391,8 +500,6 @@ impl NotationTrack {
     }
 
     pub fn debug(&self, start: Tick, stop: Tick) {
-        log(&format!("{:?}", self));
-
         let mut annotation = String::new();
         for i in 0..stop {
             if i >= start && i < stop {
@@ -439,14 +546,14 @@ impl Debug for NotationTrack {
 }
 
 pub fn get_written_durations(
-    flow_length: Ticks,
+    flow: &Flow,
     tracks: &[&Track],
     barlines: &Barlines,
 ) -> NotationByTrack {
     let mut entries = NotationByTrack::new();
 
     for track in tracks {
-        let notation = track.to_notation_track(flow_length, barlines);
+        let notation = track.to_notation_track(flow.length, barlines, flow.subdivisions);
         entries.insert(track.key.clone(), notation);
     }
 
@@ -454,12 +561,17 @@ pub fn get_written_durations(
 }
 
 impl Track {
-    pub fn to_notation_track(&self, flow_length: Ticks, barlines: &Barlines) -> NotationTrack {
+    pub fn to_notation_track(
+        &self,
+        flow_length: Ticks,
+        barlines: &Barlines,
+        subdivisions: Ticks,
+    ) -> NotationTrack {
         let mut notation = NotationTrack::new(flow_length);
         notation.split_at_tone_events(self);
         notation.split_measures(barlines);
-        notation.split_as_per_meter(barlines);
-        notation.split_unwritable(barlines);
+        notation.split_as_per_meter(barlines, subdivisions);
+        notation.split_unwritable(barlines, subdivisions);
         notation
     }
 }

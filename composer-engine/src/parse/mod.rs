@@ -3,6 +3,7 @@ pub mod draw_brackets;
 pub mod draw_clefs;
 pub mod draw_key_signatures;
 pub mod draw_names;
+pub mod draw_noteheads;
 pub mod draw_staves;
 pub mod draw_sub_brackets;
 pub mod draw_systemic_barline;
@@ -29,6 +30,7 @@ use draw_brackets::draw_brackets;
 use draw_clefs::draw_clefs;
 use draw_key_signatures::draw_key_signatures;
 use draw_names::draw_names;
+use draw_noteheads::draw_noteheads;
 use draw_staves::draw_staves;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
@@ -90,20 +92,19 @@ impl Engine {
         let instrument_name_gap: Space = engrave.instrument_name.padding.right;
 
         let (flow, instruments, staves, tracks) = self.get_flow_instruments(flow_key);
-        let flow_master = self.score.tracks.get(&flow.master).unwrap();
 
         // TODO: all these are indipendant -- can they be parralised?
         let vertical_spans = get_vertical_spans(&instruments, engrave);
         let vertical_spacing = measure_vertical_spacing(&instruments, &flow.staves, engrave);
         let name_widths = measure_instrument_names(&instruments, engrave, &converter, measure);
         let bracket_widths = measure_brackets(&vertical_spacing, &vertical_spans, engrave);
-        let barlines = get_barlines(flow.length, flow_master);
+        let barlines = get_barlines(flow, &self.score.tracks);
         let tone_offsets = get_tone_offsets(flow.length, &staves, &self.score.tracks);
 
-        let notations = get_written_durations(flow.length, &tracks, &barlines);
+        let notations = get_written_durations(flow, &tracks, &barlines);
 
         // TDDO: all these rely on the written notation - can they be parralised?
-        let beams = get_beams(&notations, &barlines);
+        let beams = get_beams(&notations, &barlines, flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
         let tone_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
         let accidentals = get_accidentals(
@@ -218,6 +219,20 @@ impl Engine {
             &self.score.tracks,
             &vertical_spacing,
             &horizontal_spacing,
+            &converter,
+            &mut instructions,
+        );
+
+        draw_noteheads(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            flow,
+            &staves,
+            &notations,
+            &horizontal_spacing,
+            &vertical_spacing,
+            &tone_offsets,
+            &tone_positions,
             &converter,
             &mut instructions,
         );

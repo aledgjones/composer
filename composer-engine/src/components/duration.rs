@@ -24,6 +24,21 @@ pub enum NoteDuration {
 }
 
 impl NoteDuration {
+    /// convert ticks to NoteDuration. this may fail so wrap in option
+    pub fn from_ticks(ticks: &Ticks, subdivisions: Ticks) -> Option<NoteDuration> {
+        let quarters = *ticks as f32 / subdivisions as f32;
+        match quarters {
+            4.0 => Some(NoteDuration::Whole),
+            2.0 => Some(NoteDuration::Half),
+            1.0 => Some(NoteDuration::Quarter),
+            0.5 => Some(NoteDuration::Eighth),
+            0.25 => Some(NoteDuration::Sixteenth),
+            0.125 => Some(NoteDuration::ThirtySecond),
+            0.0625 => Some(NoteDuration::SixtyFourth),
+            _ => None,
+        }
+    }
+
     pub fn to_quarters(&self) -> f32 {
         match self {
             NoteDuration::Whole => 4.0,
@@ -36,8 +51,21 @@ impl NoteDuration {
         }
     }
 
-    pub fn to_ticks(&self, subdivisions: u8) -> Ticks {
+    pub fn to_ticks(&self, subdivisions: Ticks) -> Ticks {
         (self.to_quarters() * subdivisions as f32) as Ticks
+    }
+
+    pub fn spacing_ratio(&self, ratio: f32) -> f32 {
+        match self {
+            NoteDuration::Whole => ratio * 2.0,
+            NoteDuration::Half => ratio,
+            NoteDuration::Quarter => 1.0,
+            NoteDuration::Eighth => 1.0 / ratio,
+            NoteDuration::Sixteenth => 1.0 / (ratio * 2.0),
+            NoteDuration::ThirtySecond => 1.0 / (ratio * 4.0),
+            NoteDuration::SixtyFourth => 1.0 / (ratio * 8.0),
+            _ => 1.0,
+        }
     }
 
     pub fn to_glyph(&self) -> &str {
@@ -77,7 +105,7 @@ impl NoteDuration {
     }
 }
 
-pub fn is_writable(duration: Ticks, subdivisions: u8) -> bool {
+pub fn is_writable(duration: Ticks, subdivisions: Ticks) -> bool {
     let quarters = duration as f32 / subdivisions as f32;
     for option in NOTE_DURATIONS {
         if quarters == option.to_quarters() {

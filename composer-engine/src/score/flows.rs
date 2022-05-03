@@ -36,6 +36,7 @@ pub struct Flow {
     pub title: String,
     pub players: HashSet<String>, // purely for inclusion lookup -- order comes from score.players.order
     pub length: Ticks,            // number of subdivision ticks in the flow
+    pub subdivisions: Ticks,
 
     pub master: String,
     pub staves: HashMap<String, Stave>,
@@ -48,6 +49,7 @@ impl Flow {
             title: String::from(""),
             players: HashSet::new(),
             length: 16 * 4 * 4, // 4 * 4/4
+            subdivisions: 16,
 
             master: master.key.clone(),
             staves: HashMap::new(),
@@ -290,6 +292,8 @@ impl Engine {
         let flow = self.score.flows.by_key.get(flow_key).unwrap();
         let master = self.score.tracks.get(&flow.master).unwrap();
 
+        let tick_width = QUARTER_WIDTH / flow.subdivisions as f32;
+
         let mut time_signature: TimeSignature = TimeSignature::default();
 
         for tick in 0..flow.length {
@@ -297,15 +301,17 @@ impl Engine {
                 time_signature = entry;
             }
 
-            let tick_width = QUARTER_WIDTH / time_signature.subdivisions as f32;
-
             output.list.push(Tick {
                 x: output.width,
                 width: tick_width,
-                first: time_signature.is_on_first_beat(tick),
-                beat: time_signature.is_on_beat(tick),
-                sub_beat: time_signature.is_on_beat_type(tick, &time_signature.beat_type.half()),
-                boundry: time_signature.is_on_grouping_boundry(tick),
+                first: time_signature.is_on_first_beat(tick, flow.subdivisions),
+                beat: time_signature.is_on_beat(tick, flow.subdivisions),
+                sub_beat: time_signature.is_on_beat_type(
+                    tick,
+                    &time_signature.beat_type.half(),
+                    flow.subdivisions,
+                ),
+                boundry: time_signature.is_on_grouping_boundry(tick, flow.subdivisions),
             });
 
             output.width += tick_width;

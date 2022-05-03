@@ -3,7 +3,7 @@ use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
 use crate::components::misc::Tick;
 use std::collections::HashMap;
-use std::ops::{Index, IndexMut};
+use std::ops::{Add, Index, IndexMut};
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
 pub enum Position {
@@ -20,6 +20,14 @@ pub enum Position {
     PostNoteSlot,
     NoteSpacing,
     PaddingEnd,
+}
+
+impl Add<Position> for usize {
+    type Output = usize;
+
+    fn add(self, other: Position) -> usize {
+        self + other as usize
+    }
 }
 
 impl From<usize> for Position {

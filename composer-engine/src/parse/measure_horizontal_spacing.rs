@@ -24,28 +24,26 @@ pub fn measure_horizontal_spacing(
     staves: &[&Stave],
     tracks: &HashMap<String, Track>,
     barlines: &Barlines,
-    notations: &NotationByTrack,
+    notations_by_track: &NotationByTrack,
     tone_positions: &TonePositions,
-    beams: &BeamsByTrack,
-    stem_directions: &StemDirectionsByTrack,
+    beams_by_track: &BeamsByTrack,
+    stem_directions_by_track: &StemDirectionsByTrack,
     accidentals: &Accidentals,
     engraving: &Engrave,
 ) -> (HorizontalSpacing, f32) {
     let mut widths: Vec<f32> = vec![0.0; (flow.length * 13) as usize];
-
     for tick in 0..flow.length {
-        let slice_start = (tick * 13) as usize;
-        let spacing = &mut widths[slice_start..slice_start + 13];
+        let start = (tick * 13) as usize;
 
         if tick == 0 {
-            spacing[Position::PaddingStart] = 1.0;
+            widths[start + Position::PaddingStart] = 1.0;
         }
 
         let flow_master = tracks.get(&flow.master).unwrap();
 
-        let time_signature = flow_master.get_time_signature_at_tick(&tick);
         let key_signature = flow_master.get_key_signature_at_tick(&tick);
-        let barline = flow_master.get_barline_at_tick(&tick);
+        // TODO: barline spacing
+        // let barline = flow_master.get_barline_at_tick(&tick);
 
         // KEY SIGNATURE
         if let Some(key) = key_signature.clone() {
@@ -58,13 +56,20 @@ pub fn measure_horizontal_spacing(
             } else {
                 key.metrics()
             };
-            spacing[Position::KeySignature] = metrics.width + metrics.padding.right;
+            widths[start + Position::KeySignature] = metrics.width + metrics.padding.right;
         };
 
         // TIME SIGNATURE
-        if let Some(time) = time_signature {
+        if let Some(time) = flow_master.get_time_signature_at_tick(&tick) {
             let metrics = time.metrics();
-            spacing[Position::TimeSignature] = metrics.width + metrics.padding.right;
+            widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
+        };
+
+        // ACCIDENTALS
+        if let Some(slots) = accidentals.slots_by_tick.get(&tick) {
+            if slots > &0 {
+                widths[start + Position::Accidentals] = ((*slots as f32) * 1.1) + 0.2;
+            }
         };
 
         for stave in staves {
@@ -73,19 +78,38 @@ pub fn measure_horizontal_spacing(
             // CLEF
             if let Some(clef) = stave_master.get_clef_at_tick(&tick) {
                 let metrics = clef.metrics();
-                spacing[Position::Clef] = metrics.width + metrics.padding.right;
+                widths[start + Position::Clef] = metrics.width + metrics.padding.right;
             }
 
             for track_key in &stave.tracks {
-                let notation = notations.get(track_key).unwrap();
+                let notation = notations_by_track.get(track_key).unwrap();
                 if let Some(entry) = notation.track.get(&tick) {
                     let notehead_width: Space = 1.175;
+
                     if entry.is_rest() {
-                        spacing[Position::NoteSlot] = notehead_width;
+                        // rests are always at the not slot position
+                        widths[start + Position::NoteSlot] = notehead_width;
                     } else {
                         for tone in &entry.tones {
+                            // notes can be shunted, we need to set the width at the right position for each tone
                             let position = tone_positions.get(&(tick, tone.key.clone())).unwrap();
-                            spacing[position.clone()] = notehead_width;
+                            widths[start + position.clone()] = notehead_width;
+                        }
+                    }
+
+                    let beams = beams_by_track.get(track_key).unwrap();
+                    let stem_directions = stem_directions_by_track.get(track_key).unwrap();
+                    let stem_direction = stem_directions.get(&tick);
+
+                    let note_spacing =
+                        entry.spacing(&tick, engraving, flow.subdivisions, &stem_direction, beams);
+
+                    let note_spacing_per_tick = note_spacing / entry.duration as f32;
+                    let end = tick + entry.duration;
+                    for i in tick..end {
+                        let start = (i * 13) as usize;
+                        if note_spacing_per_tick > widths[start + Position::NoteSpacing] {
+                            widths[start + Position::NoteSpacing] = note_spacing_per_tick;
                         }
                     }
                 };

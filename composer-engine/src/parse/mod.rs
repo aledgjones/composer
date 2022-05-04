@@ -97,7 +97,6 @@ impl Engine {
 
         let (flow, instruments, staves, tracks) = self.get_flow_instruments(flow_key);
 
-        // TODO: all these are indipendant -- can they be parralised?
         let vertical_spans = get_vertical_spans(&instruments, engrave);
         let vertical_spacing = measure_vertical_spacing(&instruments, &flow.staves, engrave);
         let name_widths = measure_instrument_names(&instruments, engrave, &converter, measure);
@@ -107,7 +106,6 @@ impl Engine {
 
         let notations = get_written_durations(flow, &tracks, &barlines);
 
-        // TDDO: all these rely on the written notation - can they be parralised?
         let beams = get_beams(&notations, &barlines, flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
         let tone_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);

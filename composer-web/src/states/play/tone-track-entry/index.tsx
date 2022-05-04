@@ -8,7 +8,7 @@ import { store } from "../../../data";
 
 import "./styles.css";
 
-// TODO: write a should render function: is ticks in view?
+// TODO: write a should render function: is ticks in view along x axis?
 function shouldDraw(pitch: number, base: number, slots: number) {
   if (pitch > base) {
     return false;

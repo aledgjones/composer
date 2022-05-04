@@ -1,4 +1,4 @@
-use super::get_barlines::Barlines;
+use super::get_bars::Bars;
 use super::get_note_positions::Position;
 use super::get_written_durations::Notation;
 use super::get_written_durations::NotationByTrack;
@@ -76,7 +76,7 @@ pub fn draw_rests(
     notation_by_track: &NotationByTrack,
     horizontal_spacing: &HorizontalSpacing,
     vertical_spacing: &VerticalSpacing,
-    barlines: &Barlines,
+    bars: &Bars,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -89,8 +89,8 @@ pub fn draw_rests(
 
             for (tick, entry) in &notation.track {
                 if entry.is_rest() {
-                    let is_full_bar = barlines.contains_key(tick)
-                        && (barlines.contains_key(&(tick + entry.duration))
+                    let is_full_bar = bars.contains_key(tick)
+                        && (bars.contains_key(&(tick + entry.duration))
                             || tick + entry.duration == flow.length);
 
                     draw_rest(

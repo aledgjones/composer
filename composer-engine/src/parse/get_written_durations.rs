@@ -1,4 +1,4 @@
-use super::get_barlines::Barlines;
+use super::get_bars::Bars;
 use super::get_beams::Beams;
 use super::get_stem_directions::StemDirection;
 use super::get_tone_offsets::ToneVerticalOffsets;
@@ -479,13 +479,13 @@ impl NotationTrack {
         }
     }
 
-    pub fn split_as_per_meter(&mut self, barlines: &Barlines, subdivisions: Ticks) {
+    pub fn split_as_per_meter(&mut self, barlines: &Bars, subdivisions: Ticks) {
         for (tick, time_signature) in barlines {
             self.split_unit(tick, time_signature, time_signature, subdivisions);
         }
     }
 
-    pub fn split_measures(&mut self, barlines: &Barlines) {
+    pub fn split_measures(&mut self, barlines: &Bars) {
         for tick in barlines.keys() {
             self.split(*tick);
         }
@@ -504,7 +504,7 @@ impl NotationTrack {
         }
     }
 
-    pub fn split_unwritable(&mut self, barlines: &Barlines, subdivisions: Ticks) {
+    pub fn split_unwritable(&mut self, barlines: &Bars, subdivisions: Ticks) {
         for (i, time) in barlines {
             for tick in *i..*i + time.ticks_per_bar(subdivisions) {
                 if let Some(entry) = self.track.get(&tick) {
@@ -563,15 +563,11 @@ impl Debug for NotationTrack {
     }
 }
 
-pub fn get_written_durations(
-    flow: &Flow,
-    tracks: &[&Track],
-    barlines: &Barlines,
-) -> NotationByTrack {
+pub fn get_written_durations(flow: &Flow, tracks: &[&Track], bars: &Bars) -> NotationByTrack {
     let mut entries = NotationByTrack::new();
 
     for track in tracks {
-        let notation = track.to_notation_track(flow.length, barlines, flow.subdivisions);
+        let notation = track.to_notation_track(flow.length, bars, flow.subdivisions);
         entries.insert(track.key.clone(), notation);
     }
 
@@ -582,7 +578,7 @@ impl Track {
     pub fn to_notation_track(
         &self,
         flow_length: Ticks,
-        barlines: &Barlines,
+        barlines: &Bars,
         subdivisions: Ticks,
     ) -> NotationTrack {
         let mut notation = NotationTrack::new(flow_length);

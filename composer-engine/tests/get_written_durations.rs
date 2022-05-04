@@ -5,7 +5,7 @@ use composer_engine::components::velocity::Velocity;
 use composer_engine::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
 use composer_engine::entries::tone::Tone;
 use composer_engine::entries::Entry;
-use composer_engine::parse::get_barlines::get_barlines;
+use composer_engine::parse::get_bars::get_bars;
 use composer_engine::parse::get_written_durations::NotationTrack;
 use composer_engine::score::flows::Flow;
 use composer_engine::score::tracks::Track;
@@ -41,7 +41,7 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
     let mut flow = Flow::new(&master);
     flow.length = length;
 
-    let barlines = get_barlines(&flow, &hashmap! {flow.master.clone() => master});
+    let barlines = get_bars(&flow, &hashmap! {flow.master.clone() => master});
     track.to_notation_track(length, &barlines, flow.subdivisions)
 }
 

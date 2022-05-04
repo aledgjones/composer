@@ -1,8 +1,8 @@
 use super::get_accidentals::Accidentals;
+use super::get_beams::BeamsByTrack;
 use super::get_note_positions::{Position, TonePositions};
 use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_written_durations::NotationByTrack;
-use super::{get_barlines::Barlines, get_beams::BeamsByTrack};
 use crate::components::measurements::BoundingBox;
 use crate::components::misc::Tick;
 use crate::components::units::Space;
@@ -36,11 +36,16 @@ impl HorizontalSpacing {
     }
 }
 
+impl Default for HorizontalSpacing {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub fn measure_horizontal_spacing(
     flow: &Flow,
     staves: &[&Stave],
     tracks: &HashMap<String, Track>,
-    barlines: &Barlines,
     notations_by_track: &NotationByTrack,
     tone_positions: &TonePositions,
     beams_by_track: &BeamsByTrack,
@@ -63,23 +68,31 @@ pub fn measure_horizontal_spacing(
         // let barline = flow_master.get_barline_at_tick(&tick);
 
         // KEY SIGNATURE
-        if let Some(key) = key_signature.clone() {
-            let metrics = if key.offset == 0 {
-                // find width needed to cancel the previous key signature
-                match flow_master.get_key_signature_before_tick(tick) {
-                    Some(previous) => previous.metrics(),
-                    None => BoundingBox::none(),
-                }
-            } else {
-                key.metrics()
-            };
-            widths[start + Position::KeySignature] = metrics.width + metrics.padding.right;
+        let key = match key_signature.clone() {
+            Some(key) => {
+                let metrics = if key.offset == 0 {
+                    // find width needed to cancel the previous key signature
+                    match flow_master.get_key_signature_before_tick(tick) {
+                        Some(previous) => previous.metrics(),
+                        None => BoundingBox::none(),
+                    }
+                } else {
+                    key.metrics()
+                };
+                widths[start + Position::KeySignature] = metrics.width + metrics.padding.right;
+                Some(key)
+            }
+            _ => None,
         };
 
         // TIME SIGNATURE
-        if let Some(time) = flow_master.get_time_signature_at_tick(&tick) {
-            let metrics = time.metrics(flow.subdivisions);
-            widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
+        let time = match flow_master.get_time_signature_at_tick(&tick) {
+            Some(time) => {
+                let metrics = time.metrics(flow.subdivisions);
+                widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
+                Some(time)
+            }
+            _ => None,
         };
 
         // ACCIDENTALS
@@ -89,7 +102,10 @@ pub fn measure_horizontal_spacing(
             }
         };
 
-        // BARLINES
+        let is_first_beat = match time {
+            Some(time) => time.is_on_first_beat(tick, flow.subdivisions),
+            None => false,
+        };
 
         for stave in staves {
             let stave_master = tracks.get(&stave.master).unwrap();

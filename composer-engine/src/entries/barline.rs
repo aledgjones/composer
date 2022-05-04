@@ -7,25 +7,25 @@ use crate::utils::shortid;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
-#[derive(Debug, Clone)]
-pub enum BarlineType {
+#[derive(Debug, Clone, PartialEq)]
+pub enum BarlineDrawType {
+    Single,
     Double,
     EndRepeat,
     EndStartRepeat,
-    Final,
-    Normal,
     StartRepeat,
+    Final,
 }
 
 #[derive(Debug, Clone)]
 pub struct Barline {
     pub key: String,
     pub tick: Tick,
-    pub barline_type: BarlineType,
+    pub barline_type: BarlineDrawType,
 }
 
 impl Barline {
-    pub fn new(tick: Tick, barline_type: BarlineType) -> Self {
+    pub fn new(tick: Tick, barline_type: BarlineDrawType) -> Self {
         Self {
             key: shortid(),
             tick,
@@ -35,32 +35,32 @@ impl Barline {
 
     pub fn metrics(&self) -> BoundingBox {
         match self.barline_type {
-            BarlineType::Double => BoundingBox {
+            BarlineDrawType::Double => BoundingBox {
                 width: 0.5,
                 height: 4.0,
                 padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
             },
-            BarlineType::EndRepeat => BoundingBox {
+            BarlineDrawType::EndRepeat => BoundingBox {
                 width: 2.0,
                 height: 4.0,
                 padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
             },
-            BarlineType::EndStartRepeat => BoundingBox {
+            BarlineDrawType::EndStartRepeat => BoundingBox {
                 width: 2.0,
                 height: 4.0,
                 padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
             },
-            BarlineType::Final => BoundingBox {
+            BarlineDrawType::Final => BoundingBox {
                 width: 1.0,
                 height: 4.0,
                 padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
             },
-            BarlineType::Normal => BoundingBox {
+            BarlineDrawType::Single => BoundingBox {
                 width: 0.0,
                 height: 4.0,
                 padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
             },
-            BarlineType::StartRepeat => BoundingBox {
+            BarlineDrawType::StartRepeat => BoundingBox {
                 width: 2.0,
                 height: 4.0,
                 padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),

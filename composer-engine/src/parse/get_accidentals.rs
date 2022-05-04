@@ -1,4 +1,4 @@
-use super::get_barlines::Barlines;
+use super::get_bars::Bars;
 use super::get_written_durations::{Notation, NotationTrack};
 use super::{get_tone_offsets::ToneVerticalOffsets, get_written_durations::NotationByTrack};
 use crate::components::misc::Tick;
@@ -154,7 +154,7 @@ pub fn get_tones_needing_accidentals(
 pub fn get_accidentals_in_track(
     notation: &NotationTrack,
     master: &Track,
-    barlines: &Barlines,
+    barlines: &Bars,
     tone_offsets: &ToneVerticalOffsets,
 ) -> Accidentals {
     let mut output = Accidentals::new();
@@ -220,7 +220,7 @@ pub fn get_accidentals(
     flow: &Flow,
     tracks: &Tracks,
     notation: &NotationByTrack,
-    barlines: &Barlines,
+    bars: &Bars,
     tone_offsets: &ToneVerticalOffsets,
 ) -> Accidentals {
     let mut output: Accidentals = Accidentals::new();
@@ -228,7 +228,7 @@ pub fn get_accidentals(
     let master = tracks.get(&flow.master).unwrap();
 
     for track in notation.values() {
-        let accidentals = get_accidentals_in_track(track, master, barlines, tone_offsets);
+        let accidentals = get_accidentals_in_track(track, master, bars, tone_offsets);
         for (entry_key, entry) in accidentals.by_key {
             output.by_key.insert(entry_key, entry);
         }

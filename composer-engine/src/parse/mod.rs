@@ -12,6 +12,7 @@ pub mod draw_systemic_barline;
 pub mod draw_time_signatures;
 pub mod get_accidentals;
 pub mod get_barlines;
+pub mod get_bars;
 pub mod get_beams;
 pub mod get_note_positions;
 pub mod get_stem_directions;
@@ -26,6 +27,7 @@ pub mod measure_vertical_spacing;
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
+use crate::utils::log;
 use crate::Engine;
 use draw_accidentals::draw_accidentals;
 use draw_braces::draw_braces;
@@ -41,6 +43,7 @@ use draw_systemic_barline::draw_systemic_barline;
 use draw_time_signatures::draw_time_signatures;
 use get_accidentals::get_accidentals;
 use get_barlines::get_barlines;
+use get_bars::get_bars;
 use get_beams::get_beams;
 use get_note_positions::get_note_positions;
 use get_stem_directions::get_stem_directions;
@@ -101,27 +104,24 @@ impl Engine {
         let vertical_spacing = measure_vertical_spacing(&instruments, &flow.staves, engrave);
         let name_widths = measure_instrument_names(&instruments, engrave, &converter, measure);
         let bracket_widths = measure_brackets(&vertical_spacing, &vertical_spans, engrave);
-        let barlines = get_barlines(flow, &self.score.tracks);
+        let bars = get_bars(flow, &self.score.tracks);
         let tone_offsets = get_tone_offsets(flow.length, &staves, &self.score.tracks);
+        let barlines = get_barlines(flow, &self.score.tracks);
 
-        let notations = get_written_durations(flow, &tracks, &barlines);
+        log(&format!("{:#?}", barlines));
 
-        let beams = get_beams(&notations, &barlines, flow.subdivisions);
+        let notations = get_written_durations(flow, &tracks, &bars);
+
+        let beams = get_beams(&notations, &bars, flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
         let tone_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
-        let accidentals = get_accidentals(
-            flow,
-            &self.score.tracks,
-            &notations,
-            &barlines,
-            &tone_offsets,
-        );
+        let accidentals =
+            get_accidentals(flow, &self.score.tracks, &notations, &bars, &tone_offsets);
 
         let horizontal_spacing = measure_horizontal_spacing(
             flow,
             &staves,
             &self.score.tracks,
-            &barlines,
             &notations,
             &tone_positions,
             &beams,
@@ -233,7 +233,7 @@ impl Engine {
             &notations,
             &horizontal_spacing,
             &vertical_spacing,
-            &barlines,
+            &bars,
             &converter,
             &mut instructions,
         );

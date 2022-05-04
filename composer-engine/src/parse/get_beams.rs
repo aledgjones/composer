@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::get_barlines::Barlines;
+use super::get_bars::Bars;
 use super::get_written_durations::{Notation, NotationByTrack, NotationTrack};
 use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
@@ -37,11 +37,7 @@ fn assign_span(spans: &mut Beams, span: Beam) -> Beam {
     Vec::new()
 }
 
-pub fn get_beams_in_track(
-    notation: &NotationTrack,
-    barlines: &Barlines,
-    subdivisions: Ticks,
-) -> Beams {
+pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Bars, subdivisions: Ticks) -> Beams {
     let mut output: Beams = Vec::new();
 
     let mut current_span: Beam = Vec::new();
@@ -91,15 +87,11 @@ pub fn get_beams_in_track(
     output
 }
 
-pub fn get_beams(
-    tracks: &NotationByTrack,
-    barlines: &Barlines,
-    subdivisions: Ticks,
-) -> BeamsByTrack {
+pub fn get_beams(tracks: &NotationByTrack, bars: &Bars, subdivisions: Ticks) -> BeamsByTrack {
     let mut output: BeamsByTrack = HashMap::new();
 
     for (track_key, track) in tracks {
-        let beams = get_beams_in_track(track, barlines, subdivisions);
+        let beams = get_beams_in_track(track, bars, subdivisions);
         output.insert(track_key.clone(), beams);
     }
 

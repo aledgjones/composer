@@ -4,7 +4,7 @@ use super::get_written_durations::{Notation, NotationByTrack};
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
-use crate::components::misc::{Key, Tick};
+use crate::components::misc::Tick;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::entries::tone::Tone;
@@ -12,7 +12,7 @@ use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 
 fn draw_notehead(
-    tick: Tick,
+    tick: &Tick,
     x: &f32,
     y: &f32,
     flow: &Flow,
@@ -24,10 +24,8 @@ fn draw_notehead(
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
-    let position = tone_positions.get(&(tick, tone.key.clone())).unwrap();
-    let horizontal_offset = horizontal_spacing
-        .get(&Key::TickPosition(tick, position.clone()))
-        .unwrap();
+    let position = tone_positions.get(&(*tick, tone.key.clone())).unwrap();
+    let horizontal_offset = horizontal_spacing.get(tick, position).unwrap();
     let left = x + horizontal_offset.x;
     let glyph = entry.glyph(flow.subdivisions);
     let offset = tone_offsets.get(&tone.key).unwrap();
@@ -68,7 +66,7 @@ pub fn draw_noteheads(
             for (tick, entry) in &notation.track {
                 for tone in &entry.tones {
                     draw_notehead(
-                        *tick,
+                        tick,
                         x,
                         &top,
                         flow,

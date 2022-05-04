@@ -4,7 +4,7 @@ use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_written_durations::NotationByTrack;
 use super::{get_barlines::Barlines, get_beams::BeamsByTrack};
 use crate::components::measurements::BoundingBox;
-use crate::components::misc::{Key, Tick};
+use crate::components::misc::Tick;
 use crate::components::units::Space;
 use crate::score::engrave::Engrave;
 use crate::score::flows::Flow;
@@ -17,7 +17,24 @@ pub struct Spacing {
     pub width: Space,
     pub x: Space,
 }
-pub type HorizontalSpacing = HashMap<Key, Spacing>;
+pub struct HorizontalSpacing {
+    widths: Vec<Spacing>,
+    pub width: f32,
+}
+
+impl HorizontalSpacing {
+    pub fn new() -> Self {
+        Self {
+            widths: Vec::new(),
+            width: 0.0,
+        }
+    }
+    pub fn get(&self, tick: &Tick, position: &Position) -> Option<&Spacing> {
+        let start = (tick * 13) as usize;
+        let i = start + position.clone() as usize;
+        self.widths.get(i)
+    }
+}
 
 pub fn measure_horizontal_spacing(
     flow: &Flow,
@@ -30,7 +47,7 @@ pub fn measure_horizontal_spacing(
     stem_directions_by_track: &StemDirectionsByTrack,
     accidentals: &Accidentals,
     engraving: &Engrave,
-) -> (HorizontalSpacing, f32) {
+) -> HorizontalSpacing {
     let mut widths: Vec<f32> = vec![0.0; (flow.length * 13) as usize];
     for tick in 0..flow.length {
         let start = (tick * 13) as usize;
@@ -120,16 +137,12 @@ pub fn measure_horizontal_spacing(
     }
 
     // assign the spacing to hashmap for easy lookup & accumulate widths to get x positions
-    let mut output: HorizontalSpacing = HashMap::new();
+    let mut output = HorizontalSpacing::new();
     let mut x: f32 = 0.0;
-    for (i, width) in widths.iter().enumerate() {
-        let tick = (i / 13) as Tick;
-        let position = Position::from(i % 13);
-        output.insert(
-            Key::TickPosition(tick, position),
-            Spacing { width: *width, x },
-        );
+    for width in widths {
+        output.widths.push(Spacing { width, x });
         x += width;
     }
-    (output, x)
+    output.width = x;
+    output
 }

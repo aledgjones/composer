@@ -117,7 +117,7 @@ impl Engine {
             &tone_offsets,
         );
 
-        let (horizontal_spacing, content_width) = measure_horizontal_spacing(
+        let horizontal_spacing = measure_horizontal_spacing(
             flow,
             &staves,
             &self.score.tracks,
@@ -134,7 +134,7 @@ impl Engine {
             + name_widths
             + instrument_name_gap
             + bracket_widths
-            + content_width
+            + horizontal_spacing.width
             + padding_right;
         let height: Space = padding_top + vertical_spacing.height + padding_bottom;
 
@@ -185,7 +185,7 @@ impl Engine {
             &staves,
             &(padding_left + name_widths + instrument_name_gap + bracket_widths),
             &padding_top,
-            &content_width,
+            &horizontal_spacing.width,
             &vertical_spacing,
             &converter,
             &mut instructions,

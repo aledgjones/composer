@@ -2,7 +2,6 @@ use super::get_note_positions::Position;
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
-use crate::components::misc::Key;
 use crate::components::pitch::Accidental;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
@@ -68,7 +67,7 @@ pub fn draw_key_signatures(
             if let Some(key_signature) = flow_master.get_key_signature_at_tick(&tick) {
                 let is_offset_zero = key_signature.offset == 0;
                 let left = horizontal_spacing
-                    .get(&Key::TickPosition(tick, Position::KeySignature))
+                    .get(&tick, &Position::KeySignature)
                     .unwrap();
 
                 let key_signature = if is_offset_zero {

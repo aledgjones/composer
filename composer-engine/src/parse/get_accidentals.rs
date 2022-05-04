@@ -7,6 +7,7 @@ use crate::entries::key_signature::{KeySignature, KeySignatureMode};
 use crate::entries::tone::Tone;
 use crate::score::flows::Flow;
 use crate::score::tracks::{Track, Tracks};
+use crate::utils::log;
 use std::collections::{HashMap, HashSet};
 
 type SlotsByTick = HashMap<Tick, u8>;
@@ -141,7 +142,7 @@ pub fn get_tones_needing_accidentals(
         if is_accidental_needed(tone, previous_tones, altered_pitches, key_signature) {
             output.push(tone.key.clone());
             altered_pitches.retain(|pitch| -> bool {
-                pitch.letter() != tone.pitch.letter() && pitch.octave() != tone.pitch.octave()
+                !(pitch.letter() == tone.pitch.letter() && pitch.octave() == tone.pitch.octave())
             });
             altered_pitches.insert(tone.pitch.clone());
         }

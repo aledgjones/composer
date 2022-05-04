@@ -17,6 +17,15 @@ export function get_full_path_from_partial(selection: any): any;
 export function def_tree(selection: any): any;
 /**
 */
+export enum Articulation {
+  None,
+  Staccato,
+  Staccatissimo,
+  Tenuto,
+  StaccatoTenuto,
+}
+/**
+*/
 export enum NoteDuration {
   Whole,
   Half,
@@ -34,18 +43,18 @@ export enum AutoCountStyle {
 }
 /**
 */
-export enum KeySignatureMode {
-  Major,
-  Minor,
-}
-/**
-*/
 export enum ClefDrawType {
   Hidden,
   G,
   F,
   C,
   Percussion,
+}
+/**
+*/
+export enum KeySignatureMode {
+  Major,
+  Minor,
 }
 /**
 */
@@ -95,15 +104,6 @@ export enum TimeSignatureDrawType {
   CommonTime,
   SplitCommonTime,
   Open,
-}
-/**
-*/
-export enum Articulation {
-  None,
-  Staccato,
-  Staccatissimo,
-  Tenuto,
-  StaccatoTenuto,
 }
 /**
 */

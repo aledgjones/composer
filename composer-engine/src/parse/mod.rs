@@ -1,3 +1,4 @@
+pub mod draw_accidentals;
 pub mod draw_braces;
 pub mod draw_brackets;
 pub mod draw_clefs;
@@ -26,6 +27,7 @@ use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
 use crate::Engine;
+use draw_accidentals::draw_accidentals;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
 use draw_clefs::draw_clefs;
@@ -238,6 +240,18 @@ impl Engine {
             &mut instructions,
         );
 
+        draw_accidentals(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            &staves,
+            &notations,
+            &horizontal_spacing,
+            &vertical_spacing,
+            &tone_offsets,
+            &accidentals,
+            &converter,
+            &mut instructions,
+        );
         draw_noteheads(
             &(padding_left + name_widths + instrument_name_gap + bracket_widths),
             &padding_top,

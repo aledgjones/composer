@@ -61,7 +61,7 @@ pub fn measure_horizontal_spacing(
 
         // TIME SIGNATURE
         if let Some(time) = flow_master.get_time_signature_at_tick(&tick) {
-            let metrics = time.metrics();
+            let metrics = time.metrics(flow.subdivisions);
             widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
         };
 

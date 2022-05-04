@@ -65,7 +65,7 @@ impl Notation {
 
     pub fn base_to_note_duration(&self, subdivisions: Ticks) -> Option<NoteDuration> {
         match self.base_to_ticks(subdivisions) {
-            Some(base) => NoteDuration::from_ticks(&base, subdivisions),
+            Some(base) => NoteDuration::from_ticks(base, subdivisions),
             None => None,
         }
     }
@@ -149,9 +149,11 @@ impl Notation {
         }
 
         // TODO: work out why this is needed!
-        // if stem_direction == &StemDirection::Up && !self.has_beam(tick, beams) {
-        //     min_width += 1.0;
-        // };
+        if let Some(StemDirection::Up) = stem_direction {
+            if !self.has_beam(tick, beams) {
+                min_space += 1.0;
+            }
+        }
 
         match self.base_to_note_duration(subdivisions) {
             Some(base) => {

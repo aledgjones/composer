@@ -7,7 +7,6 @@ use crate::entries::key_signature::{KeySignature, KeySignatureMode};
 use crate::entries::tone::Tone;
 use crate::score::flows::Flow;
 use crate::score::tracks::{Track, Tracks};
-use crate::utils::log;
 use std::collections::{HashMap, HashSet};
 
 type SlotsByTick = HashMap<Tick, u8>;

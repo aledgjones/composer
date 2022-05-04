@@ -178,7 +178,7 @@ impl TimeSignature {
         output
     }
 
-    pub fn metrics(&self) -> BoundingBox {
+    pub fn metrics(&self, subdivisions: Ticks) -> BoundingBox {
         if self.draw_type == TimeSignatureDrawType::Hidden {
             return BoundingBox {
                 width: 0.0,
@@ -187,7 +187,8 @@ impl TimeSignature {
             };
         }
 
-        let is_wide = self.beats > 9 || self.beat_type.to_quarters() < 0.5;
+        let is_wide = self.beats > 9
+            || self.beat_type.to_ticks(subdivisions) < NoteDuration::Eighth.to_ticks(subdivisions);
         if is_wide {
             BoundingBox {
                 width: 3.0,

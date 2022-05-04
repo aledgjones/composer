@@ -1,7 +1,7 @@
 use super::get_accidentals::{AccidentalNotation, Accidentals};
-use super::get_note_positions::{Position, TonePositions};
+use super::get_note_positions::Position;
 use super::get_tone_offsets::ToneVerticalOffsets;
-use super::get_written_durations::{Notation, NotationByTrack};
+use super::get_written_durations::NotationByTrack;
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
@@ -9,7 +9,6 @@ use crate::components::misc::Tick;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::entries::tone::Tone;
-use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 
 fn draw_accidental(

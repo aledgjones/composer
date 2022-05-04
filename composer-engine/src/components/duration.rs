@@ -25,34 +25,48 @@ pub enum NoteDuration {
 
 impl NoteDuration {
     /// convert ticks to NoteDuration. this may fail so wrap in option
-    pub fn from_ticks(ticks: &Ticks, subdivisions: Ticks) -> Option<NoteDuration> {
-        let quarters = *ticks as f32 / subdivisions as f32;
-        match quarters {
-            4.0 => Some(NoteDuration::Whole),
-            2.0 => Some(NoteDuration::Half),
-            1.0 => Some(NoteDuration::Quarter),
-            0.5 => Some(NoteDuration::Eighth),
-            0.25 => Some(NoteDuration::Sixteenth),
-            0.125 => Some(NoteDuration::ThirtySecond),
-            0.0625 => Some(NoteDuration::SixtyFourth),
-            _ => None,
+    pub fn from_ticks(ticks: Ticks, subdivisions: Ticks) -> Option<NoteDuration> {
+        if ticks == subdivisions * 4 {
+            return Some(NoteDuration::Whole);
         }
-    }
 
-    pub fn to_quarters(&self) -> f32 {
-        match self {
-            NoteDuration::Whole => 4.0,
-            NoteDuration::Half => 2.0,
-            NoteDuration::Quarter => 1.0,
-            NoteDuration::Eighth => 0.5,
-            NoteDuration::Sixteenth => 0.25,
-            NoteDuration::ThirtySecond => 0.125,
-            NoteDuration::SixtyFourth => 0.0625,
+        if ticks == subdivisions * 2 {
+            return Some(NoteDuration::Half);
         }
+
+        if ticks == subdivisions {
+            return Some(NoteDuration::Quarter);
+        }
+
+        if ticks == subdivisions / 2 {
+            return Some(NoteDuration::Eighth);
+        }
+
+        if ticks == subdivisions / 4 {
+            return Some(NoteDuration::Sixteenth);
+        }
+
+        if ticks == subdivisions / 8 {
+            return Some(NoteDuration::ThirtySecond);
+        }
+
+        if ticks == subdivisions / 16 {
+            return Some(NoteDuration::SixtyFourth);
+        }
+
+        None
     }
 
     pub fn to_ticks(&self, subdivisions: Ticks) -> Ticks {
-        (self.to_quarters() * subdivisions as f32) as Ticks
+        match self {
+            NoteDuration::Whole => subdivisions * 4,
+            NoteDuration::Half => subdivisions * 2,
+            NoteDuration::Quarter => subdivisions,
+            NoteDuration::Eighth => subdivisions / 2,
+            NoteDuration::Sixteenth => subdivisions / 4,
+            NoteDuration::ThirtySecond => subdivisions / 8,
+            NoteDuration::SixtyFourth => subdivisions / 16,
+        }
     }
 
     pub fn spacing_ratio(&self, ratio: f32, is_dotted: bool) -> f32 {
@@ -64,7 +78,6 @@ impl NoteDuration {
             NoteDuration::Sixteenth => 1.0 / (ratio * 2.0),
             NoteDuration::ThirtySecond => 1.0 / (ratio * 4.0),
             NoteDuration::SixtyFourth => 1.0 / (ratio * 8.0),
-            _ => 1.0,
         };
 
         if is_dotted {
@@ -112,9 +125,8 @@ impl NoteDuration {
 }
 
 pub fn is_writable(duration: Ticks, subdivisions: Ticks) -> bool {
-    let quarters = duration as f32 / subdivisions as f32;
     for option in NOTE_DURATIONS {
-        if quarters == option.to_quarters() {
+        if duration == option.to_ticks(subdivisions) {
             return true;
         }
     }

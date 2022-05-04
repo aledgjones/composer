@@ -5,7 +5,7 @@ use super::get_written_durations::NotationByTrack;
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
-use crate::components::misc::Tick;
+use crate::components::misc::{Key, Tick};
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::entries::tone::Tone;
@@ -23,7 +23,7 @@ fn draw_accidental(
     instructions: &mut Vec<Instruction>,
 ) {
     let horizontal_offset = horizontal_spacing
-        .get(&(tick, Position::PreNoteSlot))
+        .get(&Key::TickPosition(tick, Position::PreNoteSlot))
         .unwrap();
     let left = x + horizontal_offset.x - 0.2 - (accidental.slot as f32 * 1.1);
     let glyph = tone.pitch.accidental.to_glyph();

@@ -4,7 +4,7 @@ use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_written_durations::NotationByTrack;
 use super::{get_barlines::Barlines, get_beams::BeamsByTrack};
 use crate::components::measurements::BoundingBox;
-use crate::components::misc::Tick;
+use crate::components::misc::{Key, Tick};
 use crate::components::units::Space;
 use crate::score::engrave::Engrave;
 use crate::score::flows::Flow;
@@ -17,7 +17,7 @@ pub struct Spacing {
     pub width: Space,
     pub x: Space,
 }
-pub type HorizontalSpacing = HashMap<(Tick, Position), Spacing>;
+pub type HorizontalSpacing = HashMap<Key, Spacing>;
 
 pub fn measure_horizontal_spacing(
     flow: &Flow,
@@ -72,6 +72,8 @@ pub fn measure_horizontal_spacing(
             }
         };
 
+        // BARLINES
+
         for stave in staves {
             let stave_master = tracks.get(&stave.master).unwrap();
 
@@ -123,7 +125,10 @@ pub fn measure_horizontal_spacing(
     for (i, width) in widths.iter().enumerate() {
         let tick = (i / 13) as Tick;
         let position = Position::from(i % 13);
-        output.insert((tick, position), Spacing { width: *width, x });
+        output.insert(
+            Key::TickPosition(tick, position),
+            Spacing { width: *width, x },
+        );
         x += width;
     }
     (output, x)

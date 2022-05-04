@@ -6,6 +6,7 @@ use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
 use crate::components::duration::NoteDuration;
+use crate::components::misc::Key;
 use crate::components::misc::{Tick, Ticks};
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
@@ -24,12 +25,15 @@ fn draw_rest(
     instructions: &mut Vec<Instruction>,
 ) {
     let start = horizontal_spacing
-        .get(&(*tick, Position::NoteSlot))
+        .get(&Key::TickPosition(*tick, Position::NoteSlot))
         .unwrap();
 
     if is_full_bar {
         let end = horizontal_spacing
-            .get(&(tick + entry.duration - 1, Position::PaddingEnd))
+            .get(&Key::TickPosition(
+                tick + entry.duration - 1,
+                Position::PaddingEnd,
+            ))
             .unwrap();
         let left = (x + start.x + ((end.x - start.x) / 2.0)) - 1.0;
 

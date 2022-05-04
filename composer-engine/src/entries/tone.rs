@@ -191,7 +191,7 @@ impl Track {
             None => return output,
         };
 
-        for key in entry_keys.iter() {
+        for key in entry_keys {
             if let Some(Entry::Tone(tone)) = self.entries.by_key.get(key) {
                 output.push(tone.clone());
             }

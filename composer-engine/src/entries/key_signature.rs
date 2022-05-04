@@ -204,7 +204,7 @@ impl Track {
             None => return None,
         };
 
-        for key in entry_keys.iter() {
+        for key in entry_keys {
             if let Some(Entry::KeySignature(key_signature)) = self.entries.by_key.get(key) {
                 return Some(key_signature.clone());
             }

@@ -77,7 +77,7 @@ impl Track {
             None => return None,
         };
 
-        for key in entry_keys.iter() {
+        for key in entry_keys {
             if let Some(Entry::Barline(barline)) = self.entries.by_key.get(key) {
                 return Some(barline.clone());
             }

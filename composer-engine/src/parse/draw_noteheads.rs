@@ -4,7 +4,7 @@ use super::get_written_durations::{Notation, NotationByTrack};
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
-use crate::components::misc::Tick;
+use crate::components::misc::{Key, Tick};
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::entries::tone::Tone;
@@ -25,7 +25,9 @@ fn draw_notehead(
     instructions: &mut Vec<Instruction>,
 ) {
     let position = tone_positions.get(&(tick, tone.key.clone())).unwrap();
-    let horizontal_offset = horizontal_spacing.get(&(tick, position.clone())).unwrap();
+    let horizontal_offset = horizontal_spacing
+        .get(&Key::TickPosition(tick, position.clone()))
+        .unwrap();
     let left = x + horizontal_offset.x;
     let glyph = entry.glyph(flow.subdivisions);
     let offset = tone_offsets.get(&tone.key).unwrap();

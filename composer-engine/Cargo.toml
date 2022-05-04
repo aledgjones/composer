@@ -30,5 +30,11 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 wasm-bindgen-test = "0.3.13"
 
 [profile.release]
+# less code to include into binary
+panic = 'abort'
+# optimization over all codebase ( better optimization, slower build )
+codegen-units = 1
+# link time optimization using using whole-program analysis
 lto = true
+# optimize for speed
 opt-level = 3

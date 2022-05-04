@@ -71,7 +71,7 @@ impl Track {
             None => return None,
         };
 
-        for key in entry_keys.iter() {
+        for key in entry_keys {
             if let Some(Entry::Clef(clef)) = self.entries.by_key.get(key) {
                 return Some(clef.clone());
             }

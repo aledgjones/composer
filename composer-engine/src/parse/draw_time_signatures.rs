@@ -3,6 +3,7 @@ use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
 use crate::components::duration::NoteDuration;
+use crate::components::misc::Key;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
@@ -133,7 +134,7 @@ pub fn draw_time_signatures(
         for tick in 0..flow.length {
             if let Some(time_signature) = flow_master.get_time_signature_at_tick(&tick) {
                 let left = horizontal_spacing
-                    .get(&(tick, Position::TimeSignature))
+                    .get(&Key::TickPosition(tick, Position::TimeSignature))
                     .unwrap();
                 let offset = time_signature.metrics(flow.subdivisions).width / 2.0;
 

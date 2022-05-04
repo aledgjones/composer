@@ -2,6 +2,7 @@ use super::get_note_positions::Position;
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
+use crate::components::misc::Key;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::entries::clef::Clef;
@@ -47,7 +48,9 @@ pub fn draw_clefs(
 
         for tick in 0..flow.length {
             if let Some(clef) = stave_master.get_clef_at_tick(&tick) {
-                let left = horizontal_spacing.get(&(tick, Position::Clef)).unwrap();
+                let left = horizontal_spacing
+                    .get(&Key::TickPosition(tick, Position::Clef))
+                    .unwrap();
                 draw_clef(x + left.x, y + top.y, &clef, converter, instructions)
             }
         }

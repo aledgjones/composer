@@ -5,7 +5,7 @@ use crate::components::misc::Tick;
 use std::collections::HashMap;
 use std::ops::{Add, Index, IndexMut};
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
+#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum Position {
     PaddingStart = 0,
     EndRepeat,

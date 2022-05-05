@@ -4,6 +4,7 @@ mod draw_braces;
 mod draw_brackets;
 mod draw_clefs;
 mod draw_key_signatures;
+mod draw_ledger_lines;
 mod draw_names;
 mod draw_noteheads;
 mod draw_rests;
@@ -35,6 +36,7 @@ use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
 use draw_clefs::draw_clefs;
 use draw_key_signatures::draw_key_signatures;
+use draw_ledger_lines::draw_ledger_lines;
 use draw_names::draw_names;
 use draw_noteheads::draw_noteheads;
 use draw_rests::draw_rests;
@@ -266,6 +268,19 @@ impl Engine {
             &vertical_spacing,
             &tone_offsets,
             &accidentals,
+            &converter,
+            &mut instructions,
+        );
+        draw_ledger_lines(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            &staves,
+            &notations,
+            &horizontal_spacing,
+            &vertical_spacing,
+            &tone_offsets,
+            &tone_positions,
+            &stem_directions,
             &converter,
             &mut instructions,
         );

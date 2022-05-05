@@ -68,22 +68,36 @@ pub fn measure_horizontal_spacing(
 
         // BARLINES
         if let Some(def) = barlines.get(&tick) {
+            let time = flow_master.get_time_signature_at_tick(&tick);
+            let key = flow_master.get_key_signature_at_tick(&tick);
+
             if def.end_repeat {
                 let metrics = BarlineDrawType::EndRepeat.metrics();
-                widths[start + Position::EndRepeat] = metrics.width + metrics.padding.right;
-                // TODO: if time || key => -0.5
+                if time.is_some() || key.is_some() {
+                    widths[start + Position::EndRepeat] =
+                        metrics.width + metrics.padding.right - 0.5;
+                } else {
+                    widths[start + Position::EndRepeat] = metrics.width + metrics.padding.right;
+                }
             }
 
             if let Some(draw_type) = &def.draw_type {
                 let metrics = draw_type.metrics();
-                widths[start + Position::Barline] = metrics.width + metrics.padding.right;
-                // TODO: if time || key => -0.5
+                if time.is_some() || key.is_some() {
+                    widths[start + Position::Barline] = metrics.width + metrics.padding.right - 0.5;
+                } else {
+                    widths[start + Position::Barline] = metrics.width + metrics.padding.right;
+                }
             }
 
             if def.start_repeat {
                 let metrics = BarlineDrawType::StartRepeat.metrics();
-                widths[start + Position::StartRepeat] = metrics.width + metrics.padding.right;
-                // TODO: if time => -1.0
+                if time.is_some() {
+                    widths[start + Position::StartRepeat] =
+                        metrics.width + metrics.padding.right - 1.0;
+                } else {
+                    widths[start + Position::StartRepeat] = metrics.width + metrics.padding.right;
+                }
             }
         };
 

@@ -110,7 +110,7 @@ pub fn get_stem_directions(
 
 impl Notation {
     pub fn get_stem_direction(&self, tone_offsets: &ToneVerticalOffsets) -> StemDirection {
-        let (_, _, furthest) = get_tone_offset_info(&self.tones, tone_offsets);
+        let (_, _, furthest) = self.get_tone_offset_info(tone_offsets);
 
         if furthest > 0 {
             StemDirection::Up

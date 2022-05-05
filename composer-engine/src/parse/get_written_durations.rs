@@ -1,6 +1,7 @@
 use super::get_bars::Bars;
 use super::get_beams::Beams;
 use super::get_stem_directions::StemDirection;
+use super::get_tone_offsets::get_tone_offset_info;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use crate::components::duration::is_writable;
 use crate::components::duration::NoteDuration;
@@ -20,8 +21,8 @@ use std::fmt::Formatter;
 use std::fmt::Result;
 use std::iter::FromIterator;
 
-pub type Clusters<'a> = Vec<Cluster<'a>>;
-pub type Cluster<'a> = Vec<&'a Tone>;
+pub type Clusters = Vec<Cluster>;
+pub type Cluster = Vec<Tone>;
 pub type NotationByTrack = HashMap<String, NotationTrack>;
 
 #[derive(Debug, Clone)]
@@ -180,19 +181,23 @@ impl Notation {
         tones
     }
 
+    pub fn get_tone_offset_info(&self, tone_offsets: &ToneVerticalOffsets) -> (i8, i8, i8) {
+        get_tone_offset_info(&self.tones, tone_offsets)
+    }
+
     pub fn get_clusters(&self, tone_offsets: &ToneVerticalOffsets) -> Clusters {
         let tones = self.sort_tones(tone_offsets);
 
         let mut clusters: Clusters = Vec::new();
         let mut cluster: Cluster = Vec::new();
-        let mut previous_tone = self.tones.first().unwrap();
+        let mut previous_tone = tones.first().unwrap();
 
         for i in 1..tones.len() {
-            let current_tone = self.tones.get(i).unwrap();
+            let current_tone = tones.get(i).unwrap();
             let current_offset = tone_offsets.get(&current_tone.key).unwrap();
             let previous_offset = tone_offsets.get(&previous_tone.key).unwrap();
 
-            cluster.push(previous_tone);
+            cluster.push(previous_tone.clone());
 
             // if not a cluster
             if previous_offset - current_offset > 1 {
@@ -204,7 +209,7 @@ impl Notation {
         }
 
         if !tones.is_empty() {
-            cluster.push(previous_tone);
+            cluster.push(previous_tone.clone());
             clusters.push(cluster);
         }
 

@@ -4,6 +4,7 @@ pub mod parse;
 pub mod score;
 pub mod utils;
 
+use crate::utils::log;
 use js_sys::Function;
 use score::engrave::LayoutType;
 use score::Score;
@@ -30,9 +31,11 @@ impl Engine {
             score: Score::new(),
         };
 
-        engine.create_flow();
+        let key = engine.create_flow();
         engine.create_engrave(LayoutType::Score, "Score");
         engine.create_engrave(LayoutType::Part, "Part");
+
+        log(&key);
 
         engine
     }

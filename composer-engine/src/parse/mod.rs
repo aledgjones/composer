@@ -1,35 +1,37 @@
-pub mod draw_accidentals;
-pub mod draw_braces;
-pub mod draw_brackets;
-pub mod draw_clefs;
-pub mod draw_key_signatures;
-pub mod draw_names;
-pub mod draw_noteheads;
-pub mod draw_rests;
-pub mod draw_staves;
-pub mod draw_sub_brackets;
-pub mod draw_systemic_barline;
-pub mod draw_time_signatures;
-pub mod get_accidentals;
-pub mod get_barlines;
+mod draw_accidentals;
+mod draw_barlines;
+mod draw_braces;
+mod draw_brackets;
+mod draw_clefs;
+mod draw_key_signatures;
+mod draw_names;
+mod draw_noteheads;
+mod draw_rests;
+mod draw_staves;
+mod draw_sub_brackets;
+mod draw_systemic_barline;
+mod draw_time_signatures;
+mod get_accidentals;
+mod get_barlines;
 pub mod get_bars;
 pub mod get_beams;
-pub mod get_note_positions;
-pub mod get_stem_directions;
-pub mod get_tone_offsets;
-pub mod get_vertical_spans;
+mod get_note_positions;
+mod get_stem_directions;
+mod get_tone_offsets;
+mod get_vertical_spans;
 pub mod get_written_durations;
-pub mod measure_brackets_and_braces;
-pub mod measure_horizontal_spacing;
-pub mod measure_instrument_names;
-pub mod measure_vertical_spacing;
+mod measure_brackets_and_braces;
+mod measure_horizontal_spacing;
+mod measure_instrument_names;
+mod measure_vertical_spacing;
 
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
+use crate::entries::barline::BarlineDrawType;
 use crate::score::engrave::LayoutType;
-use crate::utils::log;
 use crate::Engine;
 use draw_accidentals::draw_accidentals;
+use draw_barlines::draw_barlines;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
 use draw_clefs::draw_clefs;
@@ -59,6 +61,13 @@ use serde::Serialize;
 use wasm_bindgen::prelude::*;
 
 #[derive(Serialize)]
+pub struct Circle {
+    pub color: String,
+    pub radius: f32,
+    pub point: Point,
+}
+
+#[derive(Serialize)]
 pub struct Line {
     pub color: String,
     pub width: f32,
@@ -80,6 +89,7 @@ pub struct Text {
 #[derive(Serialize)]
 #[serde(tag = "type")]
 pub enum Instruction {
+    Circle(Circle),
     Line(Line),
     Text(Text),
 }
@@ -108,8 +118,6 @@ impl Engine {
         let tone_offsets = get_tone_offsets(flow.length, &staves, &self.score.tracks);
         let barlines = get_barlines(flow, &self.score.tracks);
 
-        log(&format!("{:#?}", barlines));
-
         let notations = get_written_durations(flow, &tracks, &bars);
 
         let beams = get_beams(&notations, &bars, flow.subdivisions);
@@ -122,6 +130,7 @@ impl Engine {
             flow,
             &staves,
             &self.score.tracks,
+            &barlines,
             &notations,
             &tone_positions,
             &beams,
@@ -187,6 +196,17 @@ impl Engine {
             &padding_top,
             &horizontal_spacing.width,
             &vertical_spacing,
+            &converter,
+            &mut instructions,
+        );
+        draw_barlines(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            &barlines,
+            &staves,
+            &vertical_spacing,
+            &vertical_spans,
+            &horizontal_spacing,
             &converter,
             &mut instructions,
         );

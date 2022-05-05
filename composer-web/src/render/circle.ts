@@ -1,45 +1,23 @@
-import { RenderInstruction, InstructionType } from "./instructions";
-
-export interface CircleStyles {
-  color: string;
-}
+import { RenderInstruction } from "./instructions";
 
 export type Circle = {
-  styles: CircleStyles;
-  x: number;
-  y: number;
+  color: string;
   radius: number;
+  point: [number, number];
 };
 export type CircleInstruction = RenderInstruction<Circle>;
-
-export function buildCircle(
-  key: string,
-  styles: CircleStyles,
-  x: number,
-  y: number,
-  radius: number
-): CircleInstruction {
-  return {
-    key,
-    type: InstructionType.Circle,
-    styles,
-    x,
-    y,
-    radius,
-  };
-}
 
 export function drawCircle(
   ctx: CanvasRenderingContext2D,
   instruction: CircleInstruction,
-  space: number
+  dpi: number
 ) {
   ctx.beginPath();
-  ctx.fillStyle = instruction.styles.color;
+  ctx.fillStyle = instruction.color;
   ctx.arc(
-    instruction.x * space,
-    instruction.y * space,
-    instruction.radius * space,
+    instruction.point[0] * dpi,
+    instruction.point[1] * dpi,
+    instruction.radius * dpi,
     0,
     2 * Math.PI
   );

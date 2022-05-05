@@ -247,6 +247,8 @@ impl Engine {
                 };
             }
         }
+
+        self.emit();
     }
 }
 

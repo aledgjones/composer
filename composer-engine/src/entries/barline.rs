@@ -4,6 +4,7 @@ use crate::components::measurements::PaddingSpaces;
 use crate::components::misc::Tick;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
+use crate::Engine;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
@@ -15,6 +16,43 @@ pub enum BarlineDrawType {
     EndStartRepeat,
     StartRepeat,
     Final,
+}
+
+impl BarlineDrawType {
+    pub fn metrics(&self) -> BoundingBox {
+        match self {
+            BarlineDrawType::Single => BoundingBox {
+                width: 0.0,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+            },
+            BarlineDrawType::Double => BoundingBox {
+                width: 0.5,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+            },
+            BarlineDrawType::EndRepeat => BoundingBox {
+                width: 2.0,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+            },
+            BarlineDrawType::EndStartRepeat => BoundingBox {
+                width: 3.5,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+            },
+            BarlineDrawType::StartRepeat => BoundingBox {
+                width: 2.0,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+            },
+            BarlineDrawType::Final => BoundingBox {
+                width: 1.0,
+                height: 4.0,
+                padding: PaddingSpaces::new(0.0, 0.0, 0.0, 0.0),
+            },
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -32,40 +70,24 @@ impl Barline {
             barline_type,
         }
     }
+}
 
-    pub fn metrics(&self) -> BoundingBox {
-        match self.barline_type {
-            BarlineDrawType::Double => BoundingBox {
-                width: 0.5,
-                height: 4.0,
-                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
-            },
-            BarlineDrawType::EndRepeat => BoundingBox {
-                width: 2.0,
-                height: 4.0,
-                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
-            },
-            BarlineDrawType::EndStartRepeat => BoundingBox {
-                width: 2.0,
-                height: 4.0,
-                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
-            },
-            BarlineDrawType::Final => BoundingBox {
-                width: 1.0,
-                height: 4.0,
-                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
-            },
-            BarlineDrawType::Single => BoundingBox {
-                width: 0.0,
-                height: 4.0,
-                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
-            },
-            BarlineDrawType::StartRepeat => BoundingBox {
-                width: 2.0,
-                height: 4.0,
-                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
-            },
-        }
+#[wasm_bindgen]
+impl Engine {
+    pub fn create_barline(&mut self, flow_key: &str, tick: Tick, draw_type: BarlineDrawType) {
+        let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
+        let master = self.score.tracks.get_mut(&flow.master).unwrap();
+
+        // remove old time signative if defined
+        if let Some(old) = master.get_barline_at_tick(&tick) {
+            master.remove(&old.key);
+        };
+
+        // insert the new time signature
+        let new = Barline::new(tick, draw_type);
+        master.insert(Entry::Barline(new));
+
+        self.emit();
     }
 }
 

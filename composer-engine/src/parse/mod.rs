@@ -27,7 +27,6 @@ mod measure_vertical_spacing;
 
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
-use crate::entries::barline::BarlineDrawType;
 use crate::score::engrave::LayoutType;
 use crate::Engine;
 use draw_accidentals::draw_accidentals;

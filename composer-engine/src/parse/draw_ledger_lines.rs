@@ -25,7 +25,7 @@ fn draw_ledger_line(
     let (highest, lowest, _) = entry.get_tone_offset_info(tone_offsets);
 
     let from = if highest > 0 { 0 } else { highest };
-    let to = if lowest < 0 { 0 } else { lowest };
+    let to = if lowest < 0 { 0 } else { lowest + 1 };
 
     for offset in from..to {
         if offset % 2 == 0 && (offset < -5 || offset > 5) {

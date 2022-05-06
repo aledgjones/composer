@@ -503,7 +503,11 @@ impl NotationTrack {
                 self.split(tick);
                 for tone in tones {
                     self.split(tick + tone.duration);
-                    self.add_tone(tick, &tone);
+                    for inner_tick in tick..tick + tone.duration {
+                        if self.track.contains_key(&inner_tick) {
+                            self.add_tone(inner_tick, &tone);
+                        }
+                    }
                 }
             }
         }

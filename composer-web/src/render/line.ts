@@ -1,8 +1,6 @@
 import { InstructionType, RenderInstruction } from "./instructions";
 
-type CoordX = number;
-type CoordY = number;
-type PathPoint = [CoordX, CoordY];
+type PathPoint = { x: number; y: number };
 type Path = PathPoint[];
 
 export type LineInstruction = RenderInstruction<{
@@ -22,7 +20,7 @@ export function drawLine(
   ctx.strokeStyle = instruction.color;
 
   for (let i = 0; i < instruction.points.length; i++) {
-    const [x, y] = instruction.points[i];
+    const { x, y } = instruction.points[i];
     if (i === 0) {
       ctx.moveTo(x * dpi, y * dpi);
     } else {

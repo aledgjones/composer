@@ -23,15 +23,15 @@ pub fn draw_systemic_barline(
             color: String::from("#000"),
             width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
             points: vec![
-                Point(
-                    converter.spaces_to_px(x),
-                    converter.spaces_to_px(&(y - tweak_for_stave_line_width)),
-                ),
-                Point(
-                    converter.spaces_to_px(x),
-                    converter
+                Point {
+                    x: converter.spaces_to_px(x),
+                    y: converter.spaces_to_px(&(y - tweak_for_stave_line_width)),
+                },
+                Point {
+                    x: converter.spaces_to_px(x),
+                    y: converter
                         .spaces_to_px(&(y + vertical_spacing.height + tweak_for_stave_line_width)),
-                ),
+                },
             ],
         }));
     }

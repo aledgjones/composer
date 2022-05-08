@@ -26,16 +26,22 @@ pub fn draw_sub_brackets(
             color: String::from("#000"),
             width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
             points: vec![
-                Point(converter.spaces_to_px(x), converter.spaces_to_px(&top)),
-                Point(
-                    converter.spaces_to_px(&(x - 1.5)),
-                    converter.spaces_to_px(&top),
-                ),
-                Point(
-                    converter.spaces_to_px(&(x - 1.5)),
-                    converter.spaces_to_px(&bottom),
-                ),
-                Point(converter.spaces_to_px(x), converter.spaces_to_px(&bottom)),
+                Point {
+                    x: converter.spaces_to_px(x),
+                    y: converter.spaces_to_px(&top),
+                },
+                Point {
+                    x: converter.spaces_to_px(&(x - 1.5)),
+                    y: converter.spaces_to_px(&top),
+                },
+                Point {
+                    x: converter.spaces_to_px(&(x - 1.5)),
+                    y: converter.spaces_to_px(&bottom),
+                },
+                Point {
+                    x: converter.spaces_to_px(x),
+                    y: converter.spaces_to_px(&bottom),
+                },
             ],
         }));
     }

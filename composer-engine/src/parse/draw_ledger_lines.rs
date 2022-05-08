@@ -1,14 +1,66 @@
-use super::get_note_positions::{Position, TonePositions};
-use super::get_stem_directions::{StemDirection, StemDirectionsByTrack};
+use super::get_note_positions::Position;
+use super::get_note_positions::TonePositions;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_vertical_spacing::VerticalSpacing;
-use super::{Instruction, Line};
+use super::Instruction;
+use super::Line;
 use crate::components::measurements::Point;
 use crate::components::misc::Tick;
 use crate::components::units::Converter;
-use crate::score::stave::{Stave, STAVE_LINE_WIDTH};
+use crate::score::stave::Stave;
+use crate::score::stave::STAVE_LINE_WIDTH;
+
+fn draw_line<T: Iterator<Item = i8>>(
+    range: T,
+    tick: &Tick,
+    x: &f32,
+    y: &f32,
+    horizontal_spacing: &HorizontalSpacing,
+    tone_positions: &TonePositions,
+    converter: &Converter,
+    instructions: &mut Vec<Instruction>,
+) {
+    let mut start_slot = Position::NoteSlot;
+    let mut stop_slot = Position::NoteSlot;
+
+    for offset in range {
+        // get the furthest start position
+        if let Some(position) = tone_positions.by_offset.get(&(*tick, offset)) {
+            if position > &stop_slot {
+                stop_slot = position.clone();
+            }
+            if position < &start_slot {
+                start_slot = position.clone();
+            }
+        };
+
+        if offset % 2 == 0 && (offset < -5 || offset > 5) {
+            let y = y + (offset as f32 / 2.0);
+
+            let start_slot = horizontal_spacing.get(tick, &start_slot).unwrap();
+            let stop_slot = horizontal_spacing.get(tick, &stop_slot).unwrap();
+            let start = x + start_slot.x - 0.4;
+            let stop = x + stop_slot.x + stop_slot.width + 0.4;
+
+            instructions.push(Instruction::Line(Line {
+                color: String::from("#000"),
+                width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 1.5)),
+                points: vec![
+                    Point {
+                        x: converter.spaces_to_px(&start),
+                        y: converter.spaces_to_px(&y),
+                    },
+                    Point {
+                        x: converter.spaces_to_px(&stop),
+                        y: converter.spaces_to_px(&y),
+                    },
+                ],
+            }));
+        }
+    }
+}
 
 fn draw_ledger_line(
     tick: &Tick,
@@ -18,7 +70,6 @@ fn draw_ledger_line(
     horizontal_spacing: &HorizontalSpacing,
     tone_offsets: &ToneVerticalOffsets,
     tone_positions: &TonePositions,
-    stem_direction: &StemDirection,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -27,24 +78,27 @@ fn draw_ledger_line(
     let from = if highest > 0 { 0 } else { highest };
     let to = if lowest < 0 { 0 } else { lowest + 1 };
 
-    for offset in from..to {
-        if offset % 2 == 0 && (offset < -5 || offset > 5) {
-            let y = y + (offset as f32 / 2.0);
+    draw_line(
+        from..0,
+        tick,
+        x,
+        y,
+        horizontal_spacing,
+        tone_positions,
+        converter,
+        instructions,
+    );
 
-            let slot = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap();
-            let start = x + slot.x - 0.4;
-            let stop = x + slot.x + slot.width + 0.4;
-
-            instructions.push(Instruction::Line(Line {
-                color: String::from("#000"),
-                width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 1.5)),
-                points: vec![
-                    Point(converter.spaces_to_px(&start), converter.spaces_to_px(&y)),
-                    Point(converter.spaces_to_px(&stop), converter.spaces_to_px(&y)),
-                ],
-            }));
-        }
-    }
+    draw_line(
+        (0..to).rev(),
+        tick,
+        x,
+        y,
+        horizontal_spacing,
+        tone_positions,
+        converter,
+        instructions,
+    );
 }
 
 pub fn draw_ledger_lines(
@@ -56,7 +110,6 @@ pub fn draw_ledger_lines(
     vertical_spacing: &VerticalSpacing,
     tone_offsets: &ToneVerticalOffsets,
     tone_positions: &TonePositions,
-    stem_directions_by_track: &StemDirectionsByTrack,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -66,7 +119,6 @@ pub fn draw_ledger_lines(
 
         for track_key in &stave.tracks {
             let notation = notation_by_track.get(track_key).unwrap();
-            let stem_directions = stem_directions_by_track.get(track_key).unwrap();
 
             for (tick, entry) in &notation.track {
                 if !entry.is_rest() {
@@ -78,7 +130,6 @@ pub fn draw_ledger_lines(
                         horizontal_spacing,
                         tone_offsets,
                         tone_positions,
-                        stem_directions.get(tick).unwrap(),
                         converter,
                         instructions,
                     );

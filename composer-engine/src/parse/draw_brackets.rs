@@ -44,14 +44,14 @@ pub fn draw_brackets(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.5),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x - 0.75)),
-                            converter.spaces_to_px(&(top - tweek_for_stave_line)),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x - 0.75)),
-                            converter.spaces_to_px(&(bottom + tweek_for_stave_line)),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x - 0.75)),
+                            y: converter.spaces_to_px(&(top - tweek_for_stave_line)),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x - 0.75)),
+                            y: converter.spaces_to_px(&(bottom + tweek_for_stave_line)),
+                        },
                     ],
                 }));
             }
@@ -61,14 +61,14 @@ pub fn draw_brackets(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.5),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x - 0.75)),
-                            converter.spaces_to_px(&(top - tweek_for_stave_line)),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x - 0.75)),
-                            converter.spaces_to_px(&(bottom + tweek_for_stave_line)),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x - 0.75)),
+                            y: converter.spaces_to_px(&(top - tweek_for_stave_line)),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x - 0.75)),
+                            y: converter.spaces_to_px(&(bottom + tweek_for_stave_line)),
+                        },
                     ],
                 }));
                 // thin lines
@@ -76,22 +76,28 @@ pub fn draw_brackets(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.125),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x - 1.0)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(converter.spaces_to_px(x), converter.spaces_to_px(&top)),
+                        Point {
+                            x: converter.spaces_to_px(&(x - 1.0)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(x),
+                            y: converter.spaces_to_px(&top),
+                        },
                     ],
                 }));
                 instructions.push(Instruction::Line(Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.125),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x - 1.0)),
-                            converter.spaces_to_px(&bottom),
-                        ),
-                        Point(converter.spaces_to_px(x), converter.spaces_to_px(&bottom)),
+                        Point {
+                            x: converter.spaces_to_px(&(x - 1.0)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(x),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
             }
@@ -101,14 +107,14 @@ pub fn draw_brackets(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.5),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x - 0.75)),
-                            converter.spaces_to_px(&(top - TWEEK_FOR_WING)),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x - 0.75)),
-                            converter.spaces_to_px(&(bottom + TWEEK_FOR_WING)),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x - 0.75)),
+                            y: converter.spaces_to_px(&(top - TWEEK_FOR_WING)),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x - 0.75)),
+                            y: converter.spaces_to_px(&(bottom + TWEEK_FOR_WING)),
+                        },
                     ],
                 }));
                 // wings

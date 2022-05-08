@@ -280,7 +280,6 @@ impl Engine {
             &vertical_spacing,
             &tone_offsets,
             &tone_positions,
-            &stem_directions,
             &converter,
             &mut instructions,
         );

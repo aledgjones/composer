@@ -25,18 +25,18 @@ fn draw_barline_dots(
         instructions.push(Instruction::Circle(Circle {
             color: String::from("#000"),
             radius: converter.spaces_to_px(&0.25),
-            point: Point(
-                converter.spaces_to_px(x),
-                converter.spaces_to_px(&(top - 0.5)),
-            ),
+            point: Point {
+                x: converter.spaces_to_px(x),
+                y: converter.spaces_to_px(&(top - 0.5)),
+            },
         }));
         instructions.push(Instruction::Circle(Circle {
             color: String::from("#000"),
             radius: converter.spaces_to_px(&0.25),
-            point: Point(
-                converter.spaces_to_px(x),
-                converter.spaces_to_px(&(top + 0.5)),
-            ),
+            point: Point {
+                x: converter.spaces_to_px(x),
+                y: converter.spaces_to_px(&(top + 0.5)),
+            },
         }));
     }
 }
@@ -66,8 +66,14 @@ fn draw_barline(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
-                        Point(converter.spaces_to_px(x), converter.spaces_to_px(&top)),
-                        Point(converter.spaces_to_px(x), converter.spaces_to_px(&bottom)),
+                        Point {
+                            x: converter.spaces_to_px(x),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(x),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
             }
@@ -76,22 +82,28 @@ fn draw_barline(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
-                        Point(converter.spaces_to_px(x), converter.spaces_to_px(&top)),
-                        Point(converter.spaces_to_px(x), converter.spaces_to_px(&bottom)),
+                        Point {
+                            x: converter.spaces_to_px(x),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(x),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
                 instructions.push(Instruction::Line(Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 0.5)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 0.5)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 0.5)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 0.5)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
             }
@@ -100,28 +112,28 @@ fn draw_barline(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 1.0)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 1.0)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.0)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.0)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
                 instructions.push(Instruction::Line(Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 4.0)),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 1.75)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 1.75)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.75)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.75)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
             }
@@ -130,42 +142,42 @@ fn draw_barline(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 1.0)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 1.0)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.0)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.0)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
                 instructions.push(Instruction::Line(Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 4.0)),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 1.75)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 1.75)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.75)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.75)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
                 instructions.push(Instruction::Line(Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 2.5)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 2.5)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 2.5)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 2.5)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
             }
@@ -174,28 +186,28 @@ fn draw_barline(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 4.0)),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 0.25)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 0.25)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 0.25)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 0.25)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
                 instructions.push(Instruction::Line(Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 1.0)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 1.0)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.0)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 1.0)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
             }
@@ -204,22 +216,28 @@ fn draw_barline(
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
-                        Point(converter.spaces_to_px(x), converter.spaces_to_px(&top)),
-                        Point(converter.spaces_to_px(x), converter.spaces_to_px(&bottom)),
+                        Point {
+                            x: converter.spaces_to_px(x),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(x),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
                 instructions.push(Instruction::Line(Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 4.0)),
                     points: vec![
-                        Point(
-                            converter.spaces_to_px(&(x + 0.75)),
-                            converter.spaces_to_px(&top),
-                        ),
-                        Point(
-                            converter.spaces_to_px(&(x + 0.75)),
-                            converter.spaces_to_px(&bottom),
-                        ),
+                        Point {
+                            x: converter.spaces_to_px(&(x + 0.75)),
+                            y: converter.spaces_to_px(&top),
+                        },
+                        Point {
+                            x: converter.spaces_to_px(&(x + 0.75)),
+                            y: converter.spaces_to_px(&bottom),
+                        },
                     ],
                 }));
             }

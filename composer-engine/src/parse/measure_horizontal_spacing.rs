@@ -148,7 +148,10 @@ pub fn measure_horizontal_spacing(
                     } else {
                         for tone in &entry.tones {
                             // notes can be shunted, we need to set the width at the right position for each tone
-                            let position = tone_positions.get(&(tick, tone.key.clone())).unwrap();
+                            let position = tone_positions
+                                .by_key
+                                .get(&(tick, tone.key.clone()))
+                                .unwrap();
                             widths[start + position.clone()] = notehead_width;
                         }
                     }

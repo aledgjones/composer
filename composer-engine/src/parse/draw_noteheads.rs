@@ -24,7 +24,10 @@ fn draw_notehead(
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
-    let position = tone_positions.get(&(*tick, tone.key.clone())).unwrap();
+    let position = tone_positions
+        .by_key
+        .get(&(*tick, tone.key.clone()))
+        .unwrap();
     let horizontal_offset = horizontal_spacing.get(tick, position).unwrap();
     let left = x + horizontal_offset.x;
     let glyph = entry.glyph(flow.subdivisions);

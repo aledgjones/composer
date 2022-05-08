@@ -62,4 +62,7 @@ impl PaddingMm {
 }
 
 #[derive(Serialize)]
-pub struct Point(pub Space, pub Space);
+pub struct Point {
+    pub x: Space,
+    pub y: Space,
+}

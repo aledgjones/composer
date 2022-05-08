@@ -65,7 +65,10 @@ impl IndexMut<Position> for [f32] {
     }
 }
 
-pub type TonePositions = HashMap<(Tick, String), Position>;
+pub struct TonePositions {
+    pub by_key: HashMap<(Tick, String), Position>,
+    pub by_offset: HashMap<(Tick, i8), Position>,
+}
 
 pub fn note_positions_in_chord(
     tick: &Tick,
@@ -73,7 +76,10 @@ pub fn note_positions_in_chord(
     tone_offsets: &ToneVerticalOffsets,
     stem_direction: &StemDirection,
 ) -> TonePositions {
-    let mut shunts: TonePositions = HashMap::new();
+    let mut shunts = TonePositions {
+        by_key: HashMap::new(),
+        by_offset: HashMap::new(),
+    };
 
     let clusters = entry.get_clusters(tone_offsets);
 
@@ -97,7 +103,12 @@ pub fn note_positions_in_chord(
                 false => Position::NoteSlot,
             };
 
-            shunts.insert((*tick, tone.key.clone()), position);
+            let offset = tone_offsets.get(&tone.key).unwrap();
+
+            shunts
+                .by_key
+                .insert((*tick, tone.key.clone()), position.clone());
+            shunts.by_offset.insert((*tick, *offset), position.clone());
         }
     }
 
@@ -109,7 +120,10 @@ pub fn get_note_positions(
     tone_offsets: &ToneVerticalOffsets,
     stem_directions_by_track: &StemDirectionsByTrack,
 ) -> TonePositions {
-    let mut shunts: TonePositions = HashMap::new();
+    let mut shunts = TonePositions {
+        by_key: HashMap::new(),
+        by_offset: HashMap::new(),
+    };
 
     for (track_key, notation) in notation_by_track {
         let stem_directions = stem_directions_by_track.get(track_key).unwrap();
@@ -117,8 +131,11 @@ pub fn get_note_positions(
             if !entry.is_rest() {
                 let stem_direction = stem_directions.get(tick).unwrap();
                 let positions = note_positions_in_chord(tick, entry, tone_offsets, stem_direction);
-                for (key, position) in positions {
-                    shunts.insert(key, position);
+                for (key, position) in positions.by_key {
+                    shunts.by_key.insert(key, position);
+                }
+                for (key, position) in positions.by_offset {
+                    shunts.by_offset.insert(key, position);
                 }
             }
         }
@@ -156,7 +173,7 @@ mod tests {
     fn notehead_positions_in_chord_test_1() {
         let result = run(vec![("a", 0)], &StemDirection::Up);
         assert_eq!(
-            result,
+            result.by_key,
             hashmap! {(0,String::from("a")) => Position::NoteSlot}
         );
     }
@@ -166,7 +183,7 @@ mod tests {
     fn notehead_positions_in_chord_test_2() {
         let result = run(vec![("a", 0)], &StemDirection::Down);
         assert_eq!(
-            result,
+            result.by_key,
             hashmap! {(0,String::from("a")) => Position::NoteSlot}
         );
     }
@@ -176,7 +193,7 @@ mod tests {
     fn notehead_positions_in_chord_test_3() {
         let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Up);
         assert_eq!(
-            result,
+            result.by_key,
             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PostNoteSlot}
         );
     }
@@ -186,7 +203,7 @@ mod tests {
     fn notehead_positions_in_chord_test_4() {
         let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Down);
         assert_eq!(
-            result,
+            result.by_key,
             hashmap! {(0,String::from("a")) => Position::PreNoteSlot, (0,String::from("b")) => Position::NoteSlot}
         );
     }
@@ -196,7 +213,7 @@ mod tests {
     fn notehead_positions_in_chord_test_5() {
         let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Up);
         assert_eq!(
-            result,
+            result.by_key,
             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PostNoteSlot, (0,String::from("c")) => Position::NoteSlot}
         );
     }
@@ -206,7 +223,7 @@ mod tests {
     fn notehead_positions_in_chord_test_6() {
         let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Down);
         assert_eq!(
-            result,
+            result.by_key,
             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PreNoteSlot, (0,String::from("c")) => Position::NoteSlot}
         );
     }
@@ -216,7 +233,7 @@ mod tests {
     fn notehead_positions_in_chord_test_7() {
         let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Up);
         assert_eq!(
-            result,
+            result.by_key,
             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::NoteSlot, (0,String::from("c")) => Position::PostNoteSlot}
         );
     }
@@ -226,7 +243,7 @@ mod tests {
     fn notehead_positions_in_chord_test_8() {
         let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Down);
         assert_eq!(
-            result,
+            result.by_key,
             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PreNoteSlot, (0,String::from("c")) => Position::NoteSlot}
         );
     }

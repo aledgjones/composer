@@ -12,7 +12,7 @@ use crate::components::units::Converter;
 use crate::score::stave::Stave;
 use crate::score::stave::STAVE_LINE_WIDTH;
 
-fn draw_line<T: Iterator<Item = i8>>(
+fn draw_lines<T: Iterator<Item = i8>>(
     range: T,
     tick: &Tick,
     x: &f32,
@@ -36,7 +36,7 @@ fn draw_line<T: Iterator<Item = i8>>(
             }
         };
 
-        if offset % 2 == 0 && (offset < -5 || offset > 5) {
+        if offset % 2 == 0 {
             let y = y + (offset as f32 / 2.0);
 
             let start_slot = horizontal_spacing.get(tick, &start_slot).unwrap();
@@ -75,11 +75,12 @@ fn draw_ledger_line(
 ) {
     let (highest, lowest, _) = entry.get_tone_offset_info(tone_offsets);
 
-    let from = if highest > 0 { 0 } else { highest };
-    let to = if lowest < 0 { 0 } else { lowest + 1 };
+    let from = if highest > -5 { -5 } else { highest };
+    let to = if lowest < 5 { 5 } else { lowest + 1 };
 
-    draw_line(
-        from..0,
+    // high ledger lines
+    draw_lines(
+        from..-5,
         tick,
         x,
         y,
@@ -89,8 +90,9 @@ fn draw_ledger_line(
         instructions,
     );
 
-    draw_line(
-        (0..to).rev(),
+    // low ledger lines
+    draw_lines(
+        (5..to).rev(),
         tick,
         x,
         y,

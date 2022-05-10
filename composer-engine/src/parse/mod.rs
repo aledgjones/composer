@@ -1,5 +1,6 @@
 mod draw_accidentals;
 mod draw_barlines;
+mod draw_beams;
 mod draw_braces;
 mod draw_brackets;
 mod draw_clefs;
@@ -9,6 +10,7 @@ mod draw_names;
 mod draw_noteheads;
 mod draw_rests;
 mod draw_staves;
+mod draw_stems;
 mod draw_sub_brackets;
 mod draw_systemic_barline;
 mod draw_time_signatures;
@@ -18,6 +20,7 @@ pub mod get_bars;
 pub mod get_beams;
 mod get_note_positions;
 mod get_stem_directions;
+mod get_stem_lengths;
 mod get_tone_offsets;
 mod get_vertical_spans;
 pub mod get_written_durations;
@@ -32,6 +35,7 @@ use crate::score::engrave::LayoutType;
 use crate::Engine;
 use draw_accidentals::draw_accidentals;
 use draw_barlines::draw_barlines;
+use draw_beams::draw_beams;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
 use draw_clefs::draw_clefs;
@@ -41,6 +45,7 @@ use draw_names::draw_names;
 use draw_noteheads::draw_noteheads;
 use draw_rests::draw_rests;
 use draw_staves::draw_staves;
+use draw_stems::draw_stems;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
 use draw_time_signatures::draw_time_signatures;
@@ -50,6 +55,7 @@ use get_bars::get_bars;
 use get_beams::get_beams;
 use get_note_positions::get_note_positions;
 use get_stem_directions::get_stem_directions;
+use get_stem_lengths::get_stem_lengths;
 use get_tone_offsets::get_tone_offsets;
 use get_vertical_spans::get_vertical_spans;
 use get_written_durations::get_written_durations;
@@ -76,6 +82,12 @@ pub struct Line {
 }
 
 #[derive(Serialize)]
+pub struct Shape {
+    pub color: String,
+    pub points: Vec<Point>,
+}
+
+#[derive(Serialize)]
 pub struct Text {
     pub x: f32,
     pub y: f32,
@@ -93,6 +105,7 @@ pub enum Instruction {
     Circle(Circle),
     Line(Line),
     Text(Text),
+    Shape(Shape),
 }
 
 #[wasm_bindgen]
@@ -137,6 +150,15 @@ impl Engine {
             &beams,
             &stem_directions,
             &accidentals,
+            engrave,
+        );
+
+        let stem_lengths = get_stem_lengths(
+            &notations,
+            &tone_offsets,
+            &horizontal_spacing,
+            &stem_directions,
+            &beams,
             engrave,
         );
 
@@ -293,6 +315,25 @@ impl Engine {
             &vertical_spacing,
             &tone_offsets,
             &tone_positions,
+            &converter,
+            &mut instructions,
+        );
+        draw_stems(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            &staves,
+            &vertical_spacing,
+            &stem_lengths,
+            &converter,
+            &mut instructions,
+        );
+        draw_beams(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            &staves,
+            &vertical_spacing,
+            &stem_lengths,
+            &beams,
             &converter,
             &mut instructions,
         );

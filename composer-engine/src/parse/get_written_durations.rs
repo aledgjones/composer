@@ -126,6 +126,18 @@ impl Notation {
         false
     }
 
+    pub fn get_beam_guide_note(
+        &self,
+        stem_direction: &StemDirection,
+        tone_offsets: &ToneVerticalOffsets,
+    ) -> i8 {
+        let (highest, lowest, _) = self.get_tone_offset_info(tone_offsets);
+        match stem_direction {
+            StemDirection::Up => highest,
+            StemDirection::Down => lowest,
+        }
+    }
+
     pub fn has_tie(&self) -> bool {
         !self.ties.is_empty()
     }

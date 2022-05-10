@@ -61,7 +61,7 @@ impl PaddingMm {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Point {
     pub x: Space,
     pub y: Space,

@@ -72,6 +72,8 @@ pub struct Engrave {
     pub minimum_note_space: Space,
     pub minimum_tie_space: Space,
     pub note_space_ratio: f32,
+
+    pub max_beam_slant: f32,
 }
 
 impl Engrave {
@@ -113,6 +115,8 @@ impl Engrave {
             minimum_note_space: 0.6,
             minimum_tie_space: 2.0,
             note_space_ratio: 1.41,
+
+            max_beam_slant: 0.5,
         }
     }
 }

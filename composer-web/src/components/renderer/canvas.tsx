@@ -65,5 +65,5 @@ export const Canvas: FC<Props> = ({ instructions, x, y, width, height }) => {
     }
   }, [instructions]);
 
-  return <canvas ref={canvas} className="renderer__canvas" />;
+  return <canvas ref={canvas} />;
 };

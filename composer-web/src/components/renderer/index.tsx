@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const Renderer: FC<Props> = ({ className, flowKey }) => {
-  const { width, height, canvases, instructions } = usePipeline(flowKey);
+  const { width, height, tiles, instructions } = usePipeline(flowKey);
 
   return (
     <div className={merge("renderer", className)}>
@@ -20,15 +20,15 @@ export const Renderer: FC<Props> = ({ className, flowKey }) => {
         <p className="renderer__flow-name">
           {engine.get_flow_title(flowKey) || "Untitled Flow"}
         </p>
-        {canvases.map((config) => {
+        {tiles.map(({ key, x, y, width, height }) => {
           return (
             <Cell
-              key={config.key}
+              key={key}
               instructions={instructions}
-              x={config.x}
-              y={config.y}
-              width={config.width}
-              height={config.height}
+              x={x}
+              y={y}
+              width={width}
+              height={height}
             />
           );
         })}

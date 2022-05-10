@@ -1,6 +1,7 @@
 import { engine } from "../data";
 import { useMM } from "./use-mm";
 import { measureText } from "../ui/utils/measure-text";
+import { timer } from "../ui/utils/timer";
 
 interface Box {
   key: string;
@@ -38,7 +39,9 @@ const canvases = (width: number, height: number) => {
 export function usePipeline(flowKey: string) {
   const mm = useMM();
 
-  const [width, height, instructions] = engine.render(flowKey, mm, measureText);
+  const [width, height, instructions] = timer("parse", true, () => {
+    return engine.render(flowKey, mm, measureText);
+  });
 
   return { canvases: canvases(width, height), instructions, width, height };
 }

@@ -48,7 +48,7 @@ impl Flow {
             key: shortid(),
             title: String::from(""),
             players: FxHashSet::default(),
-            length: 16 * 4 * 4, // 4 * 4/4
+            length: 16 * 4 * 200, // 4 * 4/4
             subdivisions: 16,
 
             master: master.key.clone(),

@@ -18,6 +18,7 @@ mod get_accidentals;
 mod get_barlines;
 pub mod get_bars;
 pub mod get_beams;
+mod get_dot_slots;
 mod get_note_positions;
 mod get_stem_directions;
 mod get_stem_lengths;
@@ -53,6 +54,7 @@ use get_accidentals::get_accidentals;
 use get_barlines::get_barlines;
 use get_bars::get_bars;
 use get_beams::get_beams;
+use get_dot_slots::get_dot_slots;
 use get_note_positions::get_note_positions;
 use get_stem_directions::get_stem_directions;
 use get_stem_lengths::get_stem_lengths;
@@ -137,6 +139,7 @@ impl Engine {
         let beams = get_beams(&notations, &bars, flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
         let tone_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
+        let dots = get_dot_slots();
         let accidentals =
             get_accidentals(flow, &self.score.tracks, &notations, &bars, &tone_offsets);
 

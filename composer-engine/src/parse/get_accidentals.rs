@@ -220,7 +220,7 @@ pub fn get_accidentals_in_track(
 pub fn get_accidentals(
     flow: &Flow,
     tracks: &Tracks,
-    notation: &NotationByTrack,
+    notation_by_track: &NotationByTrack,
     bars: &Bars,
     tone_offsets: &ToneVerticalOffsets,
 ) -> Accidentals {
@@ -228,12 +228,10 @@ pub fn get_accidentals(
 
     let master = tracks.get(&flow.master).unwrap();
 
-    for track in notation.values() {
-        let accidentals = get_accidentals_in_track(track, master, bars, tone_offsets);
-        for (entry_key, entry) in accidentals.by_key {
-            output.by_key.insert(entry_key, entry);
-        }
-        for tick in 0..track.length {
+    for notation in notation_by_track.values() {
+        let accidentals = get_accidentals_in_track(notation, master, bars, tone_offsets);
+        for ((tick, key), entry) in accidentals.by_key {
+            output.by_key.insert((tick, key), entry);
             let slot = match accidentals.slots_by_tick.get(&tick) {
                 Some(slots) => slots,
                 None => {

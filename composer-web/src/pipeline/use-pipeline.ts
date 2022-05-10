@@ -24,6 +24,8 @@ export function usePipeline(
         const ctx = canvas.current.getContext("2d", { alpha: false });
         const dpi = window.devicePixelRatio;
 
+        console.log(ctx?.canvas.getBoundingClientRect());
+
         if (ctx) {
           const [width, height, instructions] = engine.render(
             flowKey,
@@ -34,6 +36,7 @@ export function usePipeline(
           // setup canvas
           ctx.canvas.height = height * dpi;
           ctx.canvas.width = width * dpi;
+          ctx.scale(dpi, dpi);
           ctx.canvas.style.height = `${height}px`;
           ctx.canvas.style.width = `${width}px`;
 
@@ -45,22 +48,22 @@ export function usePipeline(
           instructions.forEach((instruction: RenderInstruction<any>) => {
             switch (instruction.type) {
               case InstructionType.Line:
-                drawLine(ctx, instruction, dpi);
+                drawLine(ctx, instruction);
                 break;
               case InstructionType.Text:
-                drawText(ctx, instruction, dpi);
+                drawText(ctx, instruction);
                 break;
               case InstructionType.Circle:
-                drawCircle(ctx, instruction, dpi);
+                drawCircle(ctx, instruction);
                 break;
               case InstructionType.Curve:
-                drawCurve(ctx, instruction, dpi);
+                drawCurve(ctx, instruction);
                 break;
               case InstructionType.Shape:
-                drawShape(ctx, instruction, dpi);
+                drawShape(ctx, instruction);
                 break;
               case InstructionType.Box:
-                drawBox(ctx, instruction, dpi);
+                drawBox(ctx, instruction);
                 break;
               default:
                 break;

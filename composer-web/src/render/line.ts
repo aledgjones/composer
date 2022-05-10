@@ -12,19 +12,18 @@ export type LineInstruction = RenderInstruction<{
 
 export function drawLine(
   ctx: CanvasRenderingContext2D,
-  instruction: LineInstruction,
-  dpi: number
+  instruction: LineInstruction
 ) {
   ctx.beginPath();
-  ctx.lineWidth = instruction.width * dpi;
+  ctx.lineWidth = instruction.width;
   ctx.strokeStyle = instruction.color;
 
   for (let i = 0; i < instruction.points.length; i++) {
     const { x, y } = instruction.points[i];
     if (i === 0) {
-      ctx.moveTo(x * dpi, y * dpi);
+      ctx.moveTo(x, y);
     } else {
-      ctx.lineTo(x * dpi, y * dpi);
+      ctx.lineTo(x, y);
     }
   }
   ctx.stroke();

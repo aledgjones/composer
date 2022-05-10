@@ -10,17 +10,16 @@ export type ShapeInstruction = RenderInstruction<{
 
 export function drawShape(
   ctx: CanvasRenderingContext2D,
-  instruction: ShapeInstruction,
-  space: number
+  instruction: ShapeInstruction
 ) {
   ctx.beginPath();
   ctx.fillStyle = instruction.color;
   for (let i = 0; i < instruction.points.length; i++) {
     const { x, y } = instruction.points[i];
     if (i === 0) {
-      ctx.moveTo(x * space, y * space);
+      ctx.moveTo(x, y);
     } else {
-      ctx.lineTo(x * space, y * space);
+      ctx.lineTo(x, y);
     }
   }
   ctx.closePath();

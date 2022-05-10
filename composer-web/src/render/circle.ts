@@ -9,15 +9,14 @@ export type CircleInstruction = RenderInstruction<Circle>;
 
 export function drawCircle(
   ctx: CanvasRenderingContext2D,
-  instruction: CircleInstruction,
-  dpi: number
+  instruction: CircleInstruction
 ) {
   ctx.beginPath();
   ctx.fillStyle = instruction.color;
   ctx.arc(
-    instruction.point[0] * dpi,
-    instruction.point[1] * dpi,
-    instruction.radius * dpi,
+    instruction.point[0],
+    instruction.point[1],
+    instruction.radius,
     0,
     2 * Math.PI
   );

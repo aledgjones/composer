@@ -37,20 +37,14 @@ export function buildBox(
 
 export function drawBox(
   ctx: CanvasRenderingContext2D,
-  instruction: BoxInstruction,
-  space: number
+  instruction: BoxInstruction
 ) {
   ctx.beginPath();
   ctx.fillStyle = instruction.styles.color;
-  ctx.rect(
-    instruction.x * space,
-    instruction.y * space,
-    instruction.width * space,
-    instruction.height * space
-  );
+  ctx.rect(instruction.x, instruction.y, instruction.width, instruction.height);
   if (instruction.styles.outline) {
     ctx.strokeStyle = instruction.styles.outline.color;
-    ctx.lineWidth = instruction.styles.outline.thickness * space;
+    ctx.lineWidth = instruction.styles.outline.thickness;
     ctx.stroke();
   }
   ctx.fill();

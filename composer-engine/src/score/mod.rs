@@ -13,7 +13,7 @@ use flows::Flows;
 use instruments::Instrument;
 use meta::Meta;
 use players::Players;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use tracks::Track;
 
 use self::tracks::Tracks;
@@ -24,7 +24,7 @@ pub struct Score {
     pub config: Config,
     pub engrave: Engraves,
     pub players: Players,
-    pub instruments: HashMap<String, Instrument>,
+    pub instruments: FxHashMap<String, Instrument>,
     pub flows: Flows,
     pub tracks: Tracks,
 }
@@ -36,9 +36,9 @@ impl Score {
             config: Config::new(),
             engrave: Engraves::new(),
             players: Players::new(),
-            instruments: HashMap::new(),
+            instruments: FxHashMap::default(),
             flows: Flows::new(),
-            tracks: HashMap::new(),
+            tracks: FxHashMap::default(),
         }
     }
 }

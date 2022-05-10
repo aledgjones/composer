@@ -12,7 +12,7 @@ use crate::score::engrave::Engrave;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 use crate::score::tracks::Track;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Debug)]
 pub struct Spacing {
@@ -47,7 +47,7 @@ impl Default for HorizontalSpacing {
 pub fn measure_horizontal_spacing(
     flow: &Flow,
     staves: &[&Stave],
-    tracks: &HashMap<String, Track>,
+    tracks: &FxHashMap<String, Track>,
     barlines: &Barlines,
     notations_by_track: &NotationByTrack,
     tone_positions: &TonePositions,

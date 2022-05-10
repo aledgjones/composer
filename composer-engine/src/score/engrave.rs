@@ -3,7 +3,7 @@ use crate::components::text::{Align, Font, Justify};
 use crate::components::units::{Mm, Space};
 use crate::utils::shortid;
 use crate::Engine;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 
@@ -34,14 +34,14 @@ pub enum LayoutType {
 #[derive(Debug)]
 pub struct Engraves {
     pub order: Vec<String>,
-    pub by_key: HashMap<String, Engrave>,
+    pub by_key: FxHashMap<String, Engrave>,
 }
 
 impl Engraves {
     pub fn new() -> Self {
         Self {
             order: Vec::new(),
-            by_key: HashMap::new(),
+            by_key: FxHashMap::default(),
         }
     }
 }

@@ -1,5 +1,6 @@
-use crate::entries::clef::{Clef, ClefDrawType};
 use std::collections::HashMap;
+
+use crate::entries::clef::{Clef, ClefDrawType};
 use wasm_bindgen::prelude::*;
 
 #[derive(Hash, Eq, PartialEq)]

@@ -1,6 +1,6 @@
 use crate::score::instruments::defs::INSTRUMENT_DEFS;
+use rustc_hash::FxHashSet;
 use serde::Serialize;
-use std::collections::HashSet;
 use wasm_bindgen::prelude::*;
 
 #[derive(Serialize)]
@@ -38,7 +38,7 @@ pub fn get_full_path_from_partial(selection: &JsValue) -> JsValue {
 pub fn def_tree(selection: &JsValue) -> JsValue {
     let selection: Vec<String> = selection.into_serde().unwrap();
 
-    let mut ignore: HashSet<&str> = HashSet::new();
+    let mut ignore: FxHashSet<&str> = FxHashSet::default();
     let mut tree: [Vec<&str>; 3] = [Vec::new(), Vec::new(), Vec::new()];
     for def in INSTRUMENT_DEFS.iter() {
         for (i, step) in def.path.iter().enumerate() {

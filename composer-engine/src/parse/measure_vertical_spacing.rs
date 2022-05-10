@@ -2,7 +2,7 @@ use crate::components::units::Space;
 use crate::score::engrave::Engrave;
 use crate::score::instruments::Instrument;
 use crate::score::stave::Stave;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Debug)]
 pub struct VerticalPosition {
@@ -13,23 +13,23 @@ pub struct VerticalPosition {
 #[derive(Debug)]
 pub struct VerticalSpacing {
     pub height: Space,
-    pub instruments: HashMap<String, VerticalPosition>,
-    pub staves: HashMap<String, VerticalPosition>,
+    pub instruments: FxHashMap<String, VerticalPosition>,
+    pub staves: FxHashMap<String, VerticalPosition>,
 }
 
 impl VerticalSpacing {
     fn new() -> Self {
         Self {
             height: 0.0,
-            instruments: HashMap::new(),
-            staves: HashMap::new(),
+            instruments: FxHashMap::default(),
+            staves: FxHashMap::default(),
         }
     }
 }
 
 pub fn measure_vertical_spacing(
     instruments: &[&Instrument],
-    staves: &HashMap<String, Stave>,
+    staves: &FxHashMap<String, Stave>,
     engrave: &Engrave,
 ) -> VerticalSpacing {
     let mut output = VerticalSpacing::new();

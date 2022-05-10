@@ -2,12 +2,12 @@ use crate::components::misc::Tick;
 use crate::entries::time_signature::TimeSignature;
 use crate::score::flows::Flow;
 use crate::score::tracks::Tracks;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
-pub type Bars = HashMap<Tick, TimeSignature>;
+pub type Bars = FxHashMap<Tick, TimeSignature>;
 
 pub fn get_bars(flow: &Flow, tracks: &Tracks) -> Bars {
-    let mut output: Bars = HashMap::new();
+    let mut output: Bars = FxHashMap::default();
 
     let master = tracks.get(&flow.master).unwrap();
     let mut time_signature = TimeSignature::default();

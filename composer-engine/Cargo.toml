@@ -19,6 +19,7 @@ js-sys = "0.3.56"
 maplit = "1.0.2"
 lazy_static = "1.4.0"
 roman = "0.1.6"
+rustc-hash = "1.1.0"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -35,6 +36,6 @@ panic = 'abort'
 # optimization over all codebase ( better optimization, slower build )
 codegen-units = 1
 # link time optimization using using whole-program analysis
-lto = true
+lto = "fat"
 # optimize for speed
 opt-level = 3

@@ -1,6 +1,6 @@
 use crate::utils::shortid;
 use crate::Engine;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 
@@ -31,14 +31,14 @@ impl Player {
 #[derive(Debug)]
 pub struct Players {
     pub order: Vec<String>,
-    pub by_key: HashMap<String, Player>,
+    pub by_key: FxHashMap<String, Player>,
 }
 
 impl Players {
     pub fn new() -> Self {
         Players {
             order: Vec::new(),
-            by_key: HashMap::new(),
+            by_key: FxHashMap::default(),
         }
     }
 }

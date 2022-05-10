@@ -1,11 +1,11 @@
 use crate::components::misc::Tick;
 use crate::entries::Entry;
 use crate::utils::shortid;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
-pub type Tracks = HashMap<String, Track>;
-pub type EntriesByTick = HashMap<Tick, Vec<String>>;
-pub type EntriesByKey = HashMap<String, Entry>;
+pub type Tracks = FxHashMap<String, Track>;
+pub type EntriesByTick = FxHashMap<Tick, Vec<String>>;
+pub type EntriesByKey = FxHashMap<String, Entry>;
 
 #[derive(Debug)]
 pub struct Entries {
@@ -24,8 +24,8 @@ impl Track {
         Track {
             key: shortid(),
             entries: Entries {
-                by_tick: HashMap::new(),
-                by_key: HashMap::new(),
+                by_tick: FxHashMap::default(),
+                by_key: FxHashMap::default(),
             },
         }
     }

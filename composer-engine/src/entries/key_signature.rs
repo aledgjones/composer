@@ -6,8 +6,8 @@ use crate::entries::Entry;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
 use crate::Engine;
+use rustc_hash::FxHashSet;
 use std::cmp::Ordering;
-use std::collections::HashSet;
 use wasm_bindgen::prelude::*;
 
 const SHARPS: [Pitch; 7] = [
@@ -97,8 +97,8 @@ impl KeySignature {
         }
     }
 
-    pub fn accidentals(&self) -> HashSet<&Pitch> {
-        let mut output = HashSet::new();
+    pub fn accidentals(&self) -> FxHashSet<&Pitch> {
+        let mut output = FxHashSet::default();
 
         if self.offset > 0 {
             for i in 0..self.offset.abs() {
@@ -225,53 +225,53 @@ impl Track {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::components::pitch::Accidental;
-    use crate::components::pitch::Pitch;
-    use crate::entries::key_signature::KeySignature;
-    use crate::entries::key_signature::KeySignatureMode;
-    use std::collections::HashSet;
+// #[cfg(test)]
+// mod tests {
+//     use crate::components::pitch::Accidental;
+//     use crate::components::pitch::Pitch;
+//     use crate::entries::key_signature::KeySignature;
+//     use crate::entries::key_signature::KeySignatureMode;
+//     use std::collections::HashSet;
 
-    #[test]
-    fn accidentals_test_1() {
-        let key = KeySignature::new(0, KeySignatureMode::Major, 0);
-        assert_eq!(key.accidentals(), HashSet::new());
-    }
+//     #[test]
+//     fn accidentals_test_1() {
+//         let key = KeySignature::new(0, KeySignatureMode::Major, 0);
+//         assert_eq!(key.accidentals(), HashSet::new());
+//     }
 
-    #[test]
-    fn accidentals_test_2() {
-        let key = KeySignature::new(0, KeySignatureMode::Major, 2);
-        assert_eq!(
-            key.accidentals(),
-            hashset! {
-                &Pitch {
-                    int: 66,
-                    accidental: Accidental::Sharp,
-                },
-                &Pitch {
-                    int: 61,
-                    accidental: Accidental::Sharp,
-                }
-            }
-        );
-    }
+//     #[test]
+//     fn accidentals_test_2() {
+//         let key = KeySignature::new(0, KeySignatureMode::Major, 2);
+//         assert_eq!(
+//             key.accidentals(),
+//             hashset! {
+//                 &Pitch {
+//                     int: 66,
+//                     accidental: Accidental::Sharp,
+//                 },
+//                 &Pitch {
+//                     int: 61,
+//                     accidental: Accidental::Sharp,
+//                 }
+//             }
+//         );
+//     }
 
-    #[test]
-    fn accidentals_test_3() {
-        let key = KeySignature::new(0, KeySignatureMode::Major, -2);
-        assert_eq!(
-            key.accidentals(),
-            hashset! {
-                &Pitch {
-                    int: 70,
-                    accidental: Accidental::Flat,
-                },
-                &Pitch {
-                    int: 63,
-                    accidental: Accidental::Flat,
-                }
-            }
-        );
-    }
-}
+//     #[test]
+//     fn accidentals_test_3() {
+//         let key = KeySignature::new(0, KeySignatureMode::Major, -2);
+//         assert_eq!(
+//             key.accidentals(),
+//             hashset! {
+//                 &Pitch {
+//                     int: 70,
+//                     accidental: Accidental::Flat,
+//                 },
+//                 &Pitch {
+//                     int: 63,
+//                     accidental: Accidental::Flat,
+//                 }
+//             }
+//         );
+//     }
+// }

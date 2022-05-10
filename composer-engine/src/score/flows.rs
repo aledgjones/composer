@@ -10,22 +10,22 @@ use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
 use crate::entries::Entry;
 use crate::utils::shortid;
 use crate::Engine;
+use rustc_hash::{FxHashMap, FxHashSet};
 use serde::Serialize;
-use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 
 #[derive(Debug)]
 pub struct Flows {
     pub order: Vec<String>,
-    pub by_key: HashMap<String, Flow>,
+    pub by_key: FxHashMap<String, Flow>,
 }
 
 impl Flows {
     pub fn new() -> Flows {
         Flows {
             order: Vec::new(),
-            by_key: HashMap::new(),
+            by_key: FxHashMap::default(),
         }
     }
 }
@@ -34,12 +34,12 @@ impl Flows {
 pub struct Flow {
     pub key: String,
     pub title: String,
-    pub players: HashSet<String>, // purely for inclusion lookup -- order comes from score.players.order
-    pub length: Ticks,            // number of subdivision ticks in the flow
+    pub players: FxHashSet<String>, // purely for inclusion lookup -- order comes from score.players.order
+    pub length: Ticks,              // number of subdivision ticks in the flow
     pub subdivisions: Ticks,
 
     pub master: String,
-    pub staves: HashMap<String, Stave>,
+    pub staves: FxHashMap<String, Stave>,
 }
 
 impl Flow {
@@ -47,12 +47,12 @@ impl Flow {
         Flow {
             key: shortid(),
             title: String::from(""),
-            players: HashSet::new(),
+            players: FxHashSet::default(),
             length: 16 * 4 * 4, // 4 * 4/4
             subdivisions: 16,
 
             master: master.key.clone(),
-            staves: HashMap::new(),
+            staves: FxHashMap::default(),
         }
     }
 }

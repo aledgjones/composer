@@ -8,8 +8,8 @@ use super::get_written_durations::NotationByTrack;
 use super::get_written_durations::NotationTrack;
 use crate::components::misc::Tick;
 use crate::entries::tone::Tone;
+use rustc_hash::FxHashMap;
 use std::cmp::Ordering;
-use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum StemDirection {
@@ -26,8 +26,8 @@ impl StemDirection {
     }
 }
 
-pub type StemDirections = HashMap<Tick, StemDirection>;
-pub type StemDirectionsByTrack = HashMap<String, StemDirections>;
+pub type StemDirections = FxHashMap<Tick, StemDirection>;
+pub type StemDirectionsByTrack = FxHashMap<String, StemDirections>;
 
 pub fn get_span_stem_direction(
     span: &Beam,
@@ -72,7 +72,7 @@ pub fn get_stem_directions_in_track(
     tone_offsets: &ToneVerticalOffsets,
     beams: &Beams,
 ) -> StemDirections {
-    let mut output = HashMap::new();
+    let mut output = FxHashMap::default();
 
     // natural stem directions
     for (at, entry) in &notation.track {
@@ -97,7 +97,7 @@ pub fn get_stem_directions(
     tone_offsets: &ToneVerticalOffsets,
     beams_by_track: &BeamsByTrack,
 ) -> StemDirectionsByTrack {
-    let mut output = HashMap::new();
+    let mut output = FxHashMap::default();
 
     for (track_key, track) in tracks {
         let beams = beams_by_track.get(track_key).unwrap();
@@ -122,6 +122,9 @@ impl Notation {
 
 #[cfg(test)]
 mod tests {
+    use rustc_hash::FxHashMap;
+    use rustc_hash::FxHashSet;
+
     use super::get_span_stem_direction;
     use super::StemDirection;
     use super::ToneVerticalOffsets;
@@ -133,15 +136,14 @@ mod tests {
     use crate::entries::tone::Tone;
     use crate::parse::get_written_durations::Notation;
     use crate::parse::get_written_durations::NotationTrack;
-    use std::collections::{HashMap, HashSet};
 
     fn run_get_stem_direction_test(tones: Vec<(&str, i8)>) -> StemDirection {
         let mut notation = Notation {
             tones: Vec::new(),
             duration: 0,
-            ties: HashSet::new(),
+            ties: FxHashSet::default(),
         };
-        let mut tone_offsets: ToneVerticalOffsets = HashMap::new();
+        let mut tone_offsets: ToneVerticalOffsets = FxHashMap::default();
 
         for (key, offset) in tones {
             tone_offsets.insert(key.to_string(), offset);
@@ -201,7 +203,7 @@ mod tests {
     }
 
     fn run_get_span_stem_direction_test(tones: Vec<(&str, i8)>) -> StemDirection {
-        let mut tone_offsets: ToneVerticalOffsets = HashMap::new();
+        let mut tone_offsets: ToneVerticalOffsets = FxHashMap::default();
         let mut beam = Vec::new();
 
         let mut track = NotationTrack::new(tones.len() as Ticks);
@@ -218,7 +220,7 @@ mod tests {
                         Articulation::None,
                     )],
                     duration: 1,
-                    ties: HashSet::new(),
+                    ties: FxHashSet::default(),
                 },
             );
 

@@ -6,7 +6,7 @@ use crate::utils::shortid;
 use crate::Engine;
 use crate::{components::misc::ALPHABET_LOWERCASE, score::players::PlayerType};
 use defs::{get_def, InstrumentType};
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use wasm_bindgen::prelude::*;
 
 #[derive(Debug)]
@@ -43,7 +43,7 @@ impl Instrument {
 }
 
 impl Engine {
-    pub fn assign_count(&mut self, entries: HashMap<String, Vec<(String, String)>>) {
+    pub fn assign_count(&mut self, entries: FxHashMap<String, Vec<(String, String)>>) {
         for (_, keys) in entries {
             if keys.len() > 1 {
                 for (i, (player_key, instrument_key)) in keys.iter().enumerate() {
@@ -184,8 +184,9 @@ impl Engine {
     }
 
     pub fn calculate_counts(&mut self) {
-        let mut instruments_solo: HashMap<String, Vec<(String, String)>> = HashMap::new();
-        let mut instruments_section: HashMap<String, Vec<(String, String)>> = HashMap::new();
+        let mut instruments_solo: FxHashMap<String, Vec<(String, String)>> = FxHashMap::default();
+        let mut instruments_section: FxHashMap<String, Vec<(String, String)>> =
+            FxHashMap::default();
 
         // collect keys of each instruments with exactly the same name and player type
         for player_key in &self.score.players.order {

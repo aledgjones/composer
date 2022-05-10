@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 use super::get_bars::Bars;
 use super::get_written_durations::{Notation, NotationByTrack, NotationTrack};
@@ -8,7 +8,7 @@ use crate::entries::time_signature::TimeSignature;
 
 pub type Beam = Vec<Tick>;
 pub type Beams = Vec<Beam>;
-pub type BeamsByTrack = HashMap<String, Beams>;
+pub type BeamsByTrack = FxHashMap<String, Beams>;
 
 fn grouping_is_beamable(
     notation: &NotationTrack,
@@ -88,7 +88,7 @@ pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Bars, subdivision
 }
 
 pub fn get_beams(tracks: &NotationByTrack, bars: &Bars, subdivisions: Ticks) -> BeamsByTrack {
-    let mut output: BeamsByTrack = HashMap::new();
+    let mut output: BeamsByTrack = FxHashMap::default();
 
     for (track_key, track) in tracks {
         let beams = get_beams_in_track(track, bars, subdivisions);

@@ -8,7 +8,7 @@ use crate::components::measurements::Point;
 use crate::components::misc::Tick;
 use crate::score::engrave::Engrave;
 use crate::score::stave::STAVE_LINE_WIDTH;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Debug)]
 pub enum BeamSlant {
@@ -22,8 +22,8 @@ pub struct StemDef {
     pub head: Point,
     pub tail: Point,
 }
-pub type StemLengths = HashMap<Tick, StemDef>;
-pub type StemLengthsByTrack = HashMap<String, StemLengths>;
+pub type StemLengths = FxHashMap<Tick, StemDef>;
+pub type StemLengthsByTrack = FxHashMap<String, StemLengths>;
 
 fn adjust_to_beam(
     beam: &Beam,
@@ -177,7 +177,7 @@ pub fn get_stem_lengths_in_track(
     beams: &Beams,
     engrave: &Engrave,
 ) -> StemLengths {
-    let mut output: StemLengths = HashMap::new();
+    let mut output: StemLengths = FxHashMap::default();
 
     // get natural lengths of stems
     for (tick, entry) in &notation.track {
@@ -253,7 +253,7 @@ pub fn get_stem_lengths(
     beams_by_track: &BeamsByTrack,
     engrave: &Engrave,
 ) -> StemLengthsByTrack {
-    let mut output: StemLengthsByTrack = HashMap::new();
+    let mut output: StemLengthsByTrack = FxHashMap::default();
 
     for (track_key, track) in tracks {
         let stem_directions = stem_directions_by_track.get(track_key).unwrap();

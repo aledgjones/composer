@@ -42,6 +42,7 @@
     "pullstate": "^1.24.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "react-hotkeys-hook": "^3.4.4"
+    "react-hotkeys-hook": "^3.4.4",
+    "react-intersection-observer": "^9.1.0"
   }
 }

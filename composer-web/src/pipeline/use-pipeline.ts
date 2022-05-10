@@ -24,8 +24,6 @@ export function usePipeline(
         const ctx = canvas.current.getContext("2d", { alpha: false });
         const dpi = window.devicePixelRatio;
 
-        console.log(ctx?.canvas.getBoundingClientRect());
-
         if (ctx) {
           const [width, height, instructions] = engine.render(
             flowKey,
@@ -36,9 +34,10 @@ export function usePipeline(
           // setup canvas
           ctx.canvas.height = height * dpi;
           ctx.canvas.width = width * dpi;
-          ctx.scale(dpi, dpi);
           ctx.canvas.style.height = `${height}px`;
           ctx.canvas.style.width = `${width}px`;
+
+          ctx.scale(dpi, dpi);
 
           // clear canvas
           ctx.fillStyle = "#fff";

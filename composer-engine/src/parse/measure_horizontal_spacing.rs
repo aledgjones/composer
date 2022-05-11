@@ -1,7 +1,7 @@
 use super::get_accidentals::Accidentals;
 use super::get_barlines::Barlines;
 use super::get_beams::BeamsByTrack;
-use super::get_note_positions::{Position, TonePositions};
+use super::get_note_positions::{Position, TonePositions, POSITION_COUNT};
 use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_written_durations::NotationByTrack;
 use crate::components::measurements::BoundingBox;
@@ -32,7 +32,7 @@ impl HorizontalSpacing {
         }
     }
     pub fn get(&self, tick: &Tick, position: &Position) -> Option<&Spacing> {
-        let start = (tick * 13) as usize;
+        let start = (tick * POSITION_COUNT) as usize;
         let i = start + position.clone() as usize;
         self.widths.get(i)
     }
@@ -56,11 +56,11 @@ pub fn measure_horizontal_spacing(
     accidentals: &Accidentals,
     engraving: &Engrave,
 ) -> HorizontalSpacing {
-    let mut widths: Vec<f32> = vec![0.0; (flow.length * 13) as usize];
+    let mut widths: Vec<f32> = vec![0.0; (flow.length * POSITION_COUNT) as usize];
     let flow_master = tracks.get(&flow.master).unwrap();
 
     for tick in 0..flow.length {
-        let start = (tick * 13) as usize;
+        let start = (tick * POSITION_COUNT) as usize;
 
         if tick == 0 {
             widths[start + Position::PaddingStart] = 1.0;
@@ -166,7 +166,7 @@ pub fn measure_horizontal_spacing(
                     let note_spacing_per_tick = note_spacing / entry.duration as f32;
                     let end = tick + entry.duration;
                     for i in tick..end {
-                        let start = (i * 13) as usize;
+                        let start = (i * POSITION_COUNT) as usize;
                         if note_spacing_per_tick > widths[start + Position::NoteSpacing] {
                             widths[start + Position::NoteSpacing] = note_spacing_per_tick;
                         }

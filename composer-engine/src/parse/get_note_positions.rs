@@ -5,6 +5,8 @@ use crate::components::misc::Tick;
 use rustc_hash::FxHashMap;
 use std::ops::{Add, Index, IndexMut};
 
+pub const POSITION_COUNT: u32 = 14;
+
 #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum Position {
     PaddingStart = 0,
@@ -18,6 +20,7 @@ pub enum Position {
     PreNoteSlot,
     NoteSlot,
     PostNoteSlot,
+    Dot,
     NoteSpacing,
     PaddingEnd,
 }
@@ -44,8 +47,9 @@ impl From<usize> for Position {
             8 => Position::PreNoteSlot,
             9 => Position::NoteSlot,
             10 => Position::PostNoteSlot,
-            11 => Position::NoteSpacing,
-            12 => Position::PaddingEnd,
+            11 => Position::Dot,
+            12 => Position::NoteSpacing,
+            13 => Position::PaddingEnd,
             _ => Position::PaddingStart,
         }
     }

@@ -4,6 +4,7 @@ mod draw_beams;
 mod draw_braces;
 mod draw_brackets;
 mod draw_clefs;
+mod draw_dots;
 mod draw_key_signatures;
 mod draw_ledger_lines;
 mod draw_names;
@@ -18,7 +19,7 @@ mod get_accidentals;
 mod get_barlines;
 pub mod get_bars;
 pub mod get_beams;
-mod get_dot_slots;
+mod get_dots;
 mod get_note_positions;
 mod get_stem_directions;
 mod get_stem_lengths;
@@ -33,6 +34,7 @@ mod measure_vertical_spacing;
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
+use crate::utils::log;
 use crate::Engine;
 use draw_accidentals::draw_accidentals;
 use draw_barlines::draw_barlines;
@@ -40,6 +42,7 @@ use draw_beams::draw_beams;
 use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
 use draw_clefs::draw_clefs;
+use draw_dots::draw_dots;
 use draw_key_signatures::draw_key_signatures;
 use draw_ledger_lines::draw_ledger_lines;
 use draw_names::draw_names;
@@ -54,7 +57,7 @@ use get_accidentals::get_accidentals;
 use get_barlines::get_barlines;
 use get_bars::get_bars;
 use get_beams::get_beams;
-use get_dot_slots::get_dot_slots;
+use get_dots::get_dots;
 use get_note_positions::get_note_positions;
 use get_stem_directions::get_stem_directions;
 use get_stem_lengths::get_stem_lengths;
@@ -139,7 +142,7 @@ impl Engine {
         let beams = get_beams(&notations, &bars, flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
         let tone_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
-        let dots = get_dot_slots();
+        let dots = get_dots(flow, &notations, &tone_offsets);
         let accidentals =
             get_accidentals(flow, &self.score.tracks, &notations, &bars, &tone_offsets);
 
@@ -164,6 +167,8 @@ impl Engine {
             &beams,
             engrave,
         );
+
+        log(&format!("{:?}", dots));
 
         let width: Space = padding_left
             + name_widths
@@ -318,6 +323,16 @@ impl Engine {
             &vertical_spacing,
             &tone_offsets,
             &tone_positions,
+            &converter,
+            &mut instructions,
+        );
+        draw_dots(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            &staves,
+            &vertical_spacing,
+            &horizontal_spacing,
+            &dots,
             &converter,
             &mut instructions,
         );

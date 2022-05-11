@@ -10,3 +10,18 @@ pub const ALPHABET_UPPERCASE: [char; 26] = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
     'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 ];
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum StemDirection {
+    Up,
+    Down,
+}
+
+impl StemDirection {
+    pub fn to_modifier(&self) -> i8 {
+        match self {
+            StemDirection::Up => 1,
+            StemDirection::Down => -1,
+        }
+    }
+}

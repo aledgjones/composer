@@ -57,11 +57,8 @@ pub fn draw_beams(
             let stem_lengths = stem_lengths_by_track.get(track_key).unwrap();
             let beams = beams_by_track.get(track_key).unwrap();
             for beam in beams {
-                let start_tick = beam.first().unwrap();
-                let stop_tick = beam.last().unwrap();
-
-                let start = stem_lengths.get(start_tick).unwrap();
-                let stop = stem_lengths.get(stop_tick).unwrap();
+                let start = stem_lengths.get(&beam.start).unwrap();
+                let stop = stem_lengths.get(&beam.stop).unwrap();
 
                 draw_beam(x, &top, start, stop, converter, instructions);
             }

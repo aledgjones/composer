@@ -1,14 +1,18 @@
-use rustc_hash::FxHashMap;
-
 use super::get_bars::Bars;
 use super::get_written_durations::{Notation, NotationByTrack, NotationTrack};
 use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
 use crate::entries::time_signature::TimeSignature;
+use rustc_hash::{FxHashMap, FxHashSet};
 
-pub type Beam = Vec<Tick>;
+pub struct Beam {
+    pub ticks: FxHashSet<Tick>,
+    pub start: Tick,
+    pub stop: Tick,
+}
 pub type Beams = Vec<Beam>;
 pub type BeamsByTrack = FxHashMap<String, Beams>;
+pub type Span = Vec<Tick>;
 
 fn grouping_is_beamable(
     notation: &NotationTrack,
@@ -29,9 +33,17 @@ fn grouping_is_beamable(
     true
 }
 
-fn assign_span(spans: &mut Beams, span: Beam) -> Beam {
+fn assign_span(spans: &mut Beams, span: Span) -> Span {
     if span.len() > 1 {
-        spans.push(span);
+        let mut ticks = FxHashSet::default();
+        for tick in &span {
+            ticks.insert(*tick);
+        }
+        spans.push(Beam {
+            ticks,
+            start: *span.first().unwrap(),
+            stop: *span.last().unwrap(),
+        });
     }
 
     Vec::new()
@@ -40,7 +52,7 @@ fn assign_span(spans: &mut Beams, span: Beam) -> Beam {
 pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Bars, subdivisions: Ticks) -> Beams {
     let mut output: Beams = Vec::new();
 
-    let mut current_span: Beam = Vec::new();
+    let mut current_span: Span = Vec::new();
     let mut time_signature = &TimeSignature::default();
     let mut boundries = time_signature.groupings_to_ticks(&0, subdivisions);
     let mut break_at_beats = false;
@@ -96,6 +108,16 @@ pub fn get_beams(tracks: &NotationByTrack, bars: &Bars, subdivisions: Ticks) -> 
     }
 
     output
+}
+
+pub fn get_has_beam(tick: &Tick, beams: &Beams) -> bool {
+    for beam in beams {
+        if beam.ticks.contains(tick) {
+            return true;
+        }
+    }
+
+    false
 }
 
 impl Notation {

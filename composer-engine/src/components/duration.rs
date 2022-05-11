@@ -1,4 +1,4 @@
-use super::misc::Ticks;
+use super::misc::{StemDirection, Ticks};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 pub const NOTE_DURATIONS: [NoteDuration; 7] = [
@@ -96,6 +96,25 @@ impl NoteDuration {
             NoteDuration::Sixteenth => "\u{1D161}",
             NoteDuration::ThirtySecond => "\u{1D162}",
             NoteDuration::SixtyFourth => "\u{1D162}",
+        }
+    }
+
+    pub fn to_flag_glyph(&self, stem_direction: &StemDirection) -> &str {
+        match stem_direction {
+            StemDirection::Up => match self {
+                NoteDuration::Eighth => "\u{E240}",
+                NoteDuration::Sixteenth => "\u{E242}",
+                NoteDuration::ThirtySecond => "\u{E244}",
+                NoteDuration::SixtyFourth => "\u{E246}",
+                _ => "",
+            },
+            StemDirection::Down => match self {
+                NoteDuration::Eighth => "\u{E241}",
+                NoteDuration::Sixteenth => "\u{E243}",
+                NoteDuration::ThirtySecond => "\u{E245}",
+                NoteDuration::SixtyFourth => "\u{E247}",
+                _ => "",
+            },
         }
     }
 

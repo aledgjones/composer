@@ -1,11 +1,11 @@
 use super::get_beams::{Beam, Beams, BeamsByTrack};
 use super::get_note_positions::Position;
-use super::get_stem_directions::{StemDirection, StemDirections, StemDirectionsByTrack};
+use super::get_stem_directions::{StemDirections, StemDirectionsByTrack};
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack, NotationTrack};
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use crate::components::measurements::Point;
-use crate::components::misc::Tick;
+use crate::components::misc::{StemDirection, Tick};
 use crate::score::engrave::Engrave;
 use crate::score::stave::STAVE_LINE_WIDTH;
 use rustc_hash::FxHashMap;
@@ -43,8 +43,7 @@ fn adjust_to_beam(
     // join inner stems to the angles beam
     let mut adjustment = 0.0;
     let tan_angle = (low_y - high.tail.y) / (low.tail.x - high.tail.x);
-    for i in 0..beam.len() {
-        let tick = beam.get(i).unwrap();
+    for tick in &beam.ticks {
         let original = output.get_mut(tick).unwrap();
 
         let opp = tan_angle * (low.tail.x - original.tail.x);
@@ -61,8 +60,7 @@ fn adjust_to_beam(
     }
 
     // make sure stems aren't squashed less than natural lengths
-    for i in 0..beam.len() {
-        let tick = beam.get(i).unwrap();
+    for tick in &beam.ticks {
         let original = output.get_mut(tick).unwrap();
         original.tail.y += adjustment;
     }
@@ -74,8 +72,8 @@ fn get_beam_slant(
     stem_direction: &StemDirection,
     tone_offsets: &ToneVerticalOffsets,
 ) -> BeamSlant {
-    let start = notation.track.get(beam.first().unwrap()).unwrap();
-    let stop = notation.track.get(beam.last().unwrap()).unwrap();
+    let start = notation.track.get(&beam.start).unwrap();
+    let stop = notation.track.get(&beam.stop).unwrap();
 
     let start_guide = start.get_beam_guide_note(stem_direction, tone_offsets);
     let stop_guide = stop.get_beam_guide_note(stem_direction, tone_offsets);
@@ -85,8 +83,11 @@ fn get_beam_slant(
     }
 
     // check the melodic shape, we flatten in certain conditions
-    for i in 1..(beam.len() - 1) {
-        let tick = beam.get(i).unwrap();
+    for tick in &beam.ticks {
+        if tick == &beam.start || tick == &beam.stop {
+            continue;
+        }
+
         let entry = notation.track.get(tick).unwrap();
         let guide = entry.get_beam_guide_note(stem_direction, tone_offsets);
 
@@ -111,9 +112,14 @@ fn get_beam_slant(
     }
 }
 
-fn get_furthest_tail(stems: &[StemDef], stem_direction: &StemDirection) -> f32 {
+fn get_furthest_tail(
+    beam: &Beam,
+    stem_lengths: &StemLengths,
+    stem_direction: &StemDirection,
+) -> f32 {
     let mut furthest = 0.0;
-    for def in stems {
+    for tick in &beam.ticks {
+        let def = stem_lengths.get(tick).unwrap();
         match stem_direction {
             StemDirection::Up => {
                 if def.tail.y < furthest {
@@ -198,45 +204,35 @@ pub fn get_stem_lengths_in_track(
 
     // for each beam adjust stems to meet beam angle
     for beam in beams {
-        let start_tick = beam.first().unwrap();
-        let stem_direction = stem_directions.get(start_tick).unwrap();
+        let stem_direction = stem_directions.get(&beam.start).unwrap();
         let slant = get_beam_slant(beam, notation, stem_direction, tone_offsets);
 
-        let stems: Vec<StemDef> = beam
-            .iter()
-            .map(|tick| output.get(tick).unwrap().clone())
-            .collect();
+        // clone these to release them from the borrow checker
+        let first = output.get(&beam.start).unwrap().clone();
+        let last = output.get(&beam.stop).unwrap().clone();
 
         match slant {
             BeamSlant::Up => match stem_direction {
                 StemDirection::Up => {
-                    let low = stems.first().unwrap();
-                    let high = stems.last().unwrap();
-                    adjust_to_beam(beam, high, low, engrave.max_beam_slant, &mut output);
+                    adjust_to_beam(beam, &last, &first, engrave.max_beam_slant, &mut output);
                 }
                 StemDirection::Down => {
-                    let low = stems.first().unwrap();
-                    let high = stems.last().unwrap();
-                    adjust_to_beam(beam, high, low, engrave.max_beam_slant, &mut output);
+                    adjust_to_beam(beam, &last, &first, engrave.max_beam_slant, &mut output);
                 }
             },
             BeamSlant::None => {
-                let furthest = get_furthest_tail(&stems, stem_direction);
-                for tick in beam {
+                let furthest = get_furthest_tail(beam, &output, stem_direction);
+                for tick in &beam.ticks {
                     let original = output.get_mut(tick).unwrap();
                     original.tail.y = furthest;
                 }
             }
             BeamSlant::Down => match stem_direction {
                 StemDirection::Up => {
-                    let high = stems.first().unwrap();
-                    let low = stems.last().unwrap();
-                    adjust_to_beam(beam, high, low, engrave.max_beam_slant, &mut output);
+                    adjust_to_beam(beam, &first, &last, engrave.max_beam_slant, &mut output);
                 }
                 StemDirection::Down => {
-                    let high = stems.first().unwrap();
-                    let low = stems.last().unwrap();
-                    adjust_to_beam(beam, high, low, engrave.max_beam_slant, &mut output);
+                    adjust_to_beam(beam, &first, &last, engrave.max_beam_slant, &mut output);
                 }
             },
         }

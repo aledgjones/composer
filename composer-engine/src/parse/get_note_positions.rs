@@ -1,7 +1,7 @@
-use super::get_stem_directions::{StemDirection, StemDirectionsByTrack};
+use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
-use crate::components::misc::Tick;
+use crate::components::misc::{StemDirection, Tick};
 use rustc_hash::FxHashMap;
 use std::ops::{Add, Index, IndexMut};
 

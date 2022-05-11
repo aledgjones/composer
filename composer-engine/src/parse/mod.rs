@@ -5,6 +5,7 @@ mod draw_braces;
 mod draw_brackets;
 mod draw_clefs;
 mod draw_dots;
+mod draw_flags;
 mod draw_key_signatures;
 mod draw_ledger_lines;
 mod draw_names;
@@ -34,7 +35,6 @@ mod measure_vertical_spacing;
 use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
-use crate::utils::log;
 use crate::Engine;
 use draw_accidentals::draw_accidentals;
 use draw_barlines::draw_barlines;
@@ -43,6 +43,7 @@ use draw_braces::draw_braces;
 use draw_brackets::draw_brackets;
 use draw_clefs::draw_clefs;
 use draw_dots::draw_dots;
+use draw_flags::draw_flags;
 use draw_key_signatures::draw_key_signatures;
 use draw_ledger_lines::draw_ledger_lines;
 use draw_names::draw_names;
@@ -167,8 +168,6 @@ impl Engine {
             &beams,
             engrave,
         );
-
-        log(&format!("{:?}", dots));
 
         let width: Space = padding_left
             + name_widths
@@ -342,6 +341,19 @@ impl Engine {
             &staves,
             &vertical_spacing,
             &stem_lengths,
+            &converter,
+            &mut instructions,
+        );
+        draw_flags(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            flow,
+            &staves,
+            &notations,
+            &stem_directions,
+            &stem_lengths,
+            &beams,
+            &vertical_spacing,
             &converter,
             &mut instructions,
         );

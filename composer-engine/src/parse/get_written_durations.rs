@@ -1,14 +1,11 @@
-use rustc_hash::FxHashMap;
-use rustc_hash::FxHashSet;
-
 use super::get_bars::Bars;
 use super::get_beams::Beams;
-use super::get_stem_directions::StemDirection;
 use super::get_tone_offsets::get_tone_offset_info;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use crate::components::duration::is_writable;
 use crate::components::duration::NoteDuration;
 use crate::components::duration::NOTE_DURATIONS;
+use crate::components::misc::StemDirection;
 use crate::components::misc::Tick;
 use crate::components::misc::Ticks;
 use crate::entries::time_signature::TimeSignature;
@@ -18,6 +15,8 @@ use crate::score::engrave::Engrave;
 use crate::score::flows::Flow;
 use crate::score::tracks::Track;
 use crate::utils::log;
+use rustc_hash::FxHashMap;
+use rustc_hash::FxHashSet;
 use std::fmt::Debug;
 use std::fmt::Formatter;
 use std::fmt::Result;
@@ -116,12 +115,16 @@ impl Notation {
         }
     }
 
+    pub fn is_flagged(&self, tick: &Tick, beams: &Beams, subdivisions: Ticks) -> bool {
+        !self.is_rest()
+            && !self.has_beam(tick, beams)
+            && self.duration <= NoteDuration::Eighth.to_ticks(subdivisions)
+    }
+
     pub fn has_beam(&self, at: &Tick, beams: &Beams) -> bool {
         for beam in beams {
-            for tick in beam {
-                if tick == at {
-                    return true;
-                }
+            if beam.ticks.contains(at) {
+                return true;
             }
         }
 

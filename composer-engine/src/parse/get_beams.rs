@@ -4,6 +4,7 @@ use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
 use crate::entries::time_signature::TimeSignature;
 use rustc_hash::{FxHashMap, FxHashSet};
+use std::iter::FromIterator;
 
 pub struct Beam {
     pub ticks: FxHashSet<Tick>,
@@ -35,15 +36,10 @@ fn grouping_is_beamable(
 
 fn assign_span(spans: &mut Beams, span: Span) -> Span {
     if span.len() > 1 {
-        let mut ticks = FxHashSet::default();
-        for tick in &span {
-            ticks.insert(*tick);
-        }
-        spans.push(Beam {
-            ticks,
-            start: *span.first().unwrap(),
-            stop: *span.last().unwrap(),
-        });
+        let start = *span.first().unwrap();
+        let stop = *span.last().unwrap();
+        let ticks = FxHashSet::from_iter(span);
+        spans.push(Beam { ticks, start, stop });
     }
 
     Vec::new()

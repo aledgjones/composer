@@ -1,10 +1,11 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 import "./styles.css";
 
 interface Props {
   href: string;
   target: string;
+  children: ReactNode;
 }
 export const Link: FC<Props> = ({ href, target, children }) => {
   return (

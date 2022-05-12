@@ -148,107 +148,118 @@ pub fn get_note_positions(
     shunts
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::{note_positions_in_chord, Position, TonePositions};
-//     use crate::entries::tone::Tone;
-//     use crate::parse::get_stem_directions::StemDirection;
-//     use crate::parse::get_written_durations::Notation;
-//     use std::collections::{HashMap, HashSet};
+#[cfg(test)]
+mod tests {
+    use rustc_hash::{FxHashMap, FxHashSet};
 
-//     fn run(config: Vec<(&str, i8)>, stem_direction: &StemDirection) -> TonePositions {
-//         let mut tone_offsets = FxHashMap::default();
-//         let mut notation = Notation {
-//             tones: Vec::new(),
-//             duration: 0,
-//             ties: HashSet::new(),
-//         };
+    use super::{note_positions_in_chord, Position, TonePositions};
+    use crate::components::misc::StemDirection;
+    use crate::entries::tone::Tone;
+    use crate::parse::get_written_durations::Notation;
 
-//         for (key, offset) in config {
-//             notation.tones.push(Tone::tester(key));
-//             tone_offsets.insert(key.to_string(), offset);
-//         }
+    fn run(config: Vec<(&str, i8)>, stem_direction: &StemDirection) -> TonePositions {
+        let mut tone_offsets = FxHashMap::default();
+        let mut notation = Notation {
+            tones: Vec::new(),
+            duration: 0,
+            ties: FxHashSet::default(),
+        };
 
-//         note_positions_in_chord(&0, &notation, &tone_offsets, stem_direction)
-//     }
+        for (key, offset) in config {
+            notation.tones.push(Tone::tester(key));
+            tone_offsets.insert(key.to_string(), offset);
+        }
 
-//     #[test]
-//     /// no shunts (1 tone, up)
-//     fn notehead_positions_in_chord_test_1() {
-//         let result = run(vec![("a", 0)], &StemDirection::Up);
-//         assert_eq!(
-//             result.by_key,
-//             hashmap! {(0,String::from("a")) => Position::NoteSlot}
-//         );
-//     }
+        note_positions_in_chord(&0, &notation, &tone_offsets, stem_direction)
+    }
 
-//     #[test]
-//     /// no shunts (1 tone, down)
-//     fn notehead_positions_in_chord_test_2() {
-//         let result = run(vec![("a", 0)], &StemDirection::Down);
-//         assert_eq!(
-//             result.by_key,
-//             hashmap! {(0,String::from("a")) => Position::NoteSlot}
-//         );
-//     }
+    #[test]
+    /// no shunts (1 tone, up)
+    fn notehead_positions_in_chord_test_1() {
+        let mut expected = FxHashMap::default();
+        expected.insert((0, String::from("a")), Position::NoteSlot);
 
-//     #[test]
-//     /// shunts (2 tones, up)
-//     fn notehead_positions_in_chord_test_3() {
-//         let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Up);
-//         assert_eq!(
-//             result.by_key,
-//             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PostNoteSlot}
-//         );
-//     }
+        let result = run(vec![("a", 0)], &StemDirection::Up);
+        assert_eq!(result.by_key, expected);
+    }
 
-//     #[test]
-//     /// shunts (2 tones, up)
-//     fn notehead_positions_in_chord_test_4() {
-//         let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Down);
-//         assert_eq!(
-//             result.by_key,
-//             hashmap! {(0,String::from("a")) => Position::PreNoteSlot, (0,String::from("b")) => Position::NoteSlot}
-//         );
-//     }
+    #[test]
+    /// no shunts (1 tone, down)
+    fn notehead_positions_in_chord_test_2() {
+        let mut expected = FxHashMap::default();
+        expected.insert((0, String::from("a")), Position::NoteSlot);
 
-//     #[test]
-//     /// shunts (3 tones, up)
-//     fn notehead_positions_in_chord_test_5() {
-//         let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Up);
-//         assert_eq!(
-//             result.by_key,
-//             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PostNoteSlot, (0,String::from("c")) => Position::NoteSlot}
-//         );
-//     }
+        let result = run(vec![("a", 0)], &StemDirection::Down);
+        assert_eq!(result.by_key, expected);
+    }
 
-//     #[test]
-//     /// shunts (3 tones, up)
-//     fn notehead_positions_in_chord_test_6() {
-//         let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Down);
-//         assert_eq!(
-//             result.by_key,
-//             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PreNoteSlot, (0,String::from("c")) => Position::NoteSlot}
-//         );
-//     }
+    #[test]
+    /// shunts (2 tones, up)
+    fn notehead_positions_in_chord_test_3() {
+        let mut expected = FxHashMap::default();
+        expected.insert((0, String::from("a")), Position::NoteSlot);
+        expected.insert((0, String::from("b")), Position::PostNoteSlot);
 
-//     #[test]
-//     /// shunts (3 tones, 2 clusters, up)
-//     fn notehead_positions_in_chord_test_7() {
-//         let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Up);
-//         assert_eq!(
-//             result.by_key,
-//             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::NoteSlot, (0,String::from("c")) => Position::PostNoteSlot}
-//         );
-//     }
+        let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Up);
+        assert_eq!(result.by_key, expected);
+    }
 
-//     #[test]
-//     /// shunts (3 tones, 2 clusters, up)
-//     fn notehead_positions_in_chord_test_8() {
-//         let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Down);
-//         assert_eq!(
-//             result.by_key,
-//             hashmap! {(0,String::from("a")) => Position::NoteSlot, (0,String::from("b")) => Position::PreNoteSlot, (0,String::from("c")) => Position::NoteSlot}
-//         );
-//     }
-// }
+    #[test]
+    /// shunts (2 tones, up)
+    fn notehead_positions_in_chord_test_4() {
+        let mut expected = FxHashMap::default();
+        expected.insert((0, String::from("a")), Position::PreNoteSlot);
+        expected.insert((0, String::from("b")), Position::NoteSlot);
+
+        let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Down);
+        assert_eq!(result.by_key, expected);
+    }
+
+    #[test]
+    /// shunts (3 tones, up)
+    fn notehead_positions_in_chord_test_5() {
+        let mut expected = FxHashMap::default();
+        expected.insert((0, String::from("a")), Position::NoteSlot);
+        expected.insert((0, String::from("b")), Position::PostNoteSlot);
+        expected.insert((0, String::from("c")), Position::NoteSlot);
+
+        let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Up);
+        assert_eq!(result.by_key, expected);
+    }
+
+    #[test]
+    /// shunts (3 tones, up)
+    fn notehead_positions_in_chord_test_6() {
+        let mut expected = FxHashMap::default();
+        expected.insert((0, String::from("a")), Position::NoteSlot);
+        expected.insert((0, String::from("b")), Position::PreNoteSlot);
+        expected.insert((0, String::from("c")), Position::NoteSlot);
+
+        let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Down);
+        assert_eq!(result.by_key, expected);
+    }
+
+    #[test]
+    /// shunts (3 tones, 2 clusters, up)
+    fn notehead_positions_in_chord_test_7() {
+        let mut expected = FxHashMap::default();
+        expected.insert((0, String::from("a")), Position::NoteSlot);
+        expected.insert((0, String::from("b")), Position::NoteSlot);
+        expected.insert((0, String::from("c")), Position::PostNoteSlot);
+
+        let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Up);
+        assert_eq!(result.by_key, expected);
+    }
+
+    #[test]
+    /// shunts (3 tones, 2 clusters, up)
+    fn notehead_positions_in_chord_test_8() {
+        let mut expected = FxHashMap::default();
+        expected.insert((0, String::from("a")), Position::NoteSlot);
+        expected.insert((0, String::from("b")), Position::PreNoteSlot);
+        expected.insert((0, String::from("c")), Position::NoteSlot);
+
+        let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Down);
+        assert_eq!(result.by_key, expected);
+    }
+}

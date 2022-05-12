@@ -14,11 +14,12 @@ use instruments::Instrument;
 use meta::Meta;
 use players::Players;
 use rustc_hash::FxHashMap;
+use serde::{Deserialize, Serialize};
 use tracks::Track;
 
 use self::tracks::Tracks;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Score {
     pub meta: Meta,
     pub config: Config,

@@ -159,11 +159,12 @@ export class Engine {
 * @param {number} tick
 * @param {number} duration
 * @param {number} pitch
+* @param {number | undefined} accidental
 * @param {number} velocity
 * @param {number} articulation
 * @returns {string}
 */
-  create_tone(track_key: string, tick: number, duration: number, pitch: number, velocity: number, articulation: number): string;
+  create_tone(track_key: string, tick: number, duration: number, pitch: number, accidental: number | undefined, velocity: number, articulation: number): string;
 /**
 * update tone pitch
 * @param {string} track_key
@@ -501,6 +502,14 @@ export class Engine {
 */
   listen(cb: Function): void;
 /**
+* @returns {any}
+*/
+  export(): any;
+/**
+* @param {any} state
+*/
+  import(state: any): void;
+/**
 * @returns {string}
 */
   application_version: string;
@@ -586,7 +595,7 @@ export interface InitOutput {
   readonly engine_create_barline: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly engine_create_key_signature: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly engine_create_time_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
-  readonly engine_create_tone: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
+  readonly engine_create_tone: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => void;
   readonly engine_set_tone_pitch: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly engine_set_tone_duration: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly engine_shift_tone: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
@@ -678,6 +687,8 @@ export interface InitOutput {
   readonly __wbg_engine_free: (a: number) => void;
   readonly engine_new: () => number;
   readonly engine_listen: (a: number, b: number) => void;
+  readonly engine_export: (a: number) => number;
+  readonly engine_import: (a: number, b: number) => void;
   readonly engine_state: (a: number, b: number) => void;
   readonly __wbg_velocity_free: (a: number) => void;
   readonly run: () => void;

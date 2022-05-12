@@ -4,10 +4,11 @@ use crate::components::units::{Mm, Space};
 use crate::utils::shortid;
 use crate::Engine;
 use rustc_hash::FxHashMap;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum BracketingApproach {
     None,
@@ -15,7 +16,7 @@ pub enum BracketingApproach {
     SmallEnsemble,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum BracketStyle {
     None,
@@ -23,7 +24,7 @@ pub enum BracketStyle {
     Line,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum LayoutType {
     Score,
@@ -31,7 +32,7 @@ pub enum LayoutType {
     Custom,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Engraves {
     pub order: Vec<String>,
     pub by_key: FxHashMap<String, Engrave>,
@@ -46,7 +47,7 @@ impl Engraves {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Engrave {
     pub key: String,
     pub layout_type: LayoutType,
@@ -111,7 +112,7 @@ impl Engrave {
             bracket_single_staves: false,
             sub_bracket: true,
 
-            base_note_space: 2.75,
+            base_note_space: 2.45,
             minimum_note_space: 0.6,
             minimum_tie_space: 2.0,
             note_space_ratio: 1.41,

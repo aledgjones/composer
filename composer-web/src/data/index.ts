@@ -1,4 +1,4 @@
-import { Engine, PlayerType } from "composer-engine";
+import { Engine } from "composer-engine";
 import { Store } from "pullstate";
 import { EngravePage, PlayerPage, State, Tool, View } from "./defs";
 
@@ -7,6 +7,7 @@ export const engine = new Engine();
 (window as any).engine = engine;
 
 export const store = new Store<State>({
+  app: {},
   selection: [],
   view: View.Setup,
   snap: 4,
@@ -31,17 +32,4 @@ export const store = new Store<State>({
     keyboard: {},
     track: {},
   },
-});
-
-// TODO: remove: auto setiup score
-const instruments = [
-  "strings.violin",
-  "strings.violin",
-  "strings.viola",
-  "strings.violoncello",
-];
-instruments.forEach((id) => {
-  const playerKey = engine.create_player(PlayerType.Solo);
-  const instrumentKey = engine.create_instrument(id);
-  engine.assign_instrument_to_player(playerKey, instrumentKey);
 });

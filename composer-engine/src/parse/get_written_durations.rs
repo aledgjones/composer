@@ -118,7 +118,15 @@ impl Notation {
     pub fn is_flagged(&self, tick: &Tick, beams: &Beams, subdivisions: Ticks) -> bool {
         !self.is_rest()
             && !self.has_beam(tick, beams)
-            && self.duration <= NoteDuration::Eighth.to_ticks(subdivisions)
+            && self.duration < NoteDuration::Quarter.to_ticks(subdivisions)
+    }
+
+    pub fn flag_glyph(&self, stem_direction: &StemDirection, subdivisions: Ticks) -> String {
+        let base = self.base_to_note_duration(subdivisions);
+        match base {
+            Some(duration) => String::from(duration.to_flag_glyph(stem_direction)),
+            None => String::from(""),
+        }
     }
 
     pub fn has_beam(&self, at: &Tick, beams: &Beams) -> bool {
@@ -155,15 +163,13 @@ impl Notation {
         stem_direction: &Option<&StemDirection>,
         beams: &Beams,
     ) -> f32 {
-        let mut min_space = engraving.minimum_note_space;
-
-        let is_dotted = self.is_dotted(subdivisions);
+        let mut min_space = match self.is_dotted(subdivisions) {
+            true => engraving.minimum_note_space + 1.0,
+            false => engraving.minimum_note_space,
+        };
 
         if self.has_tie() {
             min_space = engraving.minimum_tie_space;
-            if is_dotted {
-                min_space += 1.0;
-            }
         }
 
         // TODO: work out why this is needed!
@@ -176,7 +182,7 @@ impl Notation {
         match self.base_to_note_duration(subdivisions) {
             Some(base) => {
                 let space = engraving.base_note_space
-                    * base.spacing_ratio(engraving.note_space_ratio, is_dotted);
+                    * base.spacing_ratio(engraving.note_space_ratio, self.is_dotted(subdivisions));
                 if space > min_space {
                     space
                 } else {
@@ -627,79 +633,75 @@ impl Track {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use rustc_hash::FxHashMap;
-//     use rustc_hash::FxHashSet;
+#[cfg(test)]
+mod tests {
+    use crate::entries::tone::Tone;
+    use crate::parse::get_written_durations::Clusters;
+    use crate::parse::get_written_durations::Notation;
+    use rustc_hash::FxHashMap;
+    use rustc_hash::FxHashSet;
 
-//     use crate::entries::tone::Tone;
-//     use crate::parse::get_written_durations::Clusters;
-//     use crate::parse::get_written_durations::Notation;
-//     use std::collections::HashSet;
+    #[test]
+    fn sort_tones_test() {
+        let notation = Notation {
+            tones: vec![
+                Tone::tester("a"),
+                Tone::tester("b"),
+                Tone::tester("c"),
+                Tone::tester("d"),
+                Tone::tester("e"),
+            ],
+            duration: 0,
+            ties: FxHashSet::default(),
+        };
 
-//     #[test]
-//     fn sort_tones_test() {
-//         let notation = Notation {
-//             tones: vec![
-//                 Tone::tester("a"),
-//                 Tone::tester("b"),
-//                 Tone::tester("c"),
-//                 Tone::tester("d"),
-//                 Tone::tester("e"),
-//             ],
-//             duration: 0,
-//             ties: FxHashSet::default(),
-//         };
+        let mut tone_offsets = FxHashMap::default();
+        tone_offsets.insert(String::from("a"), 0);
+        tone_offsets.insert(String::from("b"), 1);
+        tone_offsets.insert(String::from("c"), -1);
+        tone_offsets.insert(String::from("d"), 2);
+        tone_offsets.insert(String::from("e"), -2);
 
-//         let tone_offsets = FxHashMap::from([
-//             String::from("a") => 0,
-//             String::from("b") => 1,
-//             String::from("c") => -1,
-//             String::from("d") => 2,
-//             (String::from("e"), -2)
-//         ]);
+        let result = notation.sort_tones(&tone_offsets);
+        let expected = ["d", "b", "a", "c", "e"];
+        for (i, tone) in result.iter().enumerate() {
+            assert_eq!(&tone.key, expected[i]);
+        }
+    }
 
-//         let result = notation.sort_tones(&tone_offsets);
-//         let expected = ["d", "b", "a", "c", "e"];
-//         for (i, tone) in result.iter().enumerate() {
-//             assert_eq!(&tone.key, expected[i]);
-//         }
-//     }
+    #[test]
+    fn get_clusters_test() {
+        let notation = Notation {
+            tones: vec![
+                Tone::tester("a"),
+                Tone::tester("b"),
+                Tone::tester("c"),
+                Tone::tester("d"),
+                Tone::tester("e"),
+                Tone::tester("f"),
+            ],
+            duration: 0,
+            ties: FxHashSet::default(),
+        };
 
-//     #[test]
-//     fn get_clusters_test() {
-//         let notation = Notation {
-//             tones: vec![
-//                 Tone::tester("a"),
-//                 Tone::tester("b"),
-//                 Tone::tester("c"),
-//                 Tone::tester("d"),
-//                 Tone::tester("e"),
-//                 Tone::tester("f"),
-//             ],
-//             duration: 0,
-//             ties: HashSet::new(),
-//         };
+        let mut tone_offsets = FxHashMap::default();
+        tone_offsets.insert(String::from("a"), 2);
+        tone_offsets.insert(String::from("b"), 1);
+        tone_offsets.insert(String::from("c"), -1);
+        tone_offsets.insert(String::from("d"), -3);
+        tone_offsets.insert(String::from("e"), -4);
+        tone_offsets.insert(String::from("f"), -5);
 
-//         let tone_offsets = hashmap! {
-//             String::from("a") => 2,
-//             String::from("b") => 1,
-//             String::from("c") => -1,
-//             String::from("d") => -3,
-//             String::from("e") => -4,
-//             String::from("f") => -5
-//         };
+        let result: Clusters = notation.get_clusters(&tone_offsets);
+        assert_eq!(result.len(), 3);
 
-//         let result: Clusters = notation.get_clusters(&tone_offsets);
-//         assert_eq!(result.len(), 3);
-
-//         let expected: Vec<Vec<&str>> = vec![vec!["a", "b"], vec!["c"], vec!["d", "e", "f"]];
-//         for (i, expected_cluster) in expected.iter().enumerate() {
-//             let result_cluster = result.get(i).unwrap();
-//             for (ii, expected_key) in expected_cluster.iter().enumerate() {
-//                 let result_tone = result_cluster.get(ii).unwrap();
-//                 assert_eq!(&result_tone.key, expected_key);
-//             }
-//         }
-//     }
-// }
+        let expected: Vec<Vec<&str>> = vec![vec!["a", "b"], vec!["c"], vec!["d", "e", "f"]];
+        for (i, expected_cluster) in expected.iter().enumerate() {
+            let result_cluster = result.get(i).unwrap();
+            for (ii, expected_key) in expected_cluster.iter().enumerate() {
+                let result_tone = result_cluster.get(ii).unwrap();
+                assert_eq!(&result_tone.key, expected_key);
+            }
+        }
+    }
+}

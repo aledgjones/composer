@@ -105,215 +105,297 @@ pub fn get_barlines(flow: &Flow, tracks: &Tracks) -> Barlines {
     output
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::get_barlines;
-//     use super::BarlineDrawDef;
-//     use super::Barlines;
-//     use crate::components::duration::NoteDuration;
-//     use crate::entries::barline::Barline;
-//     use crate::entries::barline::BarlineDrawType;
-//     use crate::entries::key_signature::KeySignature;
-//     use crate::entries::key_signature::KeySignatureMode;
-//     use crate::entries::time_signature::TimeSignature;
-//     use crate::entries::time_signature::TimeSignatureDrawType;
-//     use crate::entries::Entry;
-//     use crate::score::flows::Flow;
-//     use crate::score::tracks::Track;
+#[cfg(test)]
+mod tests {
+    use rustc_hash::FxHashMap;
 
-//     fn run(
-//         barline: Option<Barline>,
-//         time: Option<TimeSignature>,
-//         key: Option<KeySignature>,
-//     ) -> Barlines {
-//         let mut master = Track::new();
-//         let mut flow = Flow::new(&master);
-//         flow.length = 16 * 4 * 2;
+    use super::get_barlines;
+    use super::BarlineDrawDef;
+    use super::Barlines;
+    use crate::components::duration::NoteDuration;
+    use crate::entries::barline::Barline;
+    use crate::entries::barline::BarlineDrawType;
+    use crate::entries::key_signature::KeySignature;
+    use crate::entries::key_signature::KeySignatureMode;
+    use crate::entries::time_signature::TimeSignature;
+    use crate::entries::time_signature::TimeSignatureDrawType;
+    use crate::entries::Entry;
+    use crate::score::flows::Flow;
+    use crate::score::tracks::Track;
 
-//         master.insert(Entry::TimeSignature(TimeSignature::new(
-//             0,
-//             4,
-//             NoteDuration::Quarter,
-//             TimeSignatureDrawType::Regular,
-//             None,
-//         )));
+    fn run(
+        barline: Option<Barline>,
+        time: Option<TimeSignature>,
+        key: Option<KeySignature>,
+    ) -> Barlines {
+        let mut master = Track::new();
+        let mut flow = Flow::new(&master);
+        flow.length = 16 * 4 * 2;
 
-//         if let Some(barline) = barline {
-//             master.insert(Entry::Barline(barline));
-//         }
+        master.insert(Entry::TimeSignature(TimeSignature::new(
+            0,
+            4,
+            NoteDuration::Quarter,
+            TimeSignatureDrawType::Regular,
+            None,
+        )));
 
-//         if let Some(time) = time {
-//             master.insert(Entry::TimeSignature(time));
-//         }
+        if let Some(barline) = barline {
+            master.insert(Entry::Barline(barline));
+        }
 
-//         if let Some(key) = key {
-//             master.insert(Entry::KeySignature(key));
-//         }
+        if let Some(time) = time {
+            master.insert(Entry::TimeSignature(time));
+        }
 
-//         get_barlines(&flow, &hashmap! {master.key.clone() => master})
-//     }
+        if let Some(key) = key {
+            master.insert(Entry::KeySignature(key));
+        }
 
-//     #[test]
-//     /// single barline at first beat
-//     fn barlines_1() {
-//         let result = run(None, None, None);
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: false, start_repeat: false, draw_type: Some(BarlineDrawType::Single) }}
-//         )
-//     }
+        let mut tracks = FxHashMap::default();
+        tracks.insert(master.key.clone(), master);
 
-//     #[test]
-//     /// double if manually set (vetos single)
-//     fn barlines_2() {
-//         let result = run(Some(Barline::new(64, BarlineDrawType::Double)), None, None);
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: false, start_repeat: false, draw_type: Some(BarlineDrawType::Double) }}
-//         )
-//     }
+        get_barlines(&flow, &tracks)
+    }
 
-//     #[test]
-//     /// double if key sig (vetos single)
-//     fn barlines_3() {
-//         let result = run(
-//             None,
-//             None,
-//             Some(KeySignature::new(64, KeySignatureMode::Major, 2)),
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: false, start_repeat: false, draw_type: Some(BarlineDrawType::Double) }}
-//         )
-//     }
+    #[test]
+    /// single barline at first beat
+    fn barlines_1() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: false,
+                start_repeat: false,
+                draw_type: Some(BarlineDrawType::Single),
+            },
+        );
 
-//     #[test]
-//     /// single if time sig
-//     fn barlines_4() {
-//         let result = run(
-//             None,
-//             Some(TimeSignature::new(
-//                 64,
-//                 4,
-//                 NoteDuration::Quarter,
-//                 TimeSignatureDrawType::Regular,
-//                 None,
-//             )),
-//             None,
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: false, start_repeat: false, draw_type: Some(BarlineDrawType::Single) }}
-//         )
-//     }
+        let result = run(None, None, None);
+        assert_eq!(result, expected)
+    }
 
-//     #[test]
-//     /// end repeat
-//     fn barlines_5() {
-//         let result = run(
-//             Some(Barline::new(64, BarlineDrawType::EndRepeat)),
-//             None,
-//             None,
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: true, start_repeat: false, draw_type: None }}
-//         )
-//     }
+    #[test]
+    /// double if manually set (vetos single)
+    fn barlines_2() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: false,
+                start_repeat: false,
+                draw_type: Some(BarlineDrawType::Double),
+            },
+        );
 
-//     #[test]
-//     /// start repeat
-//     fn barlines_6() {
-//         let result = run(
-//             Some(Barline::new(64, BarlineDrawType::StartRepeat)),
-//             None,
-//             None,
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: false, start_repeat: true, draw_type: None }}
-//         )
-//     }
+        let result = run(Some(Barline::new(64, BarlineDrawType::Double)), None, None);
+        assert_eq!(result, expected)
+    }
 
-//     #[test]
-//     /// double and start if key sig
-//     fn barlines_7() {
-//         let result = run(
-//             Some(Barline::new(64, BarlineDrawType::StartRepeat)),
-//             None,
-//             Some(KeySignature::new(64, KeySignatureMode::Major, 2)),
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: false, start_repeat: true, draw_type: Some(BarlineDrawType::Double) }}
-//         )
-//     }
+    #[test]
+    /// double if key sig (vetos single)
+    fn barlines_3() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: false,
+                start_repeat: false,
+                draw_type: Some(BarlineDrawType::Double),
+            },
+        );
 
-//     #[test]
-//     /// single and start if time sig
-//     fn barlines_8() {
-//         let result = run(
-//             Some(Barline::new(64, BarlineDrawType::StartRepeat)),
-//             Some(TimeSignature::new(
-//                 64,
-//                 4,
-//                 NoteDuration::Quarter,
-//                 TimeSignatureDrawType::Regular,
-//                 None,
-//             )),
-//             None,
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: false, start_repeat: true, draw_type: Some(BarlineDrawType::Single) }}
-//         )
-//     }
+        let result = run(
+            None,
+            None,
+            Some(KeySignature::new(64, KeySignatureMode::Major, 2)),
+        );
+        assert_eq!(result, expected)
+    }
 
-//     #[test]
-//     /// combined endstart if no time/key sig
-//     fn barlines_9() {
-//         let result = run(
-//             Some(Barline::new(64, BarlineDrawType::EndStartRepeat)),
-//             None,
-//             None,
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: false, start_repeat: false, draw_type: Some(BarlineDrawType::EndStartRepeat) }}
-//         )
-//     }
+    #[test]
+    /// single if time sig
+    fn barlines_4() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: false,
+                start_repeat: false,
+                draw_type: Some(BarlineDrawType::Single),
+            },
+        );
 
-//     #[test]
-//     /// split endstart if key sig
-//     fn barlines_10() {
-//         let result = run(
-//             Some(Barline::new(64, BarlineDrawType::EndStartRepeat)),
-//             None,
-//             Some(KeySignature::new(64, KeySignatureMode::Major, 2)),
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: true, start_repeat: true, draw_type: None }}
-//         )
-//     }
+        let result = run(
+            None,
+            Some(TimeSignature::new(
+                64,
+                4,
+                NoteDuration::Quarter,
+                TimeSignatureDrawType::Regular,
+                None,
+            )),
+            None,
+        );
+        assert_eq!(result, expected)
+    }
 
-//     #[test]
-//     /// split endstart if time sig
-//     fn barlines_11() {
-//         let result = run(
-//             Some(Barline::new(64, BarlineDrawType::EndStartRepeat)),
-//             Some(TimeSignature::new(
-//                 64,
-//                 4,
-//                 NoteDuration::Quarter,
-//                 TimeSignatureDrawType::Regular,
-//                 None,
-//             )),
-//             None,
-//         );
-//         assert_eq!(
-//             result,
-//             hashmap! {64 => BarlineDrawDef { end_repeat: true, start_repeat: true, draw_type: None }}
-//         )
-//     }
-// }
+    #[test]
+    /// end repeat
+    fn barlines_5() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: true,
+                start_repeat: false,
+                draw_type: None,
+            },
+        );
+
+        let result = run(
+            Some(Barline::new(64, BarlineDrawType::EndRepeat)),
+            None,
+            None,
+        );
+        assert_eq!(result, expected)
+    }
+
+    #[test]
+    /// start repeat
+    fn barlines_6() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: false,
+                start_repeat: true,
+                draw_type: None,
+            },
+        );
+
+        let result = run(
+            Some(Barline::new(64, BarlineDrawType::StartRepeat)),
+            None,
+            None,
+        );
+        assert_eq!(result, expected)
+    }
+
+    #[test]
+    /// double and start if key sig
+    fn barlines_7() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: false,
+                start_repeat: true,
+                draw_type: Some(BarlineDrawType::Double),
+            },
+        );
+
+        let result = run(
+            Some(Barline::new(64, BarlineDrawType::StartRepeat)),
+            None,
+            Some(KeySignature::new(64, KeySignatureMode::Major, 2)),
+        );
+        assert_eq!(result, expected)
+    }
+
+    #[test]
+    /// single and start if time sig
+    fn barlines_8() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: false,
+                start_repeat: true,
+                draw_type: Some(BarlineDrawType::Single),
+            },
+        );
+
+        let result = run(
+            Some(Barline::new(64, BarlineDrawType::StartRepeat)),
+            Some(TimeSignature::new(
+                64,
+                4,
+                NoteDuration::Quarter,
+                TimeSignatureDrawType::Regular,
+                None,
+            )),
+            None,
+        );
+        assert_eq!(result, expected)
+    }
+
+    #[test]
+    /// combined endstart if no time/key sig
+    fn barlines_9() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: false,
+                start_repeat: false,
+                draw_type: Some(BarlineDrawType::EndStartRepeat),
+            },
+        );
+
+        let result = run(
+            Some(Barline::new(64, BarlineDrawType::EndStartRepeat)),
+            None,
+            None,
+        );
+        assert_eq!(result, expected)
+    }
+
+    #[test]
+    /// split endstart if key sig
+    fn barlines_10() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: true,
+                start_repeat: true,
+                draw_type: None,
+            },
+        );
+
+        let result = run(
+            Some(Barline::new(64, BarlineDrawType::EndStartRepeat)),
+            None,
+            Some(KeySignature::new(64, KeySignatureMode::Major, 2)),
+        );
+        assert_eq!(result, expected)
+    }
+
+    #[test]
+    /// split endstart if time sig
+    fn barlines_11() {
+        let mut expected = FxHashMap::default();
+        expected.insert(
+            64,
+            BarlineDrawDef {
+                end_repeat: true,
+                start_repeat: true,
+                draw_type: None,
+            },
+        );
+
+        let result = run(
+            Some(Barline::new(64, BarlineDrawType::EndStartRepeat)),
+            Some(TimeSignature::new(
+                64,
+                4,
+                NoteDuration::Quarter,
+                TimeSignatureDrawType::Regular,
+                None,
+            )),
+            None,
+        );
+        assert_eq!(result, expected)
+    }
+}

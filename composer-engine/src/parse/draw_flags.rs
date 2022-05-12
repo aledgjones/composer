@@ -4,7 +4,6 @@ use super::get_stem_lengths::StemLengthsByTrack;
 use super::get_written_durations::NotationByTrack;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
-use crate::components::duration::NoteDuration;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::score::flows::Flow;
@@ -36,12 +35,7 @@ pub fn draw_flags(
             for (tick, entry) in &notation.track {
                 if entry.is_flagged(tick, beams, flow.subdivisions) {
                     let stem_direction = stem_directions.get(tick).unwrap();
-                    let duration = NoteDuration::from_ticks(entry.duration, flow.subdivisions);
-
-                    let glyph = match &duration {
-                        Some(duration) => duration.to_flag_glyph(stem_direction),
-                        None => "",
-                    };
+                    let glyph = entry.flag_glyph(stem_direction, flow.subdivisions);
 
                     // TODO extend stem by amount of 'beams'
                     // let stem_length_modifier = stem_direction.to_modifier();
@@ -53,7 +47,7 @@ pub fn draw_flags(
                     instructions.push(Instruction::Text(Text {
                         x: converter.spaces_to_px(&left),
                         y: converter.spaces_to_px(&top),
-                        value: String::from(glyph),
+                        value: glyph,
                         color: String::from("#000"),
                         font: String::from("Bravura"),
                         size: converter.spaces_to_px(&4.0),

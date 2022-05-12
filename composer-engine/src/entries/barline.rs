@@ -5,10 +5,12 @@ use crate::components::misc::Tick;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
 use crate::Engine;
+use serde::Deserialize;
+use serde::Serialize;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum BarlineDrawType {
     Single,
     Double,
@@ -24,7 +26,7 @@ impl BarlineDrawType {
             BarlineDrawType::Single => BoundingBox {
                 width: 0.0,
                 height: 4.0,
-                padding: PaddingSpaces::new(0.0, 1.0, 0.0, 0.0),
+                padding: PaddingSpaces::new(0.0, 1.5, 0.0, 0.0),
             },
             BarlineDrawType::Double => BoundingBox {
                 width: 0.5,
@@ -55,7 +57,7 @@ impl BarlineDrawType {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Barline {
     pub key: String,
     pub tick: Tick,

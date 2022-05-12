@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-
 use crate::entries::clef::{Clef, ClefDrawType};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
 #[derive(Hash, Eq, PartialEq)]
@@ -14,7 +14,7 @@ pub enum Expression {
     Mute, // may have to convert to MuteStaccato etc. later for mixed expressions
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum InstrumentType {
     Melodic,

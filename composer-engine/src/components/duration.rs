@@ -1,4 +1,5 @@
 use super::misc::{StemDirection, Ticks};
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 pub const NOTE_DURATIONS: [NoteDuration; 7] = [
@@ -12,7 +13,7 @@ pub const NOTE_DURATIONS: [NoteDuration; 7] = [
 ];
 
 #[wasm_bindgen]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum NoteDuration {
     Whole,
     Half,

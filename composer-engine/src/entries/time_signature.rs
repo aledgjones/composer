@@ -5,6 +5,7 @@ use crate::entries::Entry;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
 use crate::Engine;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 pub enum TimeSignatureType {
@@ -15,7 +16,7 @@ pub enum TimeSignatureType {
 }
 
 #[wasm_bindgen]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TimeSignatureDrawType {
     Hidden,          // always hidden
     Regular,         // 4/4 etc
@@ -24,7 +25,7 @@ pub enum TimeSignatureDrawType {
     Open,            // X
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TimeSignature {
     pub key: String,
     pub tick: Tick,

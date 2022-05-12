@@ -6,6 +6,7 @@ pub mod tone;
 
 use clef::Clef;
 use key_signature::KeySignature;
+use serde::{Deserialize, Serialize};
 use time_signature::TimeSignature;
 use tone::Tone;
 
@@ -13,7 +14,7 @@ use crate::components::misc::Tick;
 
 use self::barline::Barline;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Entry {
     Barline(Barline),
     Clef(Clef),

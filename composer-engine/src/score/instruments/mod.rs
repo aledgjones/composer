@@ -7,9 +7,10 @@ use crate::Engine;
 use crate::{components::misc::ALPHABET_LOWERCASE, score::players::PlayerType};
 use defs::{get_def, InstrumentType};
 use rustc_hash::FxHashMap;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Instrument {
     pub key: String,
     pub id: String,

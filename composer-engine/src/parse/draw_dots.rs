@@ -29,7 +29,7 @@ pub fn draw_dots(
                     color: String::from("#000"),
                     radius: converter.spaces_to_px(&0.2),
                     point: Point {
-                        x: converter.spaces_to_px(&(x + position + 0.75)),
+                        x: converter.spaces_to_px(&(x + position + 0.5)),
                         y: converter.spaces_to_px(&(top + (*offset as f32 / 2.0))),
                     },
                 }));

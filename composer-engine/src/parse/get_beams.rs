@@ -4,6 +4,7 @@ use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
 use crate::entries::time_signature::TimeSignature;
 use rustc_hash::{FxHashMap, FxHashSet};
+use std::fmt::{Debug, Formatter, Result};
 use std::iter::FromIterator;
 
 pub struct Beam {
@@ -11,6 +12,18 @@ pub struct Beam {
     pub start: Tick,
     pub stop: Tick,
 }
+
+impl Debug for Beam {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        let mut output = Vec::new();
+        for tick in &self.ticks {
+            output.push(tick);
+        }
+
+        write!(f, "{:?}", output)
+    }
+}
+
 pub type Beams = Vec<Beam>;
 pub type BeamsByTrack = FxHashMap<String, Beams>;
 pub type Span = Vec<Tick>;

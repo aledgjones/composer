@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use super::units::{Mm, Space};
 
@@ -23,7 +23,7 @@ impl BoundingBox {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PaddingSpaces {
     pub top: Space,
     pub right: Space,
@@ -42,7 +42,7 @@ impl PaddingSpaces {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PaddingMm {
     pub top: Mm,
     pub right: Mm,
@@ -61,7 +61,7 @@ impl PaddingMm {
     }
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Point {
     pub x: Space,
     pub y: Space,

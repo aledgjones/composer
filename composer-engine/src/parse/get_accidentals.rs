@@ -238,174 +238,199 @@ pub fn get_accidentals(
     output
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::components::articulation::Articulation;
-//     use crate::components::pitch::Accidental;
-//     use crate::components::pitch::Pitch;
-//     use crate::components::velocity::Velocity;
-//     use crate::entries::key_signature::KeySignature;
-//     use crate::entries::key_signature::KeySignatureMode;
-//     use crate::entries::tone::Tone;
-//     use crate::parse::get_accidentals::find_slot;
-//     use crate::parse::get_accidentals::is_accidental_needed;
-//     use crate::parse::get_accidentals::AccidentalNotation;
-//     use std::collections::HashSet;
+#[cfg(test)]
+mod tests {
+    use rustc_hash::FxHashMap;
+    use rustc_hash::FxHashSet;
 
-//     #[test]
-//     fn is_accidental_needed_test_1() {
-//         let tone = Tone::new(
-//             String::from("a"),
-//             0,
-//             0,
-//             Pitch::new(60, Accidental::Natural),
-//             Velocity::new(100),
-//             Articulation::None,
-//         );
-//         let previous_tones = HashSet::new();
-//         let altered_pitches = HashSet::new();
-//         let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
-//         let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
-//         assert!(!result);
-//     }
+    use crate::components::articulation::Articulation;
+    use crate::components::pitch::Accidental;
+    use crate::components::pitch::Pitch;
+    use crate::components::velocity::Velocity;
+    use crate::entries::key_signature::KeySignature;
+    use crate::entries::key_signature::KeySignatureMode;
+    use crate::entries::tone::Tone;
+    use crate::parse::get_accidentals::find_slot;
+    use crate::parse::get_accidentals::is_accidental_needed;
+    use crate::parse::get_accidentals::AccidentalNotation;
 
-//     #[test]
-//     fn is_accidental_needed_test_2() {
-//         let tone = Tone::new(
-//             String::from("a"),
-//             0,
-//             0,
-//             Pitch::new(61, Accidental::Sharp),
-//             Velocity::new(100),
-//             Articulation::None,
-//         );
-//         let previous_tones = HashSet::new();
-//         let altered_pitches = HashSet::new();
-//         let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
-//         let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
-//         assert!(result);
-//     }
+    #[test]
+    fn is_accidental_needed_test_1() {
+        let tone = Tone::new(
+            String::from("a"),
+            0,
+            0,
+            Pitch::new(60, Accidental::Natural),
+            Velocity::new(100),
+            Articulation::None,
+        );
+        let previous_tones = FxHashSet::default();
+        let altered_pitches = FxHashSet::default();
+        let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
+        let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
+        assert!(!result);
+    }
 
-//     #[test]
-//     fn is_accidental_needed_test_3() {
-//         let tone = Tone::new(
-//             String::from("a"),
-//             0,
-//             0,
-//             Pitch::new(60, Accidental::Natural),
-//             Velocity::new(100),
-//             Articulation::None,
-//         );
-//         let previous_tones = hashset! {String::from("a")};
-//         let altered_pitches = HashSet::new();
-//         let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
-//         let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
-//         assert!(!result);
-//     }
+    #[test]
+    fn is_accidental_needed_test_2() {
+        let tone = Tone::new(
+            String::from("a"),
+            0,
+            0,
+            Pitch::new(61, Accidental::Sharp),
+            Velocity::new(100),
+            Articulation::None,
+        );
+        let previous_tones = FxHashSet::default();
+        let altered_pitches = FxHashSet::default();
+        let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
+        let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
+        assert!(result);
+    }
 
-//     #[test]
-//     fn is_accidental_needed_test_4() {
-//         let tone = Tone::new(
-//             String::from("a"),
-//             0,
-//             0,
-//             Pitch::new(67, Accidental::Natural),
-//             Velocity::new(100),
-//             Articulation::None,
-//         );
-//         let previous_tones = HashSet::new();
-//         let altered_pitches = hashset! {Pitch { int: 68, accidental: Accidental::Sharp}};
-//         let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
-//         let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
-//         assert!(result);
-//     }
+    #[test]
+    fn is_accidental_needed_test_3() {
+        let tone = Tone::new(
+            String::from("a"),
+            0,
+            0,
+            Pitch::new(60, Accidental::Natural),
+            Velocity::new(100),
+            Articulation::None,
+        );
 
-//     #[test]
-//     fn is_accidental_needed_test_5() {
-//         let tone = Tone::new(
-//             String::from("a"),
-//             0,
-//             0,
-//             Pitch::new(68, Accidental::Sharp),
-//             Velocity::new(100),
-//             Articulation::None,
-//         );
-//         let previous_tones = HashSet::new();
-//         let altered_pitches = hashset! {Pitch { int: 68, accidental: Accidental::Sharp}};
-//         let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
-//         let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
-//         assert!(!result);
-//     }
+        let mut previous_tones = FxHashSet::default();
+        previous_tones.insert(String::from("a"));
 
-//     #[test]
-//     fn is_accidental_needed_test_6() {
-//         let tone = Tone::new(
-//             String::from("a"),
-//             0,
-//             0,
-//             Pitch::new(60, Accidental::Natural),
-//             Velocity::new(100),
-//             Articulation::None,
-//         );
-//         let previous_tones = HashSet::new();
-//         let altered_pitches = HashSet::new();
-//         let key_signature = KeySignature::new(0, KeySignatureMode::Major, 2);
-//         let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
-//         assert!(result);
-//     }
+        let altered_pitches = FxHashSet::default();
 
-//     #[test]
-//     fn is_accidental_needed_test_7() {
-//         let tone = Tone::new(
-//             String::from("a"),
-//             0,
-//             0,
-//             Pitch::new(61, Accidental::Sharp),
-//             Velocity::new(100),
-//             Articulation::None,
-//         );
-//         let previous_tones = HashSet::new();
-//         let altered_pitches = HashSet::new();
-//         let key_signature = KeySignature::new(0, KeySignatureMode::Major, 2);
-//         let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
-//         assert!(!result);
-//     }
+        let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
+        let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
+        assert!(!result);
+    }
 
-//     #[test]
-//     fn find_slot_test_1() {
-//         let result = find_slot("a", &Vec::new(), &hashmap! {String::from("a") => 0});
-//         assert_eq!(result, 1);
-//     }
+    #[test]
+    fn is_accidental_needed_test_4() {
+        let tone = Tone::new(
+            String::from("a"),
+            0,
+            0,
+            Pitch::new(67, Accidental::Natural),
+            Velocity::new(100),
+            Articulation::None,
+        );
 
-//     #[test]
-//     fn find_slot_test_2() {
-//         let result = find_slot(
-//             "b",
-//             &[AccidentalNotation {
-//                 tone_key: String::from("a"),
-//                 slot: 1,
-//             }],
-//             &hashmap! {String::from("a") => 0, String::from("b") => 2},
-//         );
-//         assert_eq!(result, 2);
-//     }
+        let previous_tones = FxHashSet::default();
+        let mut altered_pitches = FxHashSet::default();
+        altered_pitches.insert(Pitch {
+            int: 68,
+            accidental: Accidental::Sharp,
+        });
 
-//     #[test]
-//     fn find_slot_test_3() {
-//         let result = find_slot(
-//             "c",
-//             &[
-//                 AccidentalNotation {
-//                     tone_key: String::from("a"),
-//                     slot: 1,
-//                 },
-//                 AccidentalNotation {
-//                     tone_key: String::from("b"),
-//                     slot: 2,
-//                 },
-//             ],
-//             &hashmap! {String::from("a") => 0, String::from("b") => -4, String::from("c") => 2},
-//         );
-//         assert_eq!(result, 2);
-//     }
-// }
+        let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
+        let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
+        assert!(result);
+    }
+
+    #[test]
+    fn is_accidental_needed_test_5() {
+        let tone = Tone::new(
+            String::from("a"),
+            0,
+            0,
+            Pitch::new(68, Accidental::Sharp),
+            Velocity::new(100),
+            Articulation::None,
+        );
+        let previous_tones = FxHashSet::default();
+        let mut altered_pitches = FxHashSet::default();
+        altered_pitches.insert(Pitch {
+            int: 68,
+            accidental: Accidental::Sharp,
+        });
+        let key_signature = KeySignature::new(0, KeySignatureMode::Major, 0);
+        let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
+        assert!(!result);
+    }
+
+    #[test]
+    fn is_accidental_needed_test_6() {
+        let tone = Tone::new(
+            String::from("a"),
+            0,
+            0,
+            Pitch::new(60, Accidental::Natural),
+            Velocity::new(100),
+            Articulation::None,
+        );
+        let previous_tones = FxHashSet::default();
+        let altered_pitches = FxHashSet::default();
+        let key_signature = KeySignature::new(0, KeySignatureMode::Major, 2);
+        let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
+        assert!(result);
+    }
+
+    #[test]
+    fn is_accidental_needed_test_7() {
+        let tone = Tone::new(
+            String::from("a"),
+            0,
+            0,
+            Pitch::new(61, Accidental::Sharp),
+            Velocity::new(100),
+            Articulation::None,
+        );
+        let previous_tones = FxHashSet::default();
+        let altered_pitches = FxHashSet::default();
+        let key_signature = KeySignature::new(0, KeySignatureMode::Major, 2);
+        let result = is_accidental_needed(&tone, &previous_tones, &altered_pitches, &key_signature);
+        assert!(!result);
+    }
+
+    #[test]
+    fn find_slot_test_1() {
+        let mut tone_offsets = FxHashMap::default();
+        tone_offsets.insert(String::from("a"), 0);
+        let result = find_slot("a", &Vec::new(), &tone_offsets);
+        assert_eq!(result, 1);
+    }
+
+    #[test]
+    fn find_slot_test_2() {
+        let mut tone_offsets = FxHashMap::default();
+        tone_offsets.insert(String::from("a"), 0);
+        tone_offsets.insert(String::from("b"), 2);
+        let result = find_slot(
+            "b",
+            &[AccidentalNotation {
+                tone_key: String::from("a"),
+                slot: 1,
+            }],
+            &tone_offsets,
+        );
+        assert_eq!(result, 2);
+    }
+
+    #[test]
+    fn find_slot_test_3() {
+        let mut tone_offsets = FxHashMap::default();
+        tone_offsets.insert(String::from("a"), 0);
+        tone_offsets.insert(String::from("b"), -4);
+        tone_offsets.insert(String::from("c"), 2);
+        let result = find_slot(
+            "c",
+            &[
+                AccidentalNotation {
+                    tone_key: String::from("a"),
+                    slot: 1,
+                },
+                AccidentalNotation {
+                    tone_key: String::from("b"),
+                    slot: 2,
+                },
+            ],
+            &tone_offsets,
+        );
+        assert_eq!(result, 2);
+    }
+}

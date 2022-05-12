@@ -7,6 +7,7 @@ use crate::score::tracks::Track;
 use crate::utils::shortid;
 use crate::Engine;
 use rustc_hash::FxHashSet;
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use wasm_bindgen::prelude::*;
 
@@ -73,13 +74,13 @@ const FLATS: [Pitch; 7] = [
 ];
 
 #[wasm_bindgen]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum KeySignatureMode {
     Major,
     Minor,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct KeySignature {
     pub key: String,
     pub tick: Tick,
@@ -185,7 +186,7 @@ impl Engine {
         let master = self.score.tracks.get_mut(&flow.master).unwrap();
 
         // remove old key signative if defined
-        if let Some(old) = master.get_time_signature_at_tick(&tick) {
+        if let Some(old) = master.get_key_signature_at_tick(&tick) {
             master.remove(&old.key);
         };
 

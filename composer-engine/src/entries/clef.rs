@@ -3,11 +3,12 @@ use crate::components::misc::Tick;
 use crate::components::pitch::Pitch;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 use super::Entry;
 
-#[derive(Debug, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum ClefDrawType {
     Hidden,
@@ -17,7 +18,7 @@ pub enum ClefDrawType {
     Percussion,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Clef {
     pub key: String,
     pub tick: Tick,

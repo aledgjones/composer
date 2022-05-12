@@ -1,17 +1,18 @@
 use crate::utils::shortid;
 use crate::Engine;
 use rustc_hash::FxHashMap;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum PlayerType {
     Solo,
     Section,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Player {
     pub key: String,
     pub player_type: PlayerType,
@@ -28,7 +29,7 @@ impl Player {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Players {
     pub order: Vec<String>,
     pub by_key: FxHashMap<String, Player>,

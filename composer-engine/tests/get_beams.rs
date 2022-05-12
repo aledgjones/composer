@@ -12,7 +12,7 @@ use composer_engine::parse::get_beams::Beams;
 use composer_engine::score::flows::Flow;
 use composer_engine::score::tracks::Track;
 use composer_engine::utils::shortid;
-use maplit::hashmap;
+use rustc_hash::FxHashMap;
 
 const QUARTER: u32 = 16;
 const EIGHTH: u32 = 8;
@@ -43,7 +43,10 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
     let mut flow = Flow::new(&master);
     flow.length = length;
 
-    let barlines = get_bars(&flow, &hashmap! {flow.master.clone() => master});
+    let mut tracks = FxHashMap::default();
+    tracks.insert(flow.master.clone(), master);
+
+    let barlines = get_bars(&flow, &tracks);
     let notation = track.to_notation_track(flow.length, &barlines, flow.subdivisions);
     get_beams_in_track(&notation, &barlines, flow.subdivisions)
 }

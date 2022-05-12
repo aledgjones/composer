@@ -1,4 +1,4 @@
-import { FC, CSSProperties } from "react";
+import { FC, CSSProperties, ReactNode } from "react";
 
 import merge from "classnames";
 
@@ -8,6 +8,7 @@ interface Props {
   id?: string;
   className?: string;
   style?: CSSProperties;
+  children: ReactNode;
 }
 
 /**

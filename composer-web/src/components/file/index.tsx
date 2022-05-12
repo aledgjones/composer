@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { mdiMenu, mdiOpenInNew, mdiPencilOutline } from "@mdi/js";
 import merge from "classnames";
 
-import { engine } from "../../data";
+import { engine, store } from "../../data";
 
 import { About } from "../../dialogs/about";
 import { Card } from "../../ui/components/card";
@@ -17,6 +17,8 @@ import { ListItem } from "../../ui/components/list-item";
 import { Meta } from "../../dialogs/meta/meta";
 import { Subheader } from "../../ui/components/subheader";
 import { Text } from "../text";
+import { Importer } from "../../dialogs/importer";
+import { actions } from "../../data/actions";
 
 import "./styles.css";
 
@@ -30,6 +32,8 @@ export const File: FC = () => {
   const [open, setOpen] = useState(false);
   const [meta, setMeta] = useState(false);
   const [about, setAbout] = useState(process.env.NODE_ENV === "production");
+  const [importer, setImporter] = useState(false);
+  const file = store.useState((s) => s.app.file);
 
   // auto close
   useEffect(() => {
@@ -77,17 +81,17 @@ export const File: FC = () => {
                 }}
               />
             </ListItem>
-            {/* <Divider compact />
+            <Divider compact />
             <List onClick={() => setOpen(false)}>
               <ListItem onClick={() => setImporter(true)}>Open...</ListItem>
             </List>
             <Divider compact />
             <List onClick={() => setOpen(false)}>
-              <ListItem disabled={!file} onClick={noop}>
+              <ListItem disabled={!file} onClick={actions.app.save}>
                 Save
               </ListItem>
-              <ListItem onClick={noop}>Save As</ListItem>
-            </List> */}
+              <ListItem onClick={actions.app.saveAs}>Save As</ListItem>
+            </List>
             <Divider compact />
             <List onClick={() => setOpen(false)}>
               {/* <ListItem onClick={() => setPreferences(true)}>
@@ -129,12 +133,12 @@ export const File: FC = () => {
         open={preferences}
         width={900}
         onClose={() => setPreferences(false)}
-      />
+      /> */}
       <Importer
         width={300}
         open={importer}
         onClose={() => setImporter(false)}
-      /> */}
+      />
     </>
   );
 };

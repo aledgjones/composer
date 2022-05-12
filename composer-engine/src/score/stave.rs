@@ -1,7 +1,9 @@
+use serde::{Deserialize, Serialize};
+
 use super::instruments::defs::StaveDef;
 use super::Track;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Stave {
     pub key: String,
     pub lines: Vec<u8>,

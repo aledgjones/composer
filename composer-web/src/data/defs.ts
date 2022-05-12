@@ -47,6 +47,9 @@ export interface EntrySelection {
 }
 
 export interface State {
+  app: {
+    file?: FileSystemFileHandle;
+  };
   selection: EntrySelection[];
   view: View;
   snap: number;

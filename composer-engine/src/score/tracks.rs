@@ -2,18 +2,19 @@ use crate::components::misc::Tick;
 use crate::entries::Entry;
 use crate::utils::shortid;
 use rustc_hash::FxHashMap;
+use serde::{Deserialize, Serialize};
 
 pub type Tracks = FxHashMap<String, Track>;
 pub type EntriesByTick = FxHashMap<Tick, Vec<String>>;
 pub type EntriesByKey = FxHashMap<String, Entry>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Entries {
     pub by_tick: EntriesByTick,
     pub by_key: EntriesByKey, // we can iterate the hashmap directly, so no order/by_key needed
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Track {
     pub key: String,
     pub entries: Entries,

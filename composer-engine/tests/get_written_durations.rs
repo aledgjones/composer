@@ -10,7 +10,7 @@ use composer_engine::parse::get_written_durations::NotationTrack;
 use composer_engine::score::flows::Flow;
 use composer_engine::score::tracks::Track;
 use composer_engine::utils::shortid;
-use maplit::hashmap;
+use rustc_hash::FxHashMap;
 
 const QUARTER: u32 = 16;
 const EIGHTH: u32 = 8;
@@ -41,7 +41,10 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
     let mut flow = Flow::new(&master);
     flow.length = length;
 
-    let barlines = get_bars(&flow, &hashmap! {flow.master.clone() => master});
+    let mut tracks = FxHashMap::default();
+    tracks.insert(flow.master.clone(), master);
+
+    let barlines = get_bars(&flow, &tracks);
     track.to_notation_track(length, &barlines, flow.subdivisions)
 }
 

@@ -153,6 +153,7 @@ export const ToneTrack: FC<Props> = ({
         start,
         duration,
         pitch,
+        null,
         100,
         Articulation.None
       );

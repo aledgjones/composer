@@ -45,6 +45,15 @@ impl Engine {
         self.emit();
     }
 
+    pub fn export(&self) -> JsValue {
+        JsValue::from_serde(&self.score).unwrap()
+    }
+
+    pub fn import(&mut self, state: JsValue) {
+        self.score = state.into_serde().unwrap();
+        self.emit();
+    }
+
     #[wasm_bindgen(getter)]
     pub fn state(&self) -> String {
         format!("{:#?}", self.score)

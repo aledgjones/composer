@@ -1,14 +1,15 @@
 use crate::Engine;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum AutoCountStyle {
     Arabic,
     Roman,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct AutoCount {
     pub solo: AutoCountStyle,
     pub section: AutoCountStyle,
@@ -23,7 +24,7 @@ impl AutoCount {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub auto_count: AutoCount,
 }

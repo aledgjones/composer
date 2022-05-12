@@ -1,8 +1,9 @@
 use crate::Engine;
 use js_sys::Date;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Meta {
     application_version: String,
     title: String,

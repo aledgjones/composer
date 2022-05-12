@@ -9,7 +9,7 @@ export function __wbg_set_pitch_accidental(a: number, b: number): void;
 export function engine_create_barline(a: number, b: number, c: number, d: number, e: number): void;
 export function engine_create_key_signature(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function engine_create_time_signature(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number): void;
-export function engine_create_tone(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number): void;
+export function engine_create_tone(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number): void;
 export function engine_set_tone_pitch(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function engine_set_tone_duration(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function engine_shift_tone(a: number, b: number, c: number, d: number, e: number, f: number): void;
@@ -101,6 +101,8 @@ export function engine_get_player_instruments(a: number, b: number, c: number): 
 export function __wbg_engine_free(a: number): void;
 export function engine_new(): number;
 export function engine_listen(a: number, b: number): void;
+export function engine_export(a: number): number;
+export function engine_import(a: number, b: number): void;
 export function engine_state(a: number, b: number): void;
 export function __wbg_velocity_free(a: number): void;
 export function run(): void;

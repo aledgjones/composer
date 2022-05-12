@@ -11,11 +11,11 @@ use crate::entries::Entry;
 use crate::utils::shortid;
 use crate::Engine;
 use rustc_hash::{FxHashMap, FxHashSet};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Flows {
     pub order: Vec<String>,
     pub by_key: FxHashMap<String, Flow>,
@@ -30,7 +30,7 @@ impl Flows {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Flow {
     pub key: String,
     pub title: String,

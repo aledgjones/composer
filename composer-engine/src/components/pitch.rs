@@ -1,10 +1,10 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 const C0: u8 = 12;
 
 #[wasm_bindgen]
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Accidental {
     DoubleSharp,
     Sharp,
@@ -47,7 +47,7 @@ impl Accidental {
 }
 
 #[wasm_bindgen]
-#[derive(Debug, Clone, Serialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Pitch {
     pub int: u8, // the midi number
     pub accidental: Accidental,

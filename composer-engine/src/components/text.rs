@@ -1,10 +1,10 @@
 use super::measurements::PaddingSpaces;
 use super::units::{Converter, Px, Space};
 use js_sys::Function;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsValue;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Justify {
     Start,
     Middle,
@@ -21,7 +21,7 @@ impl Justify {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Align {
     Top,
     Middle,
@@ -38,7 +38,7 @@ impl Align {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Font {
     pub size: Space,
     pub font: String,

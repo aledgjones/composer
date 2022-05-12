@@ -351,16 +351,17 @@ export class Engine {
     * @param {number} tick
     * @param {number} duration
     * @param {number} pitch
+    * @param {number | undefined} accidental
     * @param {number} velocity
     * @param {number} articulation
     * @returns {string}
     */
-    create_tone(track_key, tick, duration, pitch, velocity, articulation) {
+    create_tone(track_key, tick, duration, pitch, accidental, velocity, articulation) {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
             var ptr0 = passStringToWasm0(track_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
             var len0 = WASM_VECTOR_LEN;
-            wasm.engine_create_tone(retptr, this.ptr, ptr0, len0, tick, duration, pitch, velocity, articulation);
+            wasm.engine_create_tone(retptr, this.ptr, ptr0, len0, tick, duration, pitch, isLikeNone(accidental) ? 5 : accidental, velocity, articulation);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             return getStringFromWasm0(r0, r1);
@@ -1291,6 +1292,19 @@ export class Engine {
     */
     listen(cb) {
         wasm.engine_listen(this.ptr, addHeapObject(cb));
+    }
+    /**
+    * @returns {any}
+    */
+    export() {
+        var ret = wasm.engine_export(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {any} state
+    */
+    import(state) {
+        wasm.engine_import(this.ptr, addHeapObject(state));
     }
     /**
     * @returns {string}

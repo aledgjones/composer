@@ -1,18 +1,18 @@
 use crate::components::articulation::Articulation;
 use crate::components::misc::{Tick, Ticks};
-use crate::components::pitch::Pitch;
+use crate::components::pitch::{Accidental, Pitch};
 use crate::components::velocity::Velocity;
 use crate::entries::Entry;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
 use crate::Engine;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 
 /// These represent the audiable tones of the music.
 /// They are never directly drawn in the score.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Tone {
     pub key: String,
     pub tick: Tick,
@@ -62,6 +62,7 @@ impl Engine {
         tick: Tick,
         duration: Ticks,
         pitch: u8,
+        accidental: Option<Accidental>,
         velocity: u8,
         articulation: Articulation,
     ) -> String {
@@ -69,12 +70,17 @@ impl Engine {
         let key = shortid();
         let track = self.score.tracks.get_mut(track_key).unwrap();
 
+        let pitch = match accidental {
+            Some(accidental) => Pitch::new(pitch, accidental),
+            None => Pitch::from_int(pitch),
+        };
+
         // we are now done with the entry, insert it back in
         track.insert(Entry::Tone(Tone::new(
             key.clone(),
             tick,
             duration,
-            Pitch::from_int(pitch),
+            pitch,
             Velocity::new(velocity),
             articulation,
         )));

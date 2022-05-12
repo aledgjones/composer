@@ -62,10 +62,6 @@ pub fn measure_horizontal_spacing(
     for tick in 0..flow.length {
         let start = (tick * POSITION_COUNT) as usize;
 
-        if tick == 0 {
-            widths[start + Position::PaddingStart] = 1.0;
-        }
-
         // BARLINES
         if let Some(def) = barlines.get(&tick) {
             let time = flow_master.get_time_signature_at_tick(&tick);
@@ -132,7 +128,6 @@ pub fn measure_horizontal_spacing(
 
             for track_key in &stave.tracks {
                 let notation = notations_by_track.get(track_key).unwrap();
-                let accidentals = accidentals_by_track.get(track_key).unwrap();
 
                 if let Some(entry) = notation.track.get(&tick) {
                     let notehead_width: Space = 1.175;
@@ -151,6 +146,7 @@ pub fn measure_horizontal_spacing(
                         }
                     }
 
+                    let accidentals = accidentals_by_track.get(track_key).unwrap();
                     let beams = beams_by_track.get(track_key).unwrap();
                     let stem_directions = stem_directions_by_track.get(track_key).unwrap();
                     let stem_direction = stem_directions.get(&tick);
@@ -165,7 +161,6 @@ pub fn measure_horizontal_spacing(
                             widths[start + Position::Accidentals] = (*slots as f32) * 1.1;
                         };
                     }
-
                     // extend spacing to accomodate accidentals (if needed)
                     if let Some((next_tick, _)) = notation.get_next_notation(tick) {
                         if !barlines.contains_key(&next_tick) {

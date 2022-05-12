@@ -1,4 +1,4 @@
-import { Articulation, NoteDuration, Pitch, Velocity } from "composer-engine";
+import { Articulation, Pitch, Velocity } from "composer-engine";
 
 export const enum Tool {
   Select,
@@ -49,7 +49,7 @@ export interface EntrySelection {
 export interface State {
   selection: EntrySelection[];
   view: View;
-  snap: NoteDuration;
+  snap: number;
   audition: boolean;
   flow: string | null;
   setup: {

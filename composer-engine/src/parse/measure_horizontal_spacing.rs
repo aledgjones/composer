@@ -1,4 +1,4 @@
-use super::get_accidentals::Accidentals;
+use super::get_accidentals::AccidentalsByTrack;
 use super::get_barlines::Barlines;
 use super::get_beams::BeamsByTrack;
 use super::get_note_positions::{Position, TonePositions, POSITION_COUNT};
@@ -53,8 +53,8 @@ pub fn measure_horizontal_spacing(
     tone_positions: &TonePositions,
     beams_by_track: &BeamsByTrack,
     stem_directions_by_track: &StemDirectionsByTrack,
-    accidentals: &Accidentals,
-    engraving: &Engrave,
+    accidentals_by_track: &AccidentalsByTrack,
+    engrave: &Engrave,
 ) -> HorizontalSpacing {
     let mut widths: Vec<f32> = vec![0.0; (flow.length * POSITION_COUNT) as usize];
     let flow_master = tracks.get(&flow.master).unwrap();
@@ -121,13 +121,6 @@ pub fn measure_horizontal_spacing(
             widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
         };
 
-        // ACCIDENTALS
-        if let Some(slots) = accidentals.slots_by_tick.get(&tick) {
-            if slots > &0 {
-                widths[start + Position::Accidentals] = ((*slots as f32) * 1.1) + 0.2;
-            }
-        };
-
         for stave in staves {
             let stave_master = tracks.get(&stave.master).unwrap();
 
@@ -139,6 +132,8 @@ pub fn measure_horizontal_spacing(
 
             for track_key in &stave.tracks {
                 let notation = notations_by_track.get(track_key).unwrap();
+                let accidentals = accidentals_by_track.get(track_key).unwrap();
+
                 if let Some(entry) = notation.track.get(&tick) {
                     let notehead_width: Space = 1.175;
 
@@ -160,10 +155,30 @@ pub fn measure_horizontal_spacing(
                     let stem_directions = stem_directions_by_track.get(track_key).unwrap();
                     let stem_direction = stem_directions.get(&tick);
 
-                    let note_spacing =
-                        entry.spacing(&tick, engraving, flow.subdivisions, &stem_direction, beams);
+                    let mut spacing =
+                        entry.spacing(&tick, engrave, flow.subdivisions, &stem_direction, beams);
 
-                    let note_spacing_per_tick = note_spacing / entry.duration as f32;
+                    // ACCIDENTALS
+                    if tick == 0 || barlines.contains_key(&tick) {
+                        // start of bars has no previous spacing to extend so we use the accidentals slot
+                        if let Some(slots) = accidentals.slots_by_tick.get(&tick) {
+                            widths[start + Position::Accidentals] = (*slots as f32) * 1.1;
+                        };
+                    }
+
+                    // extend spacing to accomodate accidentals (if needed)
+                    if let Some((next_tick, _)) = notation.get_next_notation(tick) {
+                        if !barlines.contains_key(&next_tick) {
+                            if let Some(slots) = accidentals.slots_by_tick.get(&next_tick) {
+                                let min = engrave.minimum_note_space + ((*slots as f32) * 1.1);
+                                if min > spacing {
+                                    spacing = min
+                                }
+                            }
+                        }
+                    };
+
+                    let note_spacing_per_tick = spacing / entry.duration as f32;
                     let end = tick + entry.duration;
                     for i in tick..end {
                         let start = (i * POSITION_COUNT) as usize;

@@ -1,4 +1,3 @@
-import { NoteDuration } from "composer-engine";
 import { store } from ".";
 import { EntrySelection, View } from "./defs";
 
@@ -26,7 +25,7 @@ export const uiActions = {
     },
   },
   snap: {
-    set: (value: NoteDuration) => {
+    set: (value: number) => {
       store.update((s) => {
         s.snap = value;
       });

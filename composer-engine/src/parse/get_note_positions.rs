@@ -16,7 +16,7 @@ pub enum Position {
     KeySignature,
     TimeSignature,
     StartRepeat,
-    Accidentals,
+    Accidentals, // only used when at begining of measure
     PreNoteSlot,
     NoteSlot,
     PostNoteSlot,

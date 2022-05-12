@@ -264,6 +264,17 @@ impl NotationTrack {
         None
     }
 
+    pub fn get_next_notation(&self, from: Tick) -> Option<(Tick, Notation)> {
+        for tick in from + 1..self.length {
+            match self.track.get(&tick) {
+                Some(notation) => return Some((tick, notation.clone())),
+                None => continue,
+            }
+        }
+
+        None
+    }
+
     pub fn insert(&mut self, tick: Tick, notation: Notation) {
         self.track.insert(tick, notation);
     }

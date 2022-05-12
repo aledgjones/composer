@@ -39,6 +39,8 @@ impl Default for Accidentals {
     }
 }
 
+pub type AccidentalsByTrack = FxHashMap<String, Accidentals>;
+
 pub fn fits_in_slot(
     i: u8,
     accidental_offset: &i8,
@@ -223,32 +225,14 @@ pub fn get_accidentals(
     notation_by_track: &NotationByTrack,
     bars: &Bars,
     tone_offsets: &ToneVerticalOffsets,
-) -> Accidentals {
-    let mut output: Accidentals = Accidentals::new();
+) -> AccidentalsByTrack {
+    let mut output: AccidentalsByTrack = FxHashMap::default();
 
     let master = tracks.get(&flow.master).unwrap();
 
-    for notation in notation_by_track.values() {
+    for (track_key, notation) in notation_by_track {
         let accidentals = get_accidentals_in_track(notation, master, bars, tone_offsets);
-        for ((tick, key), entry) in accidentals.by_key {
-            output.by_key.insert((tick, key), entry);
-            let slot = match accidentals.slots_by_tick.get(&tick) {
-                Some(slots) => slots,
-                None => {
-                    continue;
-                }
-            };
-            match output.slots_by_tick.get_mut(&tick) {
-                Some(max_slot) => {
-                    if slot > max_slot {
-                        output.slots_by_tick.insert(tick, *slot);
-                    }
-                }
-                None => {
-                    output.slots_by_tick.insert(tick, *slot);
-                }
-            }
-        }
+        output.insert(track_key.clone(), accidentals);
     }
 
     output

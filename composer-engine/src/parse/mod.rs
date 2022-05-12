@@ -296,6 +296,7 @@ impl Engine {
             &horizontal_spacing,
             &vertical_spacing,
             &tone_offsets,
+            &tone_positions,
             &accidentals,
             &converter,
             &mut instructions,

@@ -1,6 +1,6 @@
 use crate::components::misc::Ticks;
 use crate::components::pitch::Pitch;
-use crate::entries::clef::Clef;
+use crate::entries::clef::{Clef, ClefDrawType};
 use crate::entries::tone::Tone;
 use crate::score::stave::Stave;
 use crate::score::tracks::Tracks;
@@ -17,20 +17,18 @@ pub fn get_tone_offsets(
 
     for stave in staves {
         let master = tracks.get(&stave.master).unwrap();
-        let mut clef: Option<Clef> = None;
+        let mut clef: Clef = Clef::new(0, 60, 0, ClefDrawType::C);
 
         for tick in 0..flow_length {
             if let Some(found) = master.get_clef_at_tick(&tick) {
-                clef = Some(found);
+                clef = found;
             };
 
-            if let Some(clef) = &clef {
-                for stave_key in &stave.tracks {
-                    let track = tracks.get(stave_key).unwrap();
-                    for tone in track.get_tones_at_tick(&tick) {
-                        let offset = Pitch::steps_between(&tone.pitch, &clef.pitch) + clef.offset;
-                        output.insert(tone.key.clone(), offset);
-                    }
+            for stave_key in &stave.tracks {
+                let track = tracks.get(stave_key).unwrap();
+                for tone in track.get_tones_at_tick(&tick) {
+                    let offset = Pitch::steps_between(&tone.pitch, &clef.pitch) + clef.offset;
+                    output.insert(tone.key.clone(), offset);
                 }
             }
         }

@@ -28,12 +28,74 @@ pub type Beams = Vec<Beam>;
 pub type BeamsByTrack = FxHashMap<String, Beams>;
 pub type Span = Vec<Tick>;
 
+enum EighthType {
+    Rest,
+    Note,
+}
+
+/// eighths can beamed in certain patterns
+fn is_pattern(
+    pattern: &Vec<EighthType>,
+    notation: &NotationTrack,
+    start: Tick,
+    subdivisions: Ticks,
+) -> bool {
+    let eighth = NoteDuration::Eighth.to_ticks(subdivisions);
+
+    for (i, eighth_type) in pattern.iter().enumerate() {
+        match notation.track.get(&(start + (i as u32 * eighth))) {
+            Some(entry) => match eighth_type {
+                EighthType::Rest => {
+                    if !(entry.is_rest() && entry.duration == eighth) {
+                        return false;
+                    }
+                }
+                EighthType::Note => {
+                    if entry.is_rest() || entry.duration != eighth {
+                        return false;
+                    }
+                }
+            },
+            None => return false,
+        };
+    }
+
+    true
+}
+
 fn grouping_is_beamable(
+    beats: u8,
     notation: &NotationTrack,
     start: Tick,
     stop: Tick,
-    sixteenth: Ticks,
+    subdivisions: Ticks,
 ) -> bool {
+    // beat specific patterns
+    if let 4 = beats {
+        // -eee
+        let pattern = vec![
+            EighthType::Rest,
+            EighthType::Note,
+            EighthType::Note,
+            EighthType::Note,
+        ];
+        if is_pattern(&pattern, notation, start, subdivisions) {
+            return true;
+        }
+
+        // eee-
+        let pattern = vec![
+            EighthType::Note,
+            EighthType::Note,
+            EighthType::Note,
+            EighthType::Rest,
+        ];
+        if is_pattern(&pattern, notation, start, subdivisions) {
+            return true;
+        }
+    }
+
+    let sixteenth = NoteDuration::Sixteenth.to_ticks(subdivisions);
     for tick in start..stop {
         if let Some(entry) = notation.track.get(&tick) {
             // TODO: make this more sophisticated, -eee | eee- can be beamed -ee- cannot, for example
@@ -79,8 +141,7 @@ pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Bars, subdivision
                 NoteDuration::Quarter => {
                     let i = boundries.iter().position(|entry| entry == &tick).unwrap();
                     let stop = boundries.get(i + 1).unwrap();
-                    let sixteenth = NoteDuration::Sixteenth.to_ticks(subdivisions);
-                    !grouping_is_beamable(notation, tick, *stop, sixteenth)
+                    !grouping_is_beamable(time_signature.beats, notation, tick, *stop, subdivisions)
                 }
                 // larger beats break, smaller don't
                 _ => {

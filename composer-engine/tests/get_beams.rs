@@ -89,7 +89,7 @@ fn test_44_2() {
             (EIGHTH * 6, EIGHTH),
         ],
     );
-    assert_eq!(format!("{:?}", result), "[[16, 24], [32, 40]]");
+    assert_eq!(format!("{:?}", result), "[[8, 16, 24], [32, 40, 48]]");
 }
 
 #[test]

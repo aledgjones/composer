@@ -163,10 +163,11 @@ impl Notation {
         stem_direction: &Option<&StemDirection>,
         beams: &Beams,
     ) -> f32 {
-        let mut min_space = match self.is_dotted(subdivisions) {
-            true => engraving.minimum_note_space + 1.0,
-            false => engraving.minimum_note_space,
-        };
+        let mut min_space =
+            match self.is_dotted(subdivisions) || self.is_flagged(tick, beams, subdivisions) {
+                true => engraving.minimum_note_space + 1.0,
+                false => engraving.minimum_note_space,
+            };
 
         if self.has_tie() {
             min_space = engraving.minimum_tie_space;

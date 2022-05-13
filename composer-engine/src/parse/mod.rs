@@ -137,12 +137,12 @@ impl Engine {
         let name_widths = measure_instrument_names(&instruments, engrave, &converter, measure);
         let bracket_widths = measure_brackets(&vertical_spacing, &vertical_spans, engrave);
         let bars = get_bars(flow, &self.score.tracks);
-        let tone_offsets = get_tone_offsets(flow.length, &staves, &self.score.tracks);
+        let tone_offsets = get_tone_offsets(&flow.length, &staves, &self.score.tracks);
         let barlines = get_barlines(flow, &self.score.tracks);
 
         let notations = get_written_durations(flow, &tracks, &bars);
 
-        let beams = get_beams(&notations, &bars, flow.subdivisions);
+        let beams = get_beams(&notations, &bars, &flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
         let tone_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
         let dots = get_dots(flow, &notations, &tone_offsets);

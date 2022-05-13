@@ -135,7 +135,7 @@ pub fn draw_time_signatures(
                 let left = horizontal_spacing
                     .get(&tick, &Position::TimeSignature)
                     .unwrap();
-                let offset = time_signature.metrics(flow.subdivisions).width / 2.0;
+                let offset = time_signature.metrics(&flow.subdivisions).width / 2.0;
 
                 draw_time_signature(
                     x + left.x + offset,

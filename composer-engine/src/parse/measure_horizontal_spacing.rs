@@ -117,7 +117,7 @@ pub fn measure_horizontal_spacing(
 
         // TIME SIGNATURE
         if let Some(time) = flow_master.get_time_signature_at_tick(&tick) {
-            let metrics = time.metrics(flow.subdivisions);
+            let metrics = time.metrics(&flow.subdivisions);
             widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
         };
 
@@ -156,7 +156,7 @@ pub fn measure_horizontal_spacing(
                     let stem_direction = stem_directions.get(&tick);
 
                     let mut spacing =
-                        entry.spacing(&tick, engrave, flow.subdivisions, &stem_direction, beams);
+                        entry.spacing(&tick, engrave, &flow.subdivisions, &stem_direction, beams);
 
                     // ACCIDENTALS
                     if tick == 0 || barlines.contains_key(&tick) {
@@ -166,7 +166,7 @@ pub fn measure_horizontal_spacing(
                         };
                     }
                     // extend spacing to accomodate accidentals (if needed)
-                    if let Some((next_tick, _)) = notation.get_next_notation(tick) {
+                    if let Some((next_tick, _)) = notation.get_next_notation(&tick) {
                         if !barlines.contains_key(&next_tick) {
                             if let Some(slots) = accidentals.slots_by_tick.get(&next_tick) {
                                 let min = engrave.minimum_note_space + ((*slots as f32) * 1.1);

@@ -30,7 +30,7 @@ fn draw_notehead(
         .unwrap();
     let horizontal_offset = horizontal_spacing.get(tick, position).unwrap();
     let left = x + horizontal_offset.x;
-    let glyph = entry.glyph(flow.subdivisions);
+    let glyph = entry.glyph(&flow.subdivisions);
     let offset = tone_offsets.get(&tone.key).unwrap();
     let top = y + (*offset as f32 / 2.0);
 

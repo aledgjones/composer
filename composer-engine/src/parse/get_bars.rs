@@ -17,7 +17,7 @@ pub fn get_bars(flow: &Flow, tracks: &Tracks) -> Bars {
             time_signature = entry;
         }
 
-        if time_signature.is_on_first_beat(tick, flow.subdivisions) {
+        if time_signature.is_on_first_beat(&tick, &flow.subdivisions) {
             output.insert(tick, time_signature.clone());
         }
     }

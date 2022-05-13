@@ -33,9 +33,9 @@ pub fn draw_flags(
             let beams = beams_by_track.get(track_key).unwrap();
 
             for (tick, entry) in &notation.track {
-                if entry.is_flagged(tick, beams, flow.subdivisions) {
+                if entry.is_flagged(tick, beams, &flow.subdivisions) {
                     let stem_direction = stem_directions.get(tick).unwrap();
-                    let glyph = entry.flag_glyph(stem_direction, flow.subdivisions);
+                    let glyph = entry.flag_glyph(stem_direction, &flow.subdivisions);
 
                     // TODO extend stem by amount of 'beams'
                     // let stem_length_modifier = stem_direction.to_modifier();

@@ -9,7 +9,7 @@ use rustc_hash::FxHashMap;
 pub type ToneVerticalOffsets = FxHashMap<String, i8>;
 
 pub fn get_tone_offsets(
-    flow_length: Ticks,
+    flow_length: &Ticks,
     staves: &[&Stave],
     tracks: &Tracks,
 ) -> ToneVerticalOffsets {
@@ -19,7 +19,7 @@ pub fn get_tone_offsets(
         let master = tracks.get(&stave.master).unwrap();
         let mut clef: Clef = Clef::new(0, 60, 0, ClefDrawType::C);
 
-        for tick in 0..flow_length {
+        for tick in 0..*flow_length {
             if let Some(found) = master.get_clef_at_tick(&tick) {
                 clef = found;
             };
@@ -126,7 +126,7 @@ mod tests {
         tracks.insert(track.key.clone(), track);
         tracks.insert(master.key.clone(), master);
 
-        get_tone_offsets(16, &[&stave], &tracks)
+        get_tone_offsets(&16, &[&stave], &tracks)
     }
 
     #[test]

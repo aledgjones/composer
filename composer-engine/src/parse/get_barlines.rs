@@ -89,7 +89,7 @@ pub fn get_barlines(flow: &Flow, tracks: &Tracks) -> Barlines {
                     if key_signature.is_some() {
                         // key signatures take double barlines
                         def.draw_type = Some(BarlineDrawType::Double);
-                    } else if time_signature.is_on_first_beat(tick, flow.subdivisions) {
+                    } else if time_signature.is_on_first_beat(&tick, &flow.subdivisions) {
                         // this is just your standard barline
                         def.draw_type = Some(BarlineDrawType::Single);
                     }

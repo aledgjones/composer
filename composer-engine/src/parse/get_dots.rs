@@ -109,7 +109,7 @@ fn get_dots_at_tick(tick: &Tick, entry: &Notation, tone_offsets: &ToneVerticalOf
 fn get_dots_in_track(
     notation: &NotationTrack,
     tone_offsets: &ToneVerticalOffsets,
-    subdivisions: Ticks,
+    subdivisions: &Ticks,
 ) -> Dots {
     let mut output: Dots = FxHashSet::default();
 
@@ -133,7 +133,7 @@ pub fn get_dots(
     let mut output: DotsByTrack = FxHashMap::default();
 
     for (track_key, notation) in notation_by_track {
-        let dots: Dots = get_dots_in_track(notation, tone_offsets, flow.subdivisions);
+        let dots: Dots = get_dots_in_track(notation, tone_offsets, &flow.subdivisions);
         output.insert(track_key.clone(), dots);
     }
 

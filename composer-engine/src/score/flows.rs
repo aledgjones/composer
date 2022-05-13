@@ -304,14 +304,14 @@ impl Engine {
             output.list.push(Tick {
                 x: output.width,
                 width: tick_width,
-                first: time_signature.is_on_first_beat(tick, flow.subdivisions),
-                beat: time_signature.is_on_beat(tick, flow.subdivisions),
+                first: time_signature.is_on_first_beat(&tick, &flow.subdivisions),
+                beat: time_signature.is_on_beat(&tick, &flow.subdivisions),
                 sub_beat: time_signature.is_on_beat_type(
-                    tick,
+                    &tick,
                     &time_signature.beat_type.half(),
-                    flow.subdivisions,
+                    &flow.subdivisions,
                 ),
-                boundry: time_signature.is_on_grouping_boundry(tick, flow.subdivisions),
+                boundry: time_signature.is_on_grouping_boundry(&tick, &flow.subdivisions),
             });
 
             output.width += tick_width;

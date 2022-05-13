@@ -24,7 +24,7 @@ fn draw_accidental(
     instructions: &mut Vec<Instruction>,
 ) {
     let horizontal_offset = horizontal_spacing.get(tick, position).unwrap();
-    let left = x + horizontal_offset.x - 0.2 - (accidental.slot as f32 * 1.1);
+    let left = x + horizontal_offset.x - 0.2 - ((accidental.slot as f32 - 1.0) * 1.1);
     let glyph = tone.pitch.accidental.to_glyph();
     let offset = tone_offsets.get(&tone.key).unwrap();
     let top = y + (*offset as f32 / 2.0);
@@ -36,7 +36,7 @@ fn draw_accidental(
         color: String::from("#000"),
         font: String::from("Bravura"),
         size: converter.spaces_to_px(&4.0),
-        justify: Justify::Start.as_string(),
+        justify: Justify::End.as_string(),
         align: Align::Middle.as_string(),
     }));
 }

@@ -112,12 +112,12 @@ impl Engrave {
             bracket_single_staves: false,
             sub_bracket: true,
 
-            base_note_space: 2.45,
-            minimum_note_space: 0.6,
+            base_note_space: 1.25,
+            minimum_note_space: 0.4,
             minimum_tie_space: 2.0,
-            note_space_ratio: 1.41,
+            note_space_ratio: 2.80,
 
-            max_beam_slant: 0.5,
+            max_beam_slant: 1.5,
         }
     }
 }

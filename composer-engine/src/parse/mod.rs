@@ -15,6 +15,7 @@ mod draw_staves;
 mod draw_stems;
 mod draw_sub_brackets;
 mod draw_systemic_barline;
+mod draw_ties;
 mod draw_time_signatures;
 mod get_accidentals;
 mod get_barlines;
@@ -53,6 +54,7 @@ use draw_staves::draw_staves;
 use draw_stems::draw_stems;
 use draw_sub_brackets::draw_sub_brackets;
 use draw_systemic_barline::draw_systemic_barline;
+use draw_ties::draw_ties;
 use draw_time_signatures::draw_time_signatures;
 use get_accidentals::get_accidentals;
 use get_barlines::get_barlines;
@@ -365,6 +367,20 @@ impl Engine {
             &vertical_spacing,
             &stem_lengths,
             &beams,
+            &converter,
+            &mut instructions,
+        );
+        draw_ties(
+            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
+            &padding_top,
+            flow,
+            &staves,
+            &notations,
+            &stem_directions,
+            &dots,
+            &vertical_spacing,
+            &horizontal_spacing,
+            &tone_offsets,
             &converter,
             &mut instructions,
         );

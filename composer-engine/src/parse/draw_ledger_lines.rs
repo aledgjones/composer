@@ -1,8 +1,7 @@
-use super::get_note_positions::Position;
-use super::get_note_positions::TonePositions;
+use super::get_note_positions::{NoteheadShunts, Shunt};
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
-use super::measure_horizontal_spacing::HorizontalSpacing;
+use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use super::Line;
@@ -13,36 +12,51 @@ use crate::score::stave::Stave;
 use crate::score::stave::STAVE_LINE_WIDTH;
 
 fn draw_lines<T: Iterator<Item = i8>>(
+    entry: &Notation,
     range: T,
     tick: &Tick,
     x: &f32,
     y: &f32,
     horizontal_spacing: &HorizontalSpacing,
-    tone_positions: &TonePositions,
+    tone_positions: &NoteheadShunts,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
-    let mut start_slot = Position::NoteSlot;
-    let mut stop_slot = Position::NoteSlot;
+    let notehead = entry.notehead_width();
+
+    let position = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap();
+
+    let mut start_x = position.x;
+    let mut stop_x = position.x;
 
     for offset in range {
         // get the furthest start position
-        if let Some(position) = tone_positions.by_offset.get(&(*tick, offset)) {
-            if position > &stop_slot {
-                stop_slot = position.clone();
-            }
-            if position < &start_slot {
-                start_slot = position.clone();
-            }
+        match tone_positions.by_offset.get(&(*tick, offset)) {
+            Some(shunt) => match shunt {
+                Shunt::Pre => {
+                    if position.x - notehead < start_x {
+                        start_x = position.x - notehead;
+                    }
+                }
+                Shunt::None => {
+                    if position.x + notehead > stop_x {
+                        stop_x = position.x + notehead;
+                    }
+                }
+                Shunt::Post => {
+                    if position.x + (notehead * 2.0) > stop_x {
+                        stop_x = position.x + (notehead * 2.0);
+                    }
+                }
+            },
+            None => (),
         };
 
         if offset % 2 == 0 {
             let y = y + (offset as f32 / 2.0);
 
-            let start_slot = horizontal_spacing.get(tick, &start_slot).unwrap();
-            let stop_slot = horizontal_spacing.get(tick, &stop_slot).unwrap();
-            let start = x + start_slot.x - 0.4;
-            let stop = x + stop_slot.x + stop_slot.width + 0.4;
+            let start = x + start_x - 0.4;
+            let stop = x + stop_x + 0.4;
 
             instructions.push(Instruction::Line(Line {
                 color: String::from("#000"),
@@ -69,7 +83,7 @@ fn draw_ledger_line(
     entry: &Notation,
     horizontal_spacing: &HorizontalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    tone_positions: &TonePositions,
+    tone_positions: &NoteheadShunts,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -80,6 +94,7 @@ fn draw_ledger_line(
 
     // high ledger lines
     draw_lines(
+        entry,
         from..-5,
         tick,
         x,
@@ -92,6 +107,7 @@ fn draw_ledger_line(
 
     // low ledger lines
     draw_lines(
+        entry,
         (5..to).rev(),
         tick,
         x,
@@ -111,7 +127,7 @@ pub fn draw_ledger_lines(
     horizontal_spacing: &HorizontalSpacing,
     vertical_spacing: &VerticalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    tone_positions: &TonePositions,
+    tone_positions: &NoteheadShunts,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {

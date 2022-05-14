@@ -1,9 +1,8 @@
 use super::get_beams::{Beam, Beams, BeamsByTrack};
-use super::get_note_positions::Position;
 use super::get_stem_directions::{StemDirections, StemDirectionsByTrack};
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack, NotationTrack};
-use super::measure_horizontal_spacing::HorizontalSpacing;
+use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use crate::components::measurements::Point;
 use crate::components::misc::{StemDirection, Tick};
 use crate::score::engrave::Engrave;
@@ -152,10 +151,10 @@ fn get_natural_stem_length(
             if tail > 0.0 {
                 tail = 0.0
             }
-            let x = horizontal_spacing
-                .get(tick, &Position::PostNoteSlot)
-                .unwrap()
-                .x;
+
+            let mut x = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap().x;
+            x += entry.notehead_width();
+
             (x - (STAVE_LINE_WIDTH / 2.0), head, tail)
         }
         StemDirection::Down => {

@@ -61,7 +61,7 @@ use get_barlines::get_barlines;
 use get_bars::get_bars;
 use get_beams::get_beams;
 use get_dots::get_dots;
-use get_note_positions::get_note_positions;
+use get_note_positions::get_note_shunts;
 use get_stem_directions::get_stem_directions;
 use get_stem_lengths::get_stem_lengths;
 use get_tone_offsets::get_tone_offsets;
@@ -144,7 +144,7 @@ impl Engine {
 
         let beams = get_beams(&notations, &bars, &flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
-        let tone_positions = get_note_positions(&notations, &tone_offsets, &stem_directions);
+        let notehead_shunts = get_note_shunts(&notations, &tone_offsets, &stem_directions);
         let dots = get_dots(flow, &notations, &tone_offsets);
         let accidentals =
             get_accidentals(flow, &self.score.tracks, &notations, &bars, &tone_offsets);
@@ -155,7 +155,7 @@ impl Engine {
             &self.score.tracks,
             &barlines,
             &notations,
-            &tone_positions,
+            &notehead_shunts,
             &beams,
             &stem_directions,
             &accidentals,
@@ -298,7 +298,7 @@ impl Engine {
             &horizontal_spacing,
             &vertical_spacing,
             &tone_offsets,
-            &tone_positions,
+            &notehead_shunts,
             &accidentals,
             &converter,
             &mut instructions,
@@ -311,7 +311,7 @@ impl Engine {
             &horizontal_spacing,
             &vertical_spacing,
             &tone_offsets,
-            &tone_positions,
+            &notehead_shunts,
             &converter,
             &mut instructions,
         );
@@ -324,7 +324,7 @@ impl Engine {
             &horizontal_spacing,
             &vertical_spacing,
             &tone_offsets,
-            &tone_positions,
+            &notehead_shunts,
             &converter,
             &mut instructions,
         );
@@ -332,9 +332,11 @@ impl Engine {
             &(padding_left + name_widths + instrument_name_gap + bracket_widths),
             &padding_top,
             &staves,
+            &notations,
             &vertical_spacing,
             &horizontal_spacing,
             &dots,
+            &notehead_shunts,
             &converter,
             &mut instructions,
         );

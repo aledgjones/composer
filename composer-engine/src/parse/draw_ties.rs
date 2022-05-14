@@ -89,6 +89,7 @@ mod tests {
     ) -> TieDirections {
         let mut tone_offsets = FxHashMap::default();
         let mut notation = Notation {
+            tick: 0,
             tones: Vec::new(),
             duration: 0,
             ties: FxHashSet::default(),

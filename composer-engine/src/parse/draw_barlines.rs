@@ -1,7 +1,7 @@
 use super::get_barlines::Barlines;
-use super::get_note_positions::Position;
 use super::get_vertical_spans::VerticalSpans;
 use super::measure_horizontal_spacing::HorizontalSpacing;
+use super::measure_horizontal_spacing::Position;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Circle;
 use super::Instruction;

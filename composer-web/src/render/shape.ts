@@ -1,9 +1,10 @@
-import { RenderInstruction } from "./instructions";
+import { InstructionType, RenderInstruction } from "./instructions";
 
 type PathPoint = { x: number; y: number };
 type Path = PathPoint[];
 
 export type ShapeInstruction = RenderInstruction<{
+  type: InstructionType.Shape;
   color: string;
   points: Path;
 }>;

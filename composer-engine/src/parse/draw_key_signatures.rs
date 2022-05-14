@@ -1,5 +1,4 @@
-use super::get_note_positions::Position;
-use super::measure_horizontal_spacing::HorizontalSpacing;
+use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
 use crate::components::pitch::Accidental;

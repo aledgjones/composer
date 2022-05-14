@@ -1,7 +1,7 @@
-use super::get_note_positions::TonePositions;
+use super::get_note_positions::{NoteheadShunts, Shunt};
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
-use super::measure_horizontal_spacing::HorizontalSpacing;
+use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
 use crate::components::misc::Tick;
@@ -20,16 +20,25 @@ fn draw_notehead(
     tone: &Tone,
     horizontal_spacing: &HorizontalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    tone_positions: &TonePositions,
+    notehead_shunts: &NoteheadShunts,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
-    let position = tone_positions
+    let mut left = x + horizontal_spacing.get(tick, &Position::NoteSlot).unwrap().x;
+    match notehead_shunts
         .by_key
         .get(&(*tick, tone.key.clone()))
-        .unwrap();
-    let horizontal_offset = horizontal_spacing.get(tick, position).unwrap();
-    let left = x + horizontal_offset.x;
+        .unwrap()
+    {
+        Shunt::Pre => {
+            left -= entry.notehead_width();
+        }
+        Shunt::None => (),
+        Shunt::Post => {
+            left += entry.notehead_width();
+        }
+    }
+
     let glyph = entry.glyph(&flow.subdivisions);
     let offset = tone_offsets.get(&tone.key).unwrap();
     let top = y + (*offset as f32 / 2.0);
@@ -55,7 +64,7 @@ pub fn draw_noteheads(
     horizontal_spacing: &HorizontalSpacing,
     vertical_spacing: &VerticalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    tone_positions: &TonePositions,
+    tone_positions: &NoteheadShunts,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {

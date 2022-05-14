@@ -1,13 +1,18 @@
 use super::get_bars::Bars;
 use super::get_beams::Beams;
+use super::get_note_positions::NoteheadShunts;
+use super::get_note_positions::Shunt;
 use super::get_tone_offsets::get_tone_offset_info;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use crate::components::duration::is_writable;
 use crate::components::duration::NoteDuration;
 use crate::components::duration::NOTE_DURATIONS;
+use crate::components::measurements::BoundingBox;
+use crate::components::measurements::PaddingSpaces;
 use crate::components::misc::StemDirection;
 use crate::components::misc::Tick;
 use crate::components::misc::Ticks;
+use crate::components::units::Space;
 use crate::entries::time_signature::TimeSignature;
 use crate::entries::time_signature::TimeSignatureDrawType;
 use crate::entries::tone::Tone;
@@ -28,6 +33,7 @@ pub type NotationByTrack = FxHashMap<String, NotationTrack>;
 
 #[derive(Debug, Clone)]
 pub struct Notation {
+    pub tick: Tick,
     pub tones: Vec<Tone>,
     pub duration: Ticks,
     pub ties: FxHashSet<String>,
@@ -115,9 +121,9 @@ impl Notation {
         }
     }
 
-    pub fn is_flagged(&self, tick: &Tick, beams: &Beams, subdivisions: &Ticks) -> bool {
+    pub fn is_flagged(&self, beams: &Beams, subdivisions: &Ticks) -> bool {
         !self.is_rest()
-            && !self.has_beam(tick, beams)
+            && !self.has_beam(beams)
             && self.duration < NoteDuration::Quarter.to_ticks(subdivisions)
     }
 
@@ -129,10 +135,40 @@ impl Notation {
         }
     }
 
-    pub fn has_beam(&self, at: &Tick, beams: &Beams) -> bool {
+    pub fn has_beam(&self, beams: &Beams) -> bool {
         for beam in beams {
-            if beam.ticks.contains(at) {
+            if beam.ticks.contains(&self.tick) {
                 return true;
+            }
+        }
+
+        false
+    }
+
+    pub fn has_pre_shunt(&self, notehead_shunts: &NoteheadShunts) -> bool {
+        for tone in &self.tones {
+            let shunt = notehead_shunts
+                .by_key
+                .get(&(self.tick, tone.key.clone()))
+                .unwrap();
+            match shunt {
+                Shunt::Pre => return true,
+                _ => (),
+            }
+        }
+
+        false
+    }
+
+    pub fn has_post_shunt(&self, notehead_shunts: &NoteheadShunts) -> bool {
+        for tone in &self.tones {
+            let shunt = notehead_shunts
+                .by_key
+                .get(&(self.tick, tone.key.clone()))
+                .unwrap();
+            match shunt {
+                Shunt::Post => return true,
+                _ => (),
             }
         }
 
@@ -155,42 +191,69 @@ impl Notation {
         !self.ties.is_empty()
     }
 
-    pub fn spacing(
+    pub fn notehead_width(&self) -> Space {
+        1.175
+    }
+
+    pub fn min_spacing(
         &self,
-        tick: &Tick,
-        engraving: &Engrave,
+        tone_shunts: &NoteheadShunts,
         subdivisions: &Ticks,
-        stem_direction: &Option<&StemDirection>,
+        engrave: &Engrave,
         beams: &Beams,
-    ) -> f32 {
-        let mut min_space =
-            match self.is_dotted(subdivisions) || self.is_flagged(tick, beams, subdivisions) {
-                true => engraving.minimum_note_space + 1.0,
-                false => engraving.minimum_note_space,
-            };
+        stem_direction: &Option<&StemDirection>,
+    ) -> Space {
+        let mut min_space = self.notehead_width();
+        if self.has_post_shunt(tone_shunts) {
+            min_space *= 2.0;
+        }
+
+        if self.is_dotted(subdivisions) || self.is_flagged(beams, subdivisions) {
+            min_space += 1.0
+        }
 
         if self.has_tie() {
-            min_space = engraving.minimum_tie_space;
-        }
+            min_space += engrave.minimum_tie_space;
+        } else {
+            min_space += engrave.minimum_note_space;
+        };
 
         // TODO: work out why this is needed!
         if let Some(StemDirection::Up) = stem_direction {
-            if !self.has_beam(tick, beams) {
+            if !self.has_beam(beams) {
                 min_space += 1.0;
             }
-        }
+        };
 
-        match self.base_to_note_duration(subdivisions) {
+        min_space
+    }
+
+    pub fn metrics(
+        &self,
+        tone_shunts: &NoteheadShunts,
+        subdivisions: &Ticks,
+        engrave: &Engrave,
+        beams: &Beams,
+        stem_direction: &Option<&StemDirection>,
+    ) -> BoundingBox {
+        let min = self.min_spacing(tone_shunts, subdivisions, engrave, beams, stem_direction);
+        let spacing = match self.base_to_note_duration(subdivisions) {
             Some(base) => {
-                let space = engraving.base_note_space
-                    * base.spacing_ratio(engraving.note_space_ratio, self.is_dotted(subdivisions));
-                if space > min_space {
+                let space = engrave.base_note_space
+                    * base.spacing_ratio(engrave.note_space_ratio, self.is_dotted(subdivisions));
+                if space > min {
                     space
                 } else {
-                    min_space
+                    min
                 }
             }
-            None => min_space,
+            None => min,
+        };
+
+        BoundingBox {
+            width: 0.0,
+            height: 1.0,
+            padding: PaddingSpaces::new(0.0, spacing, 0.0, 0.0),
         }
     }
 
@@ -252,6 +315,7 @@ impl NotationTrack {
         track.insert(
             0,
             Notation {
+                tick: 0,
                 tones: Vec::new(),
                 duration: length,
                 ties: FxHashSet::default(),
@@ -300,6 +364,7 @@ impl NotationTrack {
                 self.insert(
                     &event_at,
                     Notation {
+                        tick: event_at,
                         tones: notation.tones.clone(),
                         duration: split_at - event_at,
                         ties: notation.tones.iter().map(|tone| tone.key.clone()).collect(),
@@ -309,6 +374,7 @@ impl NotationTrack {
                 self.insert(
                     split_at,
                     Notation {
+                        tick: *split_at,
                         tones: notation.tones.clone(),
                         duration: event_at + notation.duration - split_at,
                         ties: notation.ties,
@@ -645,6 +711,7 @@ mod tests {
     #[test]
     fn sort_tones_test() {
         let notation = Notation {
+            tick: 0,
             tones: vec![
                 Tone::tester("a"),
                 Tone::tester("b"),
@@ -673,6 +740,7 @@ mod tests {
     #[test]
     fn get_clusters_test() {
         let notation = Notation {
+            tick: 0,
             tones: vec![
                 Tone::tester("a"),
                 Tone::tester("b"),

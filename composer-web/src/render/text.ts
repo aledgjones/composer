@@ -1,7 +1,7 @@
 import { RenderInstruction, InstructionType } from "./instructions";
 
 export type Text = {
-  type: InstructionType.Line;
+  type: InstructionType.Text;
   value: string;
   x: number;
   y: number;

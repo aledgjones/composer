@@ -1,7 +1,8 @@
-import { RenderInstruction } from "./instructions";
+import { InstructionType, RenderInstruction } from "./instructions";
 
 type CirclePoint = { x: number; y: number };
 export type Circle = {
+  type: InstructionType.Circle;
   color: string;
   radius: number;
   point: CirclePoint;

@@ -155,6 +155,7 @@ mod tests {
 
     fn run_get_tone_offset_info(tones: Vec<(&str, i8)>) -> (i8, i8, i8) {
         let mut notation = Notation {
+            tick: 0,
             tones: Vec::new(),
             duration: 0,
             ties: FxHashSet::default(),

@@ -1,8 +1,8 @@
 use super::get_bars::Bars;
-use super::get_note_positions::Position;
 use super::get_written_durations::Notation;
 use super::get_written_durations::NotationByTrack;
 use super::measure_horizontal_spacing::HorizontalSpacing;
+use super::measure_horizontal_spacing::Position;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::{Instruction, Text};
 use crate::components::duration::NoteDuration;

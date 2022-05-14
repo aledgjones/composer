@@ -127,6 +127,7 @@ mod tests {
 
     fn run_get_stem_direction_test(tones: Vec<(&str, i8)>) -> StemDirection {
         let mut notation = Notation {
+            tick: 0,
             tones: Vec::new(),
             duration: 0,
             ties: FxHashSet::default(),
@@ -203,6 +204,7 @@ mod tests {
             track.insert(
                 &(tick as Tick),
                 Notation {
+                    tick: 0,
                     tones: vec![Tone::new(
                         key.to_string(),
                         tick as Tick,

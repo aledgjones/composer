@@ -1,7 +1,7 @@
 use super::get_accidentals::AccidentalsByTrack;
 use super::get_barlines::Barlines;
 use super::get_beams::BeamsByTrack;
-use super::get_note_positions::{Position, TonePositions, POSITION_COUNT};
+use super::get_note_positions::NoteheadShunts;
 use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_written_durations::NotationByTrack;
 use crate::components::measurements::BoundingBox;
@@ -13,6 +13,67 @@ use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 use crate::score::tracks::Track;
 use rustc_hash::FxHashMap;
+use std::ops::{Add, Index, IndexMut};
+
+pub const POSITION_COUNT: u32 = 12;
+
+#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone)]
+pub enum Position {
+    PaddingStart = 0,
+    EndRepeat,
+    Clef,
+    Barline,
+    KeySignature,
+    TimeSignature,
+    StartRepeat,
+    Accidentals, // only used when at begining of measure (there is no previous space to cut into)
+    PreNoteSlot, // as above
+    NoteSlot,
+    NoteSpacing,
+    PaddingEnd,
+}
+
+impl Add<Position> for usize {
+    type Output = usize;
+
+    fn add(self, other: Position) -> usize {
+        self + other as usize
+    }
+}
+
+impl From<usize> for Position {
+    fn from(int: usize) -> Position {
+        match int {
+            0 => Position::PaddingStart,
+            1 => Position::EndRepeat,
+            2 => Position::Clef,
+            3 => Position::Barline,
+            4 => Position::KeySignature,
+            5 => Position::TimeSignature,
+            6 => Position::StartRepeat,
+            7 => Position::Accidentals,
+            8 => Position::PreNoteSlot,
+            9 => Position::NoteSlot,
+            10 => Position::NoteSpacing,
+            11 => Position::PaddingEnd,
+            _ => Position::PaddingStart,
+        }
+    }
+}
+
+impl Index<Position> for [f32] {
+    type Output = f32;
+
+    fn index(&self, position: Position) -> &Self::Output {
+        &self[position as usize]
+    }
+}
+
+impl IndexMut<Position> for [f32] {
+    fn index_mut(&mut self, position: Position) -> &mut f32 {
+        &mut self[position as usize]
+    }
+}
 
 #[derive(Debug)]
 pub struct Spacing {
@@ -50,7 +111,7 @@ pub fn measure_horizontal_spacing(
     tracks: &FxHashMap<String, Track>,
     barlines: &Barlines,
     notations_by_track: &NotationByTrack,
-    tone_positions: &TonePositions,
+    notehead_shunts: &NoteheadShunts,
     beams_by_track: &BeamsByTrack,
     stem_directions_by_track: &StemDirectionsByTrack,
     accidentals_by_track: &AccidentalsByTrack,
@@ -134,20 +195,8 @@ pub fn measure_horizontal_spacing(
                 let notation = notations_by_track.get(track_key).unwrap();
 
                 if let Some(entry) = notation.track.get(&tick) {
-                    let notehead_width: Space = 1.175;
-
-                    if entry.is_rest() {
-                        // rests are always at the not slot position
-                        widths[start + Position::NoteSlot] = notehead_width;
-                    } else {
-                        for tone in &entry.tones {
-                            // notes can be shunted, we need to set the width at the right position for each tone
-                            let position = tone_positions
-                                .by_key
-                                .get(&(tick, tone.key.clone()))
-                                .unwrap();
-                            widths[start + position.clone()] = notehead_width;
-                        }
+                    if tick == 0 && entry.has_pre_shunt(notehead_shunts) {
+                        widths[start + Position::NoteSlot] = entry.notehead_width();
                     }
 
                     let accidentals = accidentals_by_track.get(track_key).unwrap();
@@ -155,8 +204,16 @@ pub fn measure_horizontal_spacing(
                     let stem_directions = stem_directions_by_track.get(track_key).unwrap();
                     let stem_direction = stem_directions.get(&tick);
 
-                    let mut spacing =
-                        entry.spacing(&tick, engrave, &flow.subdivisions, &stem_direction, beams);
+                    let mut spacing = entry
+                        .metrics(
+                            notehead_shunts,
+                            &flow.subdivisions,
+                            engrave,
+                            beams,
+                            &stem_direction,
+                        )
+                        .padding
+                        .right;
 
                     // ACCIDENTALS
                     if tick == 0 || barlines.contains_key(&tick) {
@@ -165,14 +222,33 @@ pub fn measure_horizontal_spacing(
                             widths[start + Position::Accidentals] = (*slots as f32) * 1.1;
                         };
                     }
-                    // extend spacing to accomodate accidentals (if needed)
-                    if let Some((next_tick, _)) = notation.get_next_notation(&tick) {
+
+                    // extend spacing to accomodate accidentals + pre shunts (if needed)
+                    if let Some((next_tick, next_entry)) = notation.get_next_notation(&tick) {
                         if !barlines.contains_key(&next_tick) {
-                            if let Some(slots) = accidentals.slots_by_tick.get(&next_tick) {
-                                let min = engrave.minimum_note_space + ((*slots as f32) * 1.1);
-                                if min > spacing {
-                                    spacing = min
-                                }
+                            let stem_direction = stem_directions.get(&tick);
+
+                            let min = entry.min_spacing(
+                                notehead_shunts,
+                                &flow.subdivisions,
+                                engrave,
+                                beams,
+                                &stem_direction,
+                            );
+
+                            let pre_shunt = match next_entry.has_pre_shunt(notehead_shunts) {
+                                true => next_entry.notehead_width(),
+                                false => 0.0,
+                            };
+
+                            let accidentals = match accidentals.slots_by_tick.get(&next_tick) {
+                                Some(slots) => ((*slots as f32) * 1.1),
+                                None => 0.0,
+                            };
+
+                            let min = min + pre_shunt + accidentals;
+                            if min > spacing {
+                                spacing = min
                             }
                         }
                     };

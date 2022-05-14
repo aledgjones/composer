@@ -1,6 +1,5 @@
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
-use super::Line;
 use crate::components::measurements::Point;
 use crate::components::units::Converter;
 use crate::components::units::Space;
@@ -23,7 +22,7 @@ pub fn draw_staves(
                     - (vertical_spacing.staves[&stave.key].height / 2.0)
                     + i as Space;
 
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -36,7 +35,7 @@ pub fn draw_staves(
                             y: converter.spaces_to_px(&top),
                         },
                     ],
-                }));
+                });
             }
         }
     }

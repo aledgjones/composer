@@ -76,44 +76,32 @@ use serde::Serialize;
 use wasm_bindgen::prelude::*;
 
 #[derive(Serialize)]
-pub struct Circle {
-    pub color: String,
-    pub radius: f32,
-    pub point: Point,
-}
-
-#[derive(Serialize)]
-pub struct Line {
-    pub color: String,
-    pub width: f32,
-    pub points: Vec<Point>,
-}
-
-#[derive(Serialize)]
-pub struct Shape {
-    pub color: String,
-    pub points: Vec<Point>,
-}
-
-#[derive(Serialize)]
-pub struct Text {
-    pub x: f32,
-    pub y: f32,
-    pub value: String,
-    pub color: String,
-    pub font: String,
-    pub size: f32,
-    pub justify: String,
-    pub align: String,
-}
-
-#[derive(Serialize)]
 #[serde(tag = "type")]
 pub enum Instruction {
-    Circle(Circle),
-    Line(Line),
-    Text(Text),
-    Shape(Shape),
+    Circle {
+        color: String,
+        radius: f32,
+        point: Point,
+    },
+    Line {
+        color: String,
+        width: f32,
+        points: Vec<Point>,
+    },
+    Text {
+        x: f32,
+        y: f32,
+        value: String,
+        color: String,
+        font: String,
+        size: f32,
+        justify: String,
+        align: String,
+    },
+    Shape {
+        color: String,
+        points: Vec<Point>,
+    },
 }
 
 #[wasm_bindgen]

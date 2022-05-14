@@ -1,7 +1,6 @@
 use super::get_vertical_spans::VerticalSpans;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
-use super::Text;
 use crate::components::text::Align;
 use crate::components::text::Justify;
 use crate::components::units::Converter;
@@ -21,7 +20,7 @@ pub fn draw_braces(
         let height = (bottom.y + bottom.height) - top.y;
         let top = y + (bottom.y + bottom.height / 2.0);
 
-        instructions.push(Instruction::Text(Text {
+        instructions.push(Instruction::Text {
             x: converter.spaces_to_px(&(x - 0.25)),
             y: converter.spaces_to_px(&top),
             value: String::from("\u{E000}"),
@@ -30,6 +29,6 @@ pub fn draw_braces(
             size: converter.spaces_to_px(&height),
             justify: Justify::End.as_string(),
             align: Align::Middle.as_string(),
-        }))
+        })
     }
 }

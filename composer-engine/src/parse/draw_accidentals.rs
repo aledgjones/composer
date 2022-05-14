@@ -4,7 +4,7 @@ use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::NotationByTrack;
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
-use super::{Instruction, Text};
+use super::Instruction;
 use crate::components::misc::Tick;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
@@ -26,7 +26,7 @@ fn draw_accidental(
     let offset = tone_offsets.get(&tone.key).unwrap();
     let top = y + (*offset as f32 / 2.0);
 
-    instructions.push(Instruction::Text(Text {
+    instructions.push(Instruction::Text {
         x: converter.spaces_to_px(&left),
         y: converter.spaces_to_px(&top),
         value: glyph,
@@ -35,7 +35,7 @@ fn draw_accidental(
         size: converter.spaces_to_px(&4.0),
         justify: Justify::End.as_string(),
         align: Align::Middle.as_string(),
-    }));
+    });
 }
 
 pub fn draw_accidentals(

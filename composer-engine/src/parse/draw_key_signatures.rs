@@ -1,6 +1,6 @@
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
-use super::{Instruction, Text};
+use super::Instruction;
 use crate::components::pitch::Accidental;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
@@ -26,7 +26,7 @@ fn draw_key_signature(
     };
     if let Some(pattern) = key_signature.pattern(clef) {
         for i in 0..key_signature.offset.abs() {
-            instructions.push(Instruction::Text(Text {
+            instructions.push(Instruction::Text {
                 x: converter.spaces_to_px(&(x + (i as f32))),
                 y: converter.spaces_to_px(&(y + 0.5 * pattern[i as usize] as f32)),
                 value: glyph.clone(),
@@ -35,7 +35,7 @@ fn draw_key_signature(
                 size: converter.spaces_to_px(&4.0),
                 justify: Justify::Start.as_string(),
                 align: Align::Middle.as_string(),
-            }))
+            })
         }
     }
 }

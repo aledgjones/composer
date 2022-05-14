@@ -3,9 +3,7 @@ use super::get_vertical_spans::VerticalSpans;
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_horizontal_spacing::Position;
 use super::measure_vertical_spacing::VerticalSpacing;
-use super::Circle;
 use super::Instruction;
-use super::Line;
 use crate::components::measurements::Point;
 use crate::components::units::Converter;
 use crate::entries::barline::BarlineDrawType;
@@ -22,22 +20,22 @@ fn draw_barline_dots(
 ) {
     for stave in staves {
         let top = y + vertical_spacing.staves.get(&stave.key).unwrap().y;
-        instructions.push(Instruction::Circle(Circle {
+        instructions.push(Instruction::Circle {
             color: String::from("#000"),
             radius: converter.spaces_to_px(&0.25),
             point: Point {
                 x: converter.spaces_to_px(x),
                 y: converter.spaces_to_px(&(top - 0.5)),
             },
-        }));
-        instructions.push(Instruction::Circle(Circle {
+        });
+        instructions.push(Instruction::Circle {
             color: String::from("#000"),
             radius: converter.spaces_to_px(&0.25),
             point: Point {
                 x: converter.spaces_to_px(x),
                 y: converter.spaces_to_px(&(top + 0.5)),
             },
-        }));
+        });
     }
 }
 
@@ -62,7 +60,7 @@ fn draw_barline(
 
         match draw_type {
             BarlineDrawType::Single => {
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -75,10 +73,10 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
+                });
             }
             BarlineDrawType::Double => {
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -91,8 +89,8 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
-                instructions.push(Instruction::Line(Line {
+                });
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -105,10 +103,10 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
+                });
             }
             BarlineDrawType::EndRepeat => {
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -121,8 +119,8 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
-                instructions.push(Instruction::Line(Line {
+                });
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 4.0)),
                     points: vec![
@@ -135,10 +133,10 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
+                });
             }
             BarlineDrawType::EndStartRepeat => {
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -151,8 +149,8 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
-                instructions.push(Instruction::Line(Line {
+                });
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 4.0)),
                     points: vec![
@@ -165,8 +163,8 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
-                instructions.push(Instruction::Line(Line {
+                });
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -179,10 +177,10 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
+                });
             }
             BarlineDrawType::StartRepeat => {
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 4.0)),
                     points: vec![
@@ -195,8 +193,8 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
-                instructions.push(Instruction::Line(Line {
+                });
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -209,10 +207,10 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
+                });
             }
             BarlineDrawType::Final => {
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
                     points: vec![
@@ -225,8 +223,8 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
-                instructions.push(Instruction::Line(Line {
+                });
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 4.0)),
                     points: vec![
@@ -239,7 +237,7 @@ fn draw_barline(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
+                });
             }
         }
     }

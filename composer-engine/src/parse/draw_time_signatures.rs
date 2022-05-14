@@ -1,6 +1,6 @@
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
-use super::{Instruction, Text};
+use super::Instruction;
 use crate::components::duration::NoteDuration;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
@@ -56,7 +56,7 @@ fn draw_time_signature(
 ) {
     match time_signature.draw_type {
         TimeSignatureDrawType::Hidden => (),
-        TimeSignatureDrawType::CommonTime => instructions.push(Instruction::Text(Text {
+        TimeSignatureDrawType::CommonTime => instructions.push(Instruction::Text {
             x: converter.spaces_to_px(&x),
             y: converter.spaces_to_px(&y),
             value: String::from("\u{E08A}"),
@@ -65,8 +65,8 @@ fn draw_time_signature(
             size: converter.spaces_to_px(&4.0),
             justify: Justify::Middle.as_string(),
             align: Align::Middle.as_string(),
-        })),
-        TimeSignatureDrawType::SplitCommonTime => instructions.push(Instruction::Text(Text {
+        }),
+        TimeSignatureDrawType::SplitCommonTime => instructions.push(Instruction::Text {
             x: converter.spaces_to_px(&x),
             y: converter.spaces_to_px(&y),
             value: String::from("\u{E08B}"),
@@ -75,8 +75,8 @@ fn draw_time_signature(
             size: converter.spaces_to_px(&4.0),
             justify: Justify::Middle.as_string(),
             align: Align::Middle.as_string(),
-        })),
-        TimeSignatureDrawType::Open => instructions.push(Instruction::Text(Text {
+        }),
+        TimeSignatureDrawType::Open => instructions.push(Instruction::Text {
             x: converter.spaces_to_px(&x),
             y: converter.spaces_to_px(&y),
             value: String::from("\u{E09C}"),
@@ -85,11 +85,11 @@ fn draw_time_signature(
             size: converter.spaces_to_px(&4.0),
             justify: Justify::Middle.as_string(),
             align: Align::Middle.as_string(),
-        })),
+        }),
         TimeSignatureDrawType::Regular => {
             let beats = number_to_glyph(time_signature.beats);
             let beat_type = beat_type_to_glyph(time_signature.beat_type);
-            instructions.push(Instruction::Text(Text {
+            instructions.push(Instruction::Text {
                 x: converter.spaces_to_px(&x),
                 y: converter.spaces_to_px(&(y - 1.0)),
                 value: beats,
@@ -98,8 +98,8 @@ fn draw_time_signature(
                 size: converter.spaces_to_px(&4.0),
                 justify: Justify::Middle.as_string(),
                 align: Align::Middle.as_string(),
-            }));
-            instructions.push(Instruction::Text(Text {
+            });
+            instructions.push(Instruction::Text {
                 x: converter.spaces_to_px(&x),
                 y: converter.spaces_to_px(&(y + 1.0)),
                 value: beat_type,
@@ -108,7 +108,7 @@ fn draw_time_signature(
                 size: converter.spaces_to_px(&4.0),
                 justify: Justify::Middle.as_string(),
                 align: Align::Middle.as_string(),
-            }));
+            });
         }
     };
 }

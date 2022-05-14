@@ -1,8 +1,6 @@
 use super::get_vertical_spans::VerticalSpans;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
-use super::Line;
-use super::Text;
 use crate::components::measurements::Point;
 use crate::components::text::Align;
 use crate::components::text::Justify;
@@ -40,7 +38,7 @@ pub fn draw_brackets(
         match engrave.bracket_style {
             BracketStyle::None => {
                 // thick line
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.5),
                     points: vec![
@@ -53,11 +51,11 @@ pub fn draw_brackets(
                             y: converter.spaces_to_px(&(bottom + tweek_for_stave_line)),
                         },
                     ],
-                }));
+                });
             }
             BracketStyle::Line => {
                 // think line
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.5),
                     points: vec![
@@ -70,9 +68,9 @@ pub fn draw_brackets(
                             y: converter.spaces_to_px(&(bottom + tweek_for_stave_line)),
                         },
                     ],
-                }));
+                });
                 // thin lines
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.125),
                     points: vec![
@@ -85,8 +83,8 @@ pub fn draw_brackets(
                             y: converter.spaces_to_px(&top),
                         },
                     ],
-                }));
-                instructions.push(Instruction::Line(Line {
+                });
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.125),
                     points: vec![
@@ -99,11 +97,11 @@ pub fn draw_brackets(
                             y: converter.spaces_to_px(&bottom),
                         },
                     ],
-                }));
+                });
             }
             BracketStyle::Wing => {
                 // think line
-                instructions.push(Instruction::Line(Line {
+                instructions.push(Instruction::Line {
                     color: String::from("#000"),
                     width: converter.spaces_to_px(&0.5),
                     points: vec![
@@ -116,9 +114,9 @@ pub fn draw_brackets(
                             y: converter.spaces_to_px(&(bottom + TWEEK_FOR_WING)),
                         },
                     ],
-                }));
+                });
                 // wings
-                instructions.push(Instruction::Text(Text {
+                instructions.push(Instruction::Text {
                     x: converter.spaces_to_px(&(x - 1.0)),
                     y: converter.spaces_to_px(&(top - TWEEK_FOR_WING)),
                     value: String::from("\u{E003}"),
@@ -127,8 +125,8 @@ pub fn draw_brackets(
                     size: converter.spaces_to_px(&4.0),
                     justify: Justify::Start.as_string(),
                     align: Align::Middle.as_string(),
-                }));
-                instructions.push(Instruction::Text(Text {
+                });
+                instructions.push(Instruction::Text {
                     x: converter.spaces_to_px(&(x - 1.0)),
                     y: converter.spaces_to_px(&(bottom + TWEEK_FOR_WING)),
                     value: String::from("\u{E004}"),
@@ -137,7 +135,7 @@ pub fn draw_brackets(
                     size: converter.spaces_to_px(&4.0),
                     justify: Justify::Start.as_string(),
                     align: Align::Middle.as_string(),
-                }));
+                });
             }
         }
     }

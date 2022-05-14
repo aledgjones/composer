@@ -4,7 +4,6 @@ use super::get_written_durations::{Notation, NotationByTrack};
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
-use super::Line;
 use crate::components::measurements::Point;
 use crate::components::misc::Tick;
 use crate::components::units::Converter;
@@ -58,7 +57,7 @@ fn draw_lines<T: Iterator<Item = i8>>(
             let start = x + start_x - 0.4;
             let stop = x + stop_x + 0.4;
 
-            instructions.push(Instruction::Line(Line {
+            instructions.push(Instruction::Line {
                 color: String::from("#000"),
                 width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 1.5)),
                 points: vec![
@@ -71,7 +70,7 @@ fn draw_lines<T: Iterator<Item = i8>>(
                         y: converter.spaces_to_px(&y),
                     },
                 ],
-            }));
+            });
         }
     }
 }

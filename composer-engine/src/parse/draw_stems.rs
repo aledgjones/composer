@@ -1,6 +1,6 @@
 use super::get_stem_lengths::{StemDef, StemLengthsByTrack};
 use super::measure_vertical_spacing::VerticalSpacing;
-use super::{Instruction, Line};
+use super::Instruction;
 use crate::components::measurements::Point;
 use crate::components::units::Converter;
 use crate::score::stave::{Stave, STAVE_LINE_WIDTH};
@@ -12,7 +12,7 @@ fn draw_stem(
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
-    instructions.push(Instruction::Line(Line {
+    instructions.push(Instruction::Line {
         color: String::from("#000"),
         width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
         points: vec![
@@ -25,7 +25,7 @@ fn draw_stem(
                 y: converter.spaces_to_px(&(y + def.tail.y)),
             },
         ],
-    }));
+    });
 }
 
 pub fn draw_stems(

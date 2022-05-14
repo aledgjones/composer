@@ -4,7 +4,7 @@ use super::get_written_durations::NotationByTrack;
 use super::measure_horizontal_spacing::HorizontalSpacing;
 use super::measure_horizontal_spacing::Position;
 use super::measure_vertical_spacing::VerticalSpacing;
-use super::{Instruction, Text};
+use super::Instruction;
 use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
 use crate::components::text::{Align, Justify};
@@ -31,7 +31,7 @@ fn draw_rest(
             .unwrap();
         let left = (x + start.x + ((end.x - start.x) / 2.0)) - 1.0;
 
-        instructions.push(Instruction::Text(Text {
+        instructions.push(Instruction::Text {
             x: converter.spaces_to_px(&left),
             y: converter.spaces_to_px(&(y - 1.0)),
             value: String::from("\u{E4E3}"),
@@ -40,7 +40,7 @@ fn draw_rest(
             size: converter.spaces_to_px(&4.0),
             justify: Justify::Start.as_string(),
             align: Align::Middle.as_string(),
-        }));
+        });
     } else {
         let left = x + start.x;
         let base = entry.base_to_note_duration(subdivisions);
@@ -51,7 +51,7 @@ fn draw_rest(
             _ => *y,
         };
 
-        instructions.push(Instruction::Text(Text {
+        instructions.push(Instruction::Text {
             x: converter.spaces_to_px(&left),
             y: converter.spaces_to_px(&top),
             value: glyph,
@@ -60,7 +60,7 @@ fn draw_rest(
             size: converter.spaces_to_px(&4.0),
             justify: Justify::Start.as_string(),
             align: Align::Middle.as_string(),
-        }));
+        });
 
         if is_dotted {
             todo!()

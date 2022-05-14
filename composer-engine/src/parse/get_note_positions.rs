@@ -3,7 +3,6 @@ use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
 use crate::components::misc::{StemDirection, Tick};
 use rustc_hash::FxHashMap;
-use std::ops::{Add, Index, IndexMut};
 
 #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum Shunt {

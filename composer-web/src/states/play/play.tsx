@@ -23,9 +23,9 @@ import { Controls } from "./controls";
 import { Ticks } from "./ticks";
 import { PlayHead } from "./play-head";
 import { Track } from "./track";
+import { TrackPlaceholder } from "./track-placeholder";
 
 import "./styles.css";
-import { TrackPlaceholder } from "./track-placeholder";
 
 const Play: FC = () => {
   useTitle("Solo Composer | Sequence");

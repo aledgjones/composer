@@ -7,9 +7,9 @@ import merge from "classnames";
 import { engine, store } from "../../../data";
 import { TickList } from "../ticks/defs";
 import { Tool } from "../../../data/defs";
+import { OverviewTrack } from "../overview-track";
 
 import "./styles.css";
-import { OverviewTrack } from "../overview-track";
 
 interface Props {
   flowKey: string;

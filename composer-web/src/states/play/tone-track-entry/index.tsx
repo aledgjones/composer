@@ -1,7 +1,7 @@
 import { FC, useMemo, PointerEvent } from "react";
 import { SLOT_HEIGHT } from "../const";
 import merge from "classnames";
-import { TickList } from "../ticks/defs";
+import { Idx, TickList } from "../ticks/defs";
 import { Tone, Tool } from "../../../data/defs";
 import { actions } from "../../../data/actions";
 import { store } from "../../../data";
@@ -73,7 +73,7 @@ export const ToneTrackEntry: FC<Props> = ({
     if (tone.tick >= ticks.list.length) {
       return ticks.width * zoom;
     } else {
-      return ticks.list[tone.tick].x * zoom;
+      return ticks.list[tone.tick][Idx.X] * zoom;
     }
   }, [tone, ticks, zoom]);
 
@@ -81,7 +81,7 @@ export const ToneTrackEntry: FC<Props> = ({
     if (tone.tick + tone.duration >= ticks.list.length) {
       return ticks.width * zoom - left;
     } else {
-      return ticks.list[tone.tick + tone.duration].x * zoom - left;
+      return ticks.list[tone.tick + tone.duration][Idx.X] * zoom - left;
     }
   }, [tone, ticks, left, zoom]);
 

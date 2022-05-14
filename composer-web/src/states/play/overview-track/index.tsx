@@ -1,10 +1,10 @@
 import { FC, useRef } from "react";
 import Color from "color";
-import { TickList } from "../ticks/defs";
-
-import "./styles.css";
 import { engine } from "../../../data";
 import { Tone } from "../../../data/defs";
+import { Idx, TickList } from "../ticks/defs";
+
+import "./styles.css";
 
 interface Props {
   flowKey: string;
@@ -59,10 +59,10 @@ export const OverviewTrack: FC<Props> = ({
             className="overview-track__block"
             style={{
               backgroundColor: Color(color).alpha(0.1).toString(),
-              left: ticks.list[start].x * zoom,
+              left: ticks.list[start][Idx.X] * zoom,
               width: ticks.list[stop]
-                ? (ticks.list[stop].x - ticks.list[start].x) * zoom
-                : (ticks.width - ticks.list[start].x) * zoom,
+                ? (ticks.list[stop][Idx.X] - ticks.list[start][Idx.X]) * zoom
+                : (ticks.width - ticks.list[start][Idx.X]) * zoom,
             }}
           />
         );
@@ -77,10 +77,10 @@ export const OverviewTrack: FC<Props> = ({
             style={{
               position: "absolute",
               backgroundColor: color,
-              left: ticks.list[start].x * zoom,
+              left: ticks.list[start][Idx.X] * zoom,
               width: ticks.list[stop]
-                ? (ticks.list[stop].x - ticks.list[start].x) * zoom
-                : (ticks.width - ticks.list[start].x) * zoom,
+                ? (ticks.list[stop][Idx.X] - ticks.list[start][Idx.X]) * zoom
+                : (ticks.width - ticks.list[start][Idx.X]) * zoom,
               height: `calc(100% / 100)`,
               bottom: `calc(1% * ${tone.pitch.int - 12})`, // C0 -> E8 (12 -> 112)
             }}

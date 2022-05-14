@@ -48,8 +48,8 @@ impl Flow {
             key: shortid(),
             title: String::from(""),
             players: FxHashSet::default(),
-            length: 16 * 4 * 200, // 4 * 4/4
-            subdivisions: 16,
+            length: 48 * 4 * 200, // 4 * 4/4
+            subdivisions: 48,
 
             master: master.key.clone(),
             staves: FxHashMap::default(),
@@ -57,15 +57,7 @@ impl Flow {
     }
 }
 
-#[derive(Serialize)]
-struct Tick {
-    x: f32,
-    width: f32,
-    first: bool,
-    beat: bool,
-    sub_beat: bool,
-    boundry: bool,
-}
+type Tick = (f32, f32, bool, bool, bool, bool);
 
 #[derive(Serialize)]
 struct TickList {
@@ -301,18 +293,18 @@ impl Engine {
                 time_signature = entry;
             }
 
-            output.list.push(Tick {
-                x: output.width,
-                width: tick_width,
-                first: time_signature.is_on_first_beat(&tick, &flow.subdivisions),
-                beat: time_signature.is_on_beat(&tick, &flow.subdivisions),
-                sub_beat: time_signature.is_on_beat_type(
-                    &tick,
-                    &time_signature.beat_type.half(),
-                    &flow.subdivisions,
-                ),
-                boundry: time_signature.is_on_grouping_boundry(&tick, &flow.subdivisions),
-            });
+            let first = time_signature.is_on_first_beat(&tick, &flow.subdivisions);
+            let beat = time_signature.is_on_beat(&tick, &flow.subdivisions);
+            let sub = time_signature.is_on_beat_type(
+                &tick,
+                &time_signature.beat_type.half(),
+                &flow.subdivisions,
+            );
+            let boundry = time_signature.is_on_grouping_boundry(&tick, &flow.subdivisions);
+
+            output
+                .list
+                .push((output.width, tick_width, first, beat, sub, boundry));
 
             output.width += tick_width;
         }

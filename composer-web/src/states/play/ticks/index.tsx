@@ -1,6 +1,6 @@
 import { Fragment, FC } from "react";
 import merge from "classnames";
-import { TickList } from "./defs";
+import { Idx, TickList } from "./defs";
 import { getTickColor, getTickHeight } from "./utils";
 
 interface Props {
@@ -29,22 +29,22 @@ export const Ticks: FC<Props> = ({
         const tickHeight = getTickHeight(tick, isTrack, height, zoom);
         if (tickHeight) {
           const tickColor = getTickColor(tick, isTrack);
-          if (tick.first) {
+          if (tick[Idx.First]) {
             bar++;
           }
           return (
             <Fragment key={i}>
               <line
-                x1={tick.x * zoom}
+                x1={tick[Idx.X] * zoom}
                 y1="0"
-                x2={tick.x * zoom}
+                x2={tick[Idx.X] * zoom}
                 y2={tickHeight}
                 strokeWidth="1"
                 stroke={tickColor}
               />
-              {!isTrack && tick.first && (
+              {!isTrack && tick[Idx.First] && (
                 <text
-                  x={tick.x * zoom + 5}
+                  x={tick[Idx.X] * zoom + 5}
                   y={12}
                   fill="var(--background-1000)"
                   fontSize="10"

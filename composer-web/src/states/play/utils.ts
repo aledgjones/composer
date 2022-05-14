@@ -1,5 +1,5 @@
 import { SLOT_HEIGHT } from "./const";
-import { TickList } from "./ticks/defs";
+import { Idx, TickList } from "./ticks/defs";
 
 export function getStartOfTone(
   x: number,
@@ -90,18 +90,18 @@ export function getTickFromXPosition(
 ) {
   for (let i = 0; i < ticks.list.length; i++) {
     const tick = ticks.list[i];
-    if (tick.x * zoom > x) {
+    if (tick[Idx.X] * zoom > x) {
       // we have overshot, it is in the previous tick
       const index = i - 1;
       const lowerSnapTick = index - (index % snap);
       const higherSnapTick = lowerSnapTick + snap;
 
       const highestX = ticks.list[higherSnapTick]
-        ? ticks.list[higherSnapTick].x * zoom
+        ? ticks.list[higherSnapTick][Idx.X] * zoom
         : ticks.width * zoom;
       const middleOfSnap =
-        ticks.list[lowerSnapTick].x * zoom +
-        (highestX - ticks.list[lowerSnapTick].x * zoom) / 2;
+        ticks.list[lowerSnapTick][Idx.X] * zoom +
+        (highestX - ticks.list[lowerSnapTick][Idx.X] * zoom) / 2;
 
       if (round === "down") {
         return lowerSnapTick;

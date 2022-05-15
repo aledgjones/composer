@@ -1,4 +1,4 @@
-import { FC, useLayoutEffect, useRef } from "react";
+import { FC, useEffect, useLayoutEffect, useRef } from "react";
 import { drawBox } from "../../render/box";
 import { drawCircle } from "../../render/circle";
 import { drawCurve } from "../../render/curve";

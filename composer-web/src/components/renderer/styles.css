@@ -1,10 +1,6 @@
 .renderer {
   position: relative;
   display: inline-block;
-}
-
-.renderer__container {
-  position: relative;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
   background-color: rgb(255, 255, 255);
   border-radius: var(--border-radius);

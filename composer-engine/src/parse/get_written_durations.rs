@@ -151,9 +151,8 @@ impl Notation {
                 .by_key
                 .get(&(self.tick, tone.key.clone()))
                 .unwrap();
-            match shunt {
-                Shunt::Pre => return true,
-                _ => (),
+            if let Shunt::Pre = shunt {
+                return true;
             }
         }
 
@@ -166,9 +165,8 @@ impl Notation {
                 .by_key
                 .get(&(self.tick, tone.key.clone()))
                 .unwrap();
-            match shunt {
-                Shunt::Post => return true,
-                _ => (),
+            if let Shunt::Post = shunt {
+                return true;
             }
         }
 
@@ -652,6 +650,7 @@ impl Debug for NotationTrack {
 
             let start = *tick as usize;
             let stop = (tick + notation.duration) as usize;
+
             for i in start..stop {
                 if i == start {
                     if is_rest {

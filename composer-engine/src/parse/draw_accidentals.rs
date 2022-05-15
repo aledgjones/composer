@@ -5,14 +5,12 @@ use super::get_written_durations::NotationByTrack;
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
-use crate::components::misc::Tick;
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
 use crate::entries::tone::Tone;
 use crate::score::stave::Stave;
 
 fn draw_accidental(
-    tick: &Tick,
     x: &f32,
     y: &f32,
     accidental: &AccidentalNotation,
@@ -68,7 +66,6 @@ pub fn draw_accidentals(
                 for tone in &entry.tones {
                     if let Some(accidental) = accidentals.by_key.get(&(*tick, tone.key.clone())) {
                         draw_accidental(
-                            tick,
                             &(x + left - 0.2),
                             &top,
                             accidental,

@@ -1,6 +1,6 @@
 {
   "name": "composer-ui",
-  "version": "0.50.63",
+  "version": "0.50.64",
   "description": "create an app to consume rust-generated wasm packages",
   "main": "bootstrap.ts",
   "scripts": {

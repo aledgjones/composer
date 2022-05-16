@@ -2,15 +2,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  background-color: var(--background-500);
-  border-left: 1px solid var(--background-200);
+  background-color: var(--background-200);
+  border-left: 1px solid var(--background-500);
 }
 
 .zoom__select {
   width: 80px;
   font-size: 14px;
-  border-left: 1px solid var(--background-200);
-  border-right: 1px solid var(--background-200);
+  border-left: 1px solid var(--background-500);
+  border-right: 1px solid var(--background-500);
 }
 
 .zoom__select .ui-select__container {

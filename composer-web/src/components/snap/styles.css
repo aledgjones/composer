@@ -1,7 +1,8 @@
 .snap {
-  width: 48px;
+  display: flex;
   font-size: 14px;
-  background-color: var(--background-500);
+  background-color: var(--background-200);
+  border-right: 1px solid var(--background-500);
 }
 
 .snap__select .ui-select__container {

@@ -55,6 +55,7 @@ export interface State {
   snap: number;
   audition: boolean;
   flow: string | null;
+  zoom: number;
   setup: {
     dialogs: {
       players: { page: PlayerPage };

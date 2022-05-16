@@ -38,4 +38,27 @@ export const uiActions = {
       });
     },
   },
+  zoom: {
+    inc: () => {
+      store.update((s) => {
+        const zoom = s.zoom;
+        if (zoom + 5 <= 500) {
+          s.zoom = zoom + 5;
+        }
+      });
+    },
+    desc: () => {
+      store.update((s) => {
+        const zoom = s.zoom;
+        if (zoom - 5 >= 25) {
+          s.zoom = zoom - 5;
+        }
+      });
+    },
+    set: (value: number) => {
+      store.update((s) => {
+        s.zoom = value;
+      });
+    },
+  },
 };

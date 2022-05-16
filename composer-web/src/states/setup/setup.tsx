@@ -4,7 +4,7 @@ import { RenderRegion } from "../../components/render-region";
 import { Renderer } from "../../components/renderer";
 import { InstrumentPicker } from "../../dialogs/instrument-picker";
 import { PlayerTypePicker } from "../../dialogs/player-type-picker";
-import { engine } from "../../data";
+import { engine, store } from "../../data";
 import { SelectionType } from "../../data/defs";
 import { useTitle } from "../../ui/hooks/use-title";
 import { FlowList } from "./flow-list";
@@ -12,7 +12,6 @@ import { LayoutList } from "./layout-list";
 import { PlayerList } from "./player-list";
 import { actions } from "../../data/actions";
 import { BottomBar } from "../../components/bottom-bar";
-import { Snap } from "../../components/snap";
 import { Zoom } from "../../components/zoom";
 
 import "./setup.css";
@@ -23,6 +22,8 @@ const Setup: FC = () => {
   const [playerKey, setPlayerKey] = useState<string | null>(null);
   const [showPlayerPicker, setShowPlayerPicker] = useState(false);
   const [showInstrumentPicker, setShowInstrumentPicker] = useState(false);
+
+  const zoom = store.useState((s) => s.zoom);
 
   const pickPlayerType = () => {
     setShowPlayerPicker(true);
@@ -75,10 +76,10 @@ const Setup: FC = () => {
         <BottomBar>
           <div />
           <Zoom
-            zoom={100}
-            inc={actions.play.zoom.inc}
-            set={actions.play.zoom.set}
-            desc={actions.play.zoom.desc}
+            zoom={zoom}
+            inc={actions.ui.zoom.inc}
+            set={actions.ui.zoom.set}
+            desc={actions.ui.zoom.desc}
           />
         </BottomBar>
       </div>

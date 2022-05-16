@@ -13,6 +13,7 @@ export const store = new Store<State>({
   snap: 4,
   audition: true,
   flow: null,
+  zoom: 100,
   setup: {
     dialogs: {
       players: { page: PlayerPage.AutoNumbering },

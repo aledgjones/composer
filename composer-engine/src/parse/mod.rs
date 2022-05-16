@@ -142,8 +142,6 @@ impl Engine {
         let accidentals =
             get_accidentals(flow, &self.score.tracks, &notations, &bars, &tone_offsets);
 
-        log(&format!("{:#?}", shunts));
-
         let horizontal_spacing = measure_horizontal_spacing(
             flow,
             &staves,

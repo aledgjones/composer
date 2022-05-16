@@ -9,7 +9,7 @@ use crate::components::duration::NoteDuration;
 use crate::components::duration::NOTE_DURATIONS;
 use crate::components::measurements::BoundingBox;
 use crate::components::measurements::PaddingSpaces;
-use crate::components::misc::StemDirection;
+use crate::components::misc::Direction;
 use crate::components::misc::Tick;
 use crate::components::misc::Ticks;
 use crate::components::units::Space;
@@ -42,6 +42,10 @@ pub struct Notation {
 impl Notation {
     pub fn is_rest(&self) -> bool {
         self.tones.is_empty()
+    }
+
+    pub fn is_chord(&self) -> bool {
+        self.tones.len() > 1
     }
 
     pub fn longest_written_duration(&self, subdivisions: &Ticks) -> Ticks {
@@ -89,6 +93,7 @@ impl Notation {
                     NoteDuration::Sixteenth => String::from("\u{E4E7}"),
                     NoteDuration::ThirtySecond => String::from("\u{E4E8}"),
                     NoteDuration::SixtyFourth => todo!(),
+                    NoteDuration::HudredTwentyEighth => todo!(),
                 },
                 None => String::from("\u{E4E5}"),
             }
@@ -102,6 +107,7 @@ impl Notation {
                     NoteDuration::Sixteenth => String::from("\u{E0A4}"),
                     NoteDuration::ThirtySecond => String::from("\u{E0A4}"),
                     NoteDuration::SixtyFourth => String::from("\u{E0A4}"),
+                    NoteDuration::HudredTwentyEighth => String::from("\u{E0A4}"),
                 },
                 None => String::from("\u{E0A4}"),
             }
@@ -127,7 +133,7 @@ impl Notation {
             && self.duration < NoteDuration::Quarter.to_ticks(subdivisions)
     }
 
-    pub fn flag_glyph(&self, stem_direction: &StemDirection, subdivisions: &Ticks) -> String {
+    pub fn flag_glyph(&self, stem_direction: &Direction, subdivisions: &Ticks) -> String {
         let base = self.base_to_note_duration(subdivisions);
         match base {
             Some(duration) => String::from(duration.to_flag_glyph(stem_direction)),
@@ -175,13 +181,13 @@ impl Notation {
 
     pub fn get_beam_guide_note(
         &self,
-        stem_direction: &StemDirection,
+        stem_direction: &Direction,
         tone_offsets: &ToneVerticalOffsets,
     ) -> i8 {
         let (highest, lowest, _) = self.get_tone_offset_info(tone_offsets);
         match stem_direction {
-            StemDirection::Up => highest,
-            StemDirection::Down => lowest,
+            Direction::Up => highest,
+            Direction::Down => lowest,
         }
     }
 
@@ -199,7 +205,7 @@ impl Notation {
         subdivisions: &Ticks,
         engrave: &Engrave,
         beams: &Beams,
-        stem_direction: &Option<&StemDirection>,
+        stem_direction: &Option<&Direction>,
     ) -> Space {
         let mut min_space = self.notehead_width();
         if self.has_post_shunt(tone_shunts) {
@@ -217,7 +223,7 @@ impl Notation {
         };
 
         // TODO: work out why this is needed!
-        if let Some(StemDirection::Up) = stem_direction {
+        if let Some(Direction::Up) = stem_direction {
             if !self.has_beam(beams) {
                 min_space += 1.0;
             }
@@ -232,7 +238,7 @@ impl Notation {
         subdivisions: &Ticks,
         engrave: &Engrave,
         beams: &Beams,
-        stem_direction: &Option<&StemDirection>,
+        stem_direction: &Option<&Direction>,
     ) -> BoundingBox {
         let min = self.min_spacing(tone_shunts, subdivisions, engrave, beams, stem_direction);
         let spacing = match self.base_to_note_duration(subdivisions) {

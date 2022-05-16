@@ -29,7 +29,10 @@ pub fn draw_dots(
             let dots = dots_by_track.get(track_key).unwrap();
             for (tick, offset) in dots {
                 let entry = notations.track.get(tick).unwrap();
-                let mut left = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap().x;
+                let mut left = horizontal_spacing
+                    .get(tick, &Position::NoteSpacing)
+                    .unwrap()
+                    .x;
                 left += entry.notehead_width();
                 if entry.has_post_shunt(notehead_shunts) {
                     left += entry.notehead_width();

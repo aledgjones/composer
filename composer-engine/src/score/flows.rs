@@ -263,6 +263,11 @@ impl Engine {
         JsValue::from_serde(&self.score.flows.order).unwrap()
     }
 
+    pub fn get_flow_subdivisions(&self, flow_key: &str) -> u32 {
+        let flow = self.score.flows.by_key.get(flow_key).unwrap();
+        flow.subdivisions
+    }
+
     pub fn get_flow_title(&self, flow_key: &str) -> String {
         let flow = self.score.flows.by_key.get(flow_key).unwrap();
         flow.title.clone()

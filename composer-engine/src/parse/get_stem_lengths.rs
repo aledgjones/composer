@@ -4,7 +4,7 @@ use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack, NotationTrack};
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use crate::components::measurements::Point;
-use crate::components::misc::{StemDirection, Tick};
+use crate::components::misc::{Direction, Tick};
 use crate::score::engrave::Engrave;
 use crate::score::stave::STAVE_LINE_WIDTH;
 use rustc_hash::FxHashMap;
@@ -68,7 +68,7 @@ fn adjust_to_beam(
 fn get_beam_slant(
     beam: &Beam,
     notation: &NotationTrack,
-    stem_direction: &StemDirection,
+    stem_direction: &Direction,
     tone_offsets: &ToneVerticalOffsets,
 ) -> BeamSlant {
     let start = notation.track.get(&beam.start).unwrap();
@@ -91,12 +91,12 @@ fn get_beam_slant(
         let guide = entry.get_beam_guide_note(stem_direction, tone_offsets);
 
         match stem_direction {
-            StemDirection::Up => {
+            Direction::Up => {
                 if guide < start_guide && guide < stop_guide {
                     return BeamSlant::None;
                 }
             }
-            StemDirection::Down => {
+            Direction::Down => {
                 if guide > start_guide && guide > stop_guide {
                     return BeamSlant::None;
                 }
@@ -111,21 +111,17 @@ fn get_beam_slant(
     }
 }
 
-fn get_furthest_tail(
-    beam: &Beam,
-    stem_lengths: &StemLengths,
-    stem_direction: &StemDirection,
-) -> f32 {
+fn get_furthest_tail(beam: &Beam, stem_lengths: &StemLengths, stem_direction: &Direction) -> f32 {
     let mut furthest = 0.0;
     for tick in &beam.ticks {
         let def = stem_lengths.get(tick).unwrap();
         match stem_direction {
-            StemDirection::Up => {
+            Direction::Up => {
                 if def.tail.y < furthest {
                     furthest = def.tail.y;
                 }
             }
-            StemDirection::Down => {
+            Direction::Down => {
                 if def.tail.y > furthest {
                     furthest = def.tail.y;
                 }
@@ -139,31 +135,37 @@ fn get_natural_stem_length(
     tick: &Tick,
     entry: &Notation,
     tone_offsets: &ToneVerticalOffsets,
-    stem_direction: &StemDirection,
+    stem_direction: &Direction,
     horizontal_spacing: &HorizontalSpacing,
 ) -> StemDef {
     let (highest, lowest, _) = entry.get_tone_offset_info(tone_offsets);
 
     let (x, head, tail) = match stem_direction {
-        StemDirection::Up => {
+        Direction::Up => {
             let head = (lowest as f32 - 0.5) / 2.0;
             let mut tail = (highest as f32 - 0.5) / 2.0 - 3.25;
             if tail > 0.0 {
                 tail = 0.0
             }
 
-            let mut x = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap().x;
+            let mut x = horizontal_spacing
+                .get(tick, &Position::NoteSpacing)
+                .unwrap()
+                .x;
             x += entry.notehead_width();
 
             (x - (STAVE_LINE_WIDTH / 2.0), head, tail)
         }
-        StemDirection::Down => {
+        Direction::Down => {
             let head = (highest as f32 + 0.5) / 2.0;
             let mut tail = (lowest as f32 + 0.5) / 2.0 + 3.25;
             if tail < 0.0 {
                 tail = 0.0
             }
-            let x = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap().x;
+            let x = horizontal_spacing
+                .get(tick, &Position::NoteSpacing)
+                .unwrap()
+                .x;
             (x + (STAVE_LINE_WIDTH / 2.0), head, tail)
         }
     };
@@ -212,10 +214,10 @@ pub fn get_stem_lengths_in_track(
 
         match slant {
             BeamSlant::Up => match stem_direction {
-                StemDirection::Up => {
+                Direction::Up => {
                     adjust_to_beam(beam, &last, &first, engrave.max_beam_slant, &mut output);
                 }
-                StemDirection::Down => {
+                Direction::Down => {
                     adjust_to_beam(beam, &last, &first, engrave.max_beam_slant, &mut output);
                 }
             },
@@ -227,10 +229,10 @@ pub fn get_stem_lengths_in_track(
                 }
             }
             BeamSlant::Down => match stem_direction {
-                StemDirection::Up => {
+                Direction::Up => {
                     adjust_to_beam(beam, &first, &last, engrave.max_beam_slant, &mut output);
                 }
-                StemDirection::Down => {
+                Direction::Down => {
                     adjust_to_beam(beam, &first, &last, engrave.max_beam_slant, &mut output);
                 }
             },

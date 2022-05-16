@@ -12,16 +12,16 @@ pub const ALPHABET_UPPERCASE: [char; 26] = [
 ];
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum StemDirection {
+pub enum Direction {
     Up,
     Down,
 }
 
-impl StemDirection {
+impl Direction {
     pub fn to_modifier(&self) -> i8 {
         match self {
-            StemDirection::Up => 1,
-            StemDirection::Down => -1,
+            Direction::Up => -1,
+            Direction::Down => 1,
         }
     }
 }

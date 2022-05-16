@@ -1,28 +1,11 @@
-import { RenderInstruction, InstructionType } from "./instructions";
-
-export interface CurveStyles {
-  color: string;
-}
+import { RenderInstruction } from "./instructions";
 
 type CurvePoint = { x: number; y: number; thickness: number };
 type CurvePoints = [CurvePoint, CurvePoint, CurvePoint];
 export type CurveInstruction = RenderInstruction<{
-  styles: CurveStyles;
+  color: string;
   points: CurvePoints;
 }>;
-
-export function buildCurve(
-  key: string,
-  styles: CurveStyles,
-  ...points: CurvePoints
-): CurveInstruction {
-  return {
-    key,
-    type: InstructionType.Curve,
-    styles,
-    points,
-  };
-}
 
 export function getControlPoints(
   P0: CurvePoint,
@@ -67,6 +50,6 @@ export function drawCurve(
   ctx.lineTo(P3.x, P3.y);
   ctx.quadraticCurveTo(P4.x, P4.y, P5.x, P5.y);
   ctx.closePath();
-  ctx.fillStyle = instruction.styles.color;
+  ctx.fillStyle = instruction.color;
   ctx.fill();
 }

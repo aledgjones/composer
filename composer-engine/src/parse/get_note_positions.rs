@@ -1,7 +1,7 @@
 use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
-use crate::components::misc::{StemDirection, Tick};
+use crate::components::misc::{Direction, Tick};
 use rustc_hash::FxHashMap;
 
 #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone)]
@@ -20,7 +20,7 @@ pub fn note_shunts_in_chord(
     tick: &Tick,
     entry: &Notation,
     tone_offsets: &ToneVerticalOffsets,
-    stem_direction: &StemDirection,
+    stem_direction: &Direction,
 ) -> NoteheadShunts {
     let mut shunts = NoteheadShunts {
         by_key: FxHashMap::default(),
@@ -31,7 +31,7 @@ pub fn note_shunts_in_chord(
 
     for cluster in clusters {
         let is_odd_length = cluster.len() % 2 != 0;
-        let first_note_shunted = stem_direction == &StemDirection::Up || is_odd_length;
+        let first_note_shunted = stem_direction == &Direction::Up || is_odd_length;
 
         for (i, tone) in cluster.iter().enumerate() {
             // alternate between shunted/not shunted based on the position
@@ -43,8 +43,8 @@ pub fn note_shunts_in_chord(
 
             let shunt = match shunted {
                 true => match stem_direction {
-                    StemDirection::Up => Shunt::Post,
-                    StemDirection::Down => Shunt::Pre,
+                    Direction::Up => Shunt::Post,
+                    Direction::Down => Shunt::Pre,
                 },
                 false => Shunt::None,
             };
@@ -93,13 +93,13 @@ pub fn get_note_shunts(
 #[cfg(test)]
 mod tests {
     use super::{note_shunts_in_chord, NoteheadShunts};
-    use crate::components::misc::StemDirection;
+    use crate::components::misc::Direction;
     use crate::entries::tone::Tone;
     use crate::parse::get_note_positions::Shunt;
     use crate::parse::get_written_durations::Notation;
     use rustc_hash::{FxHashMap, FxHashSet};
 
-    fn run(config: Vec<(&str, i8)>, stem_direction: &StemDirection) -> NoteheadShunts {
+    fn run(config: Vec<(&str, i8)>, stem_direction: &Direction) -> NoteheadShunts {
         let mut tone_offsets = FxHashMap::default();
         let mut notation = Notation {
             tick: 0,
@@ -122,7 +122,7 @@ mod tests {
         let mut expected = FxHashMap::default();
         expected.insert((0, String::from("a")), Shunt::None);
 
-        let result = run(vec![("a", 0)], &StemDirection::Up);
+        let result = run(vec![("a", 0)], &Direction::Up);
         assert_eq!(result.by_key, expected);
     }
 
@@ -132,7 +132,7 @@ mod tests {
         let mut expected = FxHashMap::default();
         expected.insert((0, String::from("a")), Shunt::None);
 
-        let result = run(vec![("a", 0)], &StemDirection::Down);
+        let result = run(vec![("a", 0)], &Direction::Down);
         assert_eq!(result.by_key, expected);
     }
 
@@ -143,7 +143,7 @@ mod tests {
         expected.insert((0, String::from("a")), Shunt::None);
         expected.insert((0, String::from("b")), Shunt::Post);
 
-        let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Up);
+        let result = run(vec![("a", 0), ("b", -1)], &Direction::Up);
         assert_eq!(result.by_key, expected);
     }
 
@@ -154,7 +154,7 @@ mod tests {
         expected.insert((0, String::from("a")), Shunt::Pre);
         expected.insert((0, String::from("b")), Shunt::None);
 
-        let result = run(vec![("a", 0), ("b", -1)], &StemDirection::Down);
+        let result = run(vec![("a", 0), ("b", -1)], &Direction::Down);
         assert_eq!(result.by_key, expected);
     }
 
@@ -166,7 +166,7 @@ mod tests {
         expected.insert((0, String::from("b")), Shunt::Post);
         expected.insert((0, String::from("c")), Shunt::None);
 
-        let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Up);
+        let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &Direction::Up);
         assert_eq!(result.by_key, expected);
     }
 
@@ -178,7 +178,7 @@ mod tests {
         expected.insert((0, String::from("b")), Shunt::Pre);
         expected.insert((0, String::from("c")), Shunt::None);
 
-        let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &StemDirection::Down);
+        let result = run(vec![("a", 0), ("b", -1), ("c", -2)], &Direction::Down);
         assert_eq!(result.by_key, expected);
     }
 
@@ -190,7 +190,7 @@ mod tests {
         expected.insert((0, String::from("b")), Shunt::None);
         expected.insert((0, String::from("c")), Shunt::Post);
 
-        let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Up);
+        let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &Direction::Up);
         assert_eq!(result.by_key, expected);
     }
 
@@ -202,7 +202,7 @@ mod tests {
         expected.insert((0, String::from("b")), Shunt::Pre);
         expected.insert((0, String::from("c")), Shunt::None);
 
-        let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &StemDirection::Down);
+        let result = run(vec![("a", 0), ("b", -2), ("c", -3)], &Direction::Down);
         assert_eq!(result.by_key, expected);
     }
 }

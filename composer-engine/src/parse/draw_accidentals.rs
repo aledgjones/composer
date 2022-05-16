@@ -58,7 +58,10 @@ pub fn draw_accidentals(
             let notation = notation_by_track.get(track_key).unwrap();
 
             for (tick, entry) in &notation.track {
-                let mut left = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap().x;
+                let mut left = horizontal_spacing
+                    .get(tick, &Position::NoteSpacing)
+                    .unwrap()
+                    .x;
                 if entry.has_pre_shunt(tone_shunts) {
                     left -= entry.notehead_width()
                 }

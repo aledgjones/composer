@@ -1,8 +1,8 @@
-use super::misc::{StemDirection, Ticks};
+use super::misc::{Direction, Ticks};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-pub const NOTE_DURATIONS: [NoteDuration; 7] = [
+pub const NOTE_DURATIONS: [NoteDuration; 8] = [
     NoteDuration::Whole,
     NoteDuration::Half,
     NoteDuration::Quarter,
@@ -10,6 +10,7 @@ pub const NOTE_DURATIONS: [NoteDuration; 7] = [
     NoteDuration::Sixteenth,
     NoteDuration::ThirtySecond,
     NoteDuration::SixtyFourth,
+    NoteDuration::HudredTwentyEighth,
 ];
 
 #[wasm_bindgen]
@@ -22,6 +23,7 @@ pub enum NoteDuration {
     Sixteenth,
     ThirtySecond,
     SixtyFourth,
+    HudredTwentyEighth,
 }
 
 impl NoteDuration {
@@ -55,6 +57,10 @@ impl NoteDuration {
             return Some(NoteDuration::SixtyFourth);
         }
 
+        if *ticks == subdivisions / 32 {
+            return Some(NoteDuration::HudredTwentyEighth);
+        }
+
         None
     }
 
@@ -67,6 +73,7 @@ impl NoteDuration {
             NoteDuration::Sixteenth => subdivisions / 4,
             NoteDuration::ThirtySecond => subdivisions / 8,
             NoteDuration::SixtyFourth => subdivisions / 16,
+            NoteDuration::HudredTwentyEighth => subdivisions / 32,
         }
     }
 
@@ -79,6 +86,7 @@ impl NoteDuration {
             NoteDuration::Sixteenth => 1.0 / (ratio * 2.0),
             NoteDuration::ThirtySecond => 1.0 / (ratio * 4.0),
             NoteDuration::SixtyFourth => 1.0 / (ratio * 8.0),
+            NoteDuration::HudredTwentyEighth => 1.0 / (ratio * 16.0),
         };
 
         if is_dotted {
@@ -97,19 +105,20 @@ impl NoteDuration {
             NoteDuration::Sixteenth => "\u{1D161}",
             NoteDuration::ThirtySecond => "\u{1D162}",
             NoteDuration::SixtyFourth => "\u{1D162}",
+            NoteDuration::HudredTwentyEighth => "\u{1D162}",
         }
     }
 
-    pub fn to_flag_glyph(&self, stem_direction: &StemDirection) -> &str {
+    pub fn to_flag_glyph(&self, stem_direction: &Direction) -> &str {
         match stem_direction {
-            StemDirection::Up => match self {
+            Direction::Up => match self {
                 NoteDuration::Eighth => "\u{E240}",
                 NoteDuration::Sixteenth => "\u{E242}",
                 NoteDuration::ThirtySecond => "\u{E244}",
                 NoteDuration::SixtyFourth => "\u{E246}",
                 _ => "",
             },
-            StemDirection::Down => match self {
+            Direction::Down => match self {
                 NoteDuration::Eighth => "\u{E241}",
                 NoteDuration::Sixteenth => "\u{E243}",
                 NoteDuration::ThirtySecond => "\u{E245}",
@@ -128,6 +137,7 @@ impl NoteDuration {
             NoteDuration::Sixteenth => NoteDuration::Eighth,
             NoteDuration::ThirtySecond => NoteDuration::Sixteenth,
             NoteDuration::SixtyFourth => NoteDuration::ThirtySecond,
+            NoteDuration::HudredTwentyEighth => NoteDuration::SixtyFourth,
         }
     }
 
@@ -139,7 +149,8 @@ impl NoteDuration {
             NoteDuration::Eighth => NoteDuration::Sixteenth,
             NoteDuration::Sixteenth => NoteDuration::ThirtySecond,
             NoteDuration::ThirtySecond => NoteDuration::SixtyFourth,
-            NoteDuration::SixtyFourth => NoteDuration::SixtyFourth,
+            NoteDuration::SixtyFourth => NoteDuration::HudredTwentyEighth,
+            NoteDuration::HudredTwentyEighth => NoteDuration::HudredTwentyEighth,
         }
     }
 }

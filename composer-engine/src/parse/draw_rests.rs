@@ -23,7 +23,9 @@ fn draw_rest(
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
-    let start = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap();
+    let start = horizontal_spacing
+        .get(tick, &Position::NoteSpacing)
+        .unwrap();
 
     if is_full_bar {
         let end = horizontal_spacing
@@ -45,7 +47,6 @@ fn draw_rest(
         let left = x + start.x;
         let base = entry.base_to_note_duration(subdivisions);
         let glyph = entry.glyph(subdivisions);
-        let is_dotted = entry.is_dotted(subdivisions);
         let top = match base {
             Some(NoteDuration::Whole) => y - 1.0,
             _ => *y,
@@ -61,10 +62,6 @@ fn draw_rest(
             justify: Justify::Start.as_string(),
             align: Align::Middle.as_string(),
         });
-
-        if is_dotted {
-            todo!()
-        }
     }
 }
 

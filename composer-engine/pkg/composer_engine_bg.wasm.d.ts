@@ -54,6 +54,7 @@ export function engine_assign_instrument_to_flow(a: number, b: number, c: number
 export function engine_unassign_player_from_flow(a: number, b: number, c: number, d: number, e: number): void;
 export function engine_unassign_instrument_from_flow(a: number, b: number, c: number, d: number, e: number): void;
 export function engine_flows(a: number): number;
+export function engine_get_flow_subdivisions(a: number, b: number, c: number): number;
 export function engine_get_flow_title(a: number, b: number, c: number, d: number): void;
 export function engine_flow_contains_player(a: number, b: number, c: number, d: number, e: number): number;
 export function engine_get_flow_ticks(a: number, b: number, c: number): number;

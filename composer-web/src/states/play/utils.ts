@@ -1,5 +1,25 @@
+import { NoteDuration } from "composer-engine";
 import { SLOT_HEIGHT } from "./const";
 import { Idx, TickList } from "./ticks/defs";
+
+export function durationToTicks(duration: NoteDuration, subdivisions: number) {
+  switch (duration) {
+    case NoteDuration.Whole:
+      return subdivisions * 4;
+    case NoteDuration.Half:
+      return subdivisions * 2;
+    case NoteDuration.Quarter:
+      return subdivisions;
+    case NoteDuration.Eighth:
+      return subdivisions / 2;
+    case NoteDuration.Sixteenth:
+      return subdivisions / 4;
+    case NoteDuration.ThirtySecond:
+      return subdivisions / 8;
+    default:
+      return subdivisions;
+  }
+}
 
 export function getStartOfTone(
   x: number,

@@ -43,6 +43,7 @@ pub fn beat_type_to_glyph(input: NoteDuration) -> String {
         NoteDuration::Sixteenth => 16,
         NoteDuration::ThirtySecond => 32,
         NoteDuration::SixtyFourth => 64,
+        NoteDuration::HudredTwentyEighth => 128,
     };
     number_to_glyph(number)
 }

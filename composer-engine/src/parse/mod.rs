@@ -33,7 +33,7 @@ mod measure_horizontal_spacing;
 mod measure_instrument_names;
 mod measure_vertical_spacing;
 
-use crate::components::measurements::Point;
+use crate::components::measurements::{CurvePoint, Point};
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
 use crate::Engine;
@@ -101,6 +101,10 @@ pub enum Instruction {
     Shape {
         color: String,
         points: Vec<Point>,
+    },
+    Curve {
+        color: String,
+        points: [CurvePoint; 3],
     },
 }
 
@@ -363,14 +367,14 @@ impl Engine {
         draw_ties(
             &(padding_left + name_widths + instrument_name_gap + bracket_widths),
             &padding_top,
-            flow,
             &staves,
             &notations,
             &stem_directions,
-            &dots,
             &vertical_spacing,
             &horizontal_spacing,
+            &notehead_shunts,
             &tone_offsets,
+            &dots,
             &converter,
             &mut instructions,
         );

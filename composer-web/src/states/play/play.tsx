@@ -45,6 +45,7 @@ const Play: FC = () => {
   const players: string[] = engine.players;
   const tool = store.useState((s) => s.play.tool);
   const zoom = store.useState((s) => s.play.zoom);
+  const subdivisions = engine.get_flow_subdivisions(flowKey);
 
   const colors = useRainbow(players.length);
   const ticks = engine.get_flow_ticks(flowKey);
@@ -141,6 +142,7 @@ const Play: FC = () => {
                       ticks={ticks}
                       tool={tool}
                       zoom={zoom / 100}
+                      subdivisions={subdivisions}
                     />
                   );
                 } else {

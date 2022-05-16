@@ -6,20 +6,20 @@ use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::Notation;
 use super::get_written_durations::NotationByTrack;
 use super::get_written_durations::NotationTrack;
-use crate::components::misc::StemDirection;
+use crate::components::misc::Direction;
 use crate::components::misc::Tick;
 use crate::entries::tone::Tone;
 use rustc_hash::FxHashMap;
 use std::cmp::Ordering;
 
-pub type StemDirections = FxHashMap<Tick, StemDirection>;
+pub type StemDirections = FxHashMap<Tick, Direction>;
 pub type StemDirectionsByTrack = FxHashMap<String, StemDirections>;
 
 pub fn get_span_stem_direction(
     span: &Beam,
     notation: &NotationTrack,
     tone_offsets: &ToneVerticalOffsets,
-) -> StemDirection {
+) -> Direction {
     let mut up_count = 0;
     let mut down_count = 0;
     let mut tones: Vec<Tone> = Vec::new();
@@ -30,8 +30,8 @@ pub fn get_span_stem_direction(
         let direction = entry.get_stem_direction(tone_offsets);
 
         match direction {
-            StemDirection::Up => up_count += 1,
-            StemDirection::Down => down_count += 1,
+            Direction::Up => up_count += 1,
+            Direction::Down => down_count += 1,
         }
 
         for tone in &entry.tones {
@@ -40,15 +40,15 @@ pub fn get_span_stem_direction(
     }
 
     match up_count.cmp(&down_count) {
-        Ordering::Greater => StemDirection::Up,
-        Ordering::Less => StemDirection::Down,
+        Ordering::Greater => Direction::Up,
+        Ordering::Less => Direction::Down,
         Ordering::Equal => {
             let (_, _, furthest) = get_tone_offset_info(&tones, tone_offsets);
 
             if furthest > 0 {
-                StemDirection::Up
+                Direction::Up
             } else {
-                StemDirection::Down
+                Direction::Down
             }
         }
     }
@@ -96,13 +96,13 @@ pub fn get_stem_directions(
 }
 
 impl Notation {
-    pub fn get_stem_direction(&self, tone_offsets: &ToneVerticalOffsets) -> StemDirection {
+    pub fn get_stem_direction(&self, tone_offsets: &ToneVerticalOffsets) -> Direction {
         let (_, _, furthest) = self.get_tone_offset_info(tone_offsets);
 
         if furthest > 0 {
-            StemDirection::Up
+            Direction::Up
         } else {
-            StemDirection::Down
+            Direction::Down
         }
     }
 }
@@ -113,7 +113,7 @@ mod tests {
     use rustc_hash::FxHashSet;
 
     use super::get_span_stem_direction;
-    use super::StemDirection;
+    use super::Direction;
     use super::ToneVerticalOffsets;
     use crate::components::articulation::Articulation;
     use crate::components::misc::Tick;
@@ -125,7 +125,7 @@ mod tests {
     use crate::parse::get_written_durations::Notation;
     use crate::parse::get_written_durations::NotationTrack;
 
-    fn run_get_stem_direction_test(tones: Vec<(&str, i8)>) -> StemDirection {
+    fn run_get_stem_direction_test(tones: Vec<(&str, i8)>) -> Direction {
         let mut notation = Notation {
             tick: 0,
             tones: Vec::new(),
@@ -152,46 +152,46 @@ mod tests {
     #[test]
     fn get_stem_direction_1() {
         let result = run_get_stem_direction_test(vec![("a", 0)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_stem_direction_2() {
         let result = run_get_stem_direction_test(vec![("a", 2)]);
-        assert_eq!(result, StemDirection::Up);
+        assert_eq!(result, Direction::Up);
     }
 
     #[test]
     fn get_stem_direction_3() {
         let result = run_get_stem_direction_test(vec![("a", -2)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_stem_direction_4() {
         let result = run_get_stem_direction_test(vec![("a", -2), ("b", 2)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_stem_direction_5() {
         let result = run_get_stem_direction_test(vec![("a", 2), ("b", -2)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_stem_direction_6() {
         let result = run_get_stem_direction_test(vec![("a", -2), ("b", 3)]);
-        assert_eq!(result, StemDirection::Up);
+        assert_eq!(result, Direction::Up);
     }
 
     #[test]
     fn get_stem_direction_7() {
         let result = run_get_stem_direction_test(vec![("a", -2), ("b", 3), ("c", -7)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
-    fn run_get_span_stem_direction_test(tones: Vec<(&str, i8)>) -> StemDirection {
+    fn run_get_span_stem_direction_test(tones: Vec<(&str, i8)>) -> Direction {
         let mut tone_offsets: ToneVerticalOffsets = FxHashMap::default();
         let mut beam: Beam = Beam {
             ticks: FxHashSet::default(),
@@ -228,74 +228,74 @@ mod tests {
     #[test]
     fn get_span_stem_direction_test_1() {
         let result = run_get_span_stem_direction_test(vec![("a", 0), ("b", 0)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_span_stem_direction_test_2() {
         let result = run_get_span_stem_direction_test(vec![("a", -1), ("b", -1)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_span_stem_direction_test_3() {
         let result = run_get_span_stem_direction_test(vec![("a", 1), ("b", 1)]);
-        assert_eq!(result, StemDirection::Up);
+        assert_eq!(result, Direction::Up);
     }
 
     #[test]
     fn get_span_stem_direction_test_4() {
         let result = run_get_span_stem_direction_test(vec![("a", -1), ("b", 1)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_span_stem_direction_test_5() {
         let result = run_get_span_stem_direction_test(vec![("a", 2), ("b", -2)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_span_stem_direction_test_6() {
         let result = run_get_span_stem_direction_test(vec![("a", -5), ("b", 4)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_span_stem_direction_test_7() {
         let result = run_get_span_stem_direction_test(vec![("a", 3), ("b", -4)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_span_stem_direction_test_8() {
         let result = run_get_span_stem_direction_test(vec![("a", -4), ("b", 5)]);
-        assert_eq!(result, StemDirection::Up);
+        assert_eq!(result, Direction::Up);
     }
 
     #[test]
     fn get_span_stem_direction_test_9() {
         let result = run_get_span_stem_direction_test(vec![("a", 4), ("b", -3)]);
-        assert_eq!(result, StemDirection::Up);
+        assert_eq!(result, Direction::Up);
     }
 
     #[test]
     fn get_span_stem_direction_test_10() {
         let result = run_get_span_stem_direction_test(vec![("a", 1), ("b", -1), ("c", 1)]);
-        assert_eq!(result, StemDirection::Up);
+        assert_eq!(result, Direction::Up);
     }
 
     #[test]
     fn get_span_stem_direction_test_11() {
         let result =
             run_get_span_stem_direction_test(vec![("a", -2), ("b", 0), ("c", -1), ("d", 2)]);
-        assert_eq!(result, StemDirection::Down);
+        assert_eq!(result, Direction::Down);
     }
 
     #[test]
     fn get_span_stem_direction_test_12() {
         let result =
             run_get_span_stem_direction_test(vec![("a", 1), ("b", 2), ("c", 3), ("d", -3)]);
-        assert_eq!(result, StemDirection::Up);
+        assert_eq!(result, Direction::Up);
     }
 }

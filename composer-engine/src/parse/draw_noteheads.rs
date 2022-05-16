@@ -24,7 +24,10 @@ fn draw_notehead(
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
-    let mut left = x + horizontal_spacing.get(tick, &Position::NoteSlot).unwrap().x;
+    let mut left = x + horizontal_spacing
+        .get(tick, &Position::NoteSpacing)
+        .unwrap()
+        .x;
     match notehead_shunts
         .by_key
         .get(&(*tick, tone.key.clone()))

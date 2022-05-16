@@ -5,6 +5,7 @@ import {
   getPitchFromYPosition,
   getStartOfTone,
   getDurationOfTone,
+  durationToTicks,
 } from "../utils";
 import { dragHandler } from "../../../ui/utils/drag-handler";
 import { TickList } from "../ticks/defs";
@@ -24,6 +25,7 @@ interface Props {
   tool: Tool;
   slots: number;
   zoom: number;
+  subdivisions: number;
 }
 
 export const ToneTrack: FC<Props> = ({
@@ -34,9 +36,10 @@ export const ToneTrack: FC<Props> = ({
   ticks,
   slots,
   zoom,
+  subdivisions,
 }) => {
   const track = useRef<HTMLDivElement>(null);
-  const snap = store.useState((s) => s.snap);
+  const snap = store.useState((s) => durationToTicks(s.snap, subdivisions));
   const audition = store.useState((s) => s.audition);
   const tones: Tone[] = engine.get_tones(trackKey);
 

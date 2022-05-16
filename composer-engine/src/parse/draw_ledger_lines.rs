@@ -23,7 +23,9 @@ fn draw_lines<T: Iterator<Item = i8>>(
 ) {
     let notehead = entry.notehead_width();
 
-    let position = horizontal_spacing.get(tick, &Position::NoteSlot).unwrap();
+    let position = horizontal_spacing
+        .get(tick, &Position::NoteSpacing)
+        .unwrap();
 
     let mut start_x = position.x;
     let mut stop_x = position.x;

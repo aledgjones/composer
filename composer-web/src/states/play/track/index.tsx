@@ -18,6 +18,7 @@ interface Props {
   ticks: TickList;
   tool: Tool;
   zoom: number;
+  subdivisions: number;
 }
 
 export const Track: FC<Props> = ({
@@ -27,6 +28,7 @@ export const Track: FC<Props> = ({
   ticks,
   tool,
   zoom,
+  subdivisions,
 }) => {
   const expanded = store.useState(
     (s) => s.play.expanded[instrumentKey],
@@ -93,6 +95,7 @@ export const Track: FC<Props> = ({
               tool={tool}
               slots={SLOT_COUNT}
               zoom={zoom}
+              subdivisions={subdivisions}
             />
           </div>
         </>

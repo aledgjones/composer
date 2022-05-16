@@ -34,6 +34,7 @@ export enum NoteDuration {
   Sixteenth,
   ThirtySecond,
   SixtyFourth,
+  HudredTwentyEighth,
 }
 /**
 */
@@ -373,6 +374,11 @@ export class Engine {
   unassign_instrument_from_flow(flow_key: string, instrument_key: string): void;
 /**
 * @param {string} flow_key
+* @returns {number}
+*/
+  get_flow_subdivisions(flow_key: string): number;
+/**
+* @param {string} flow_key
 * @returns {string}
 */
   get_flow_title(flow_key: string): string;
@@ -640,6 +646,7 @@ export interface InitOutput {
   readonly engine_unassign_player_from_flow: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly engine_unassign_instrument_from_flow: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly engine_flows: (a: number) => number;
+  readonly engine_get_flow_subdivisions: (a: number, b: number, c: number) => number;
   readonly engine_get_flow_title: (a: number, b: number, c: number, d: number) => void;
   readonly engine_flow_contains_player: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly engine_get_flow_ticks: (a: number, b: number, c: number) => number;

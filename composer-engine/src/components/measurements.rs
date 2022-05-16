@@ -66,3 +66,10 @@ pub struct Point {
     pub x: Space,
     pub y: Space,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CurvePoint {
+    pub x: Space,
+    pub y: Space,
+    pub thickness: Space,
+}

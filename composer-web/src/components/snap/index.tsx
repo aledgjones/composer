@@ -1,3 +1,4 @@
+import { NoteDuration } from "composer-engine";
 import { FC } from "react";
 import { store } from "../../data";
 import { actions } from "../../data/actions";
@@ -17,13 +18,13 @@ export const Snap: FC = () => {
         value={snapDuration}
         onChange={actions.ui.snap.set}
       >
-        <Option value={8} displayAs={"\u{E1D7}"}>
+        <Option value={NoteDuration.Eighth} displayAs={"\u{E1D7}"}>
           {"\u{E1D7}"}
         </Option>
-        <Option value={4} displayAs={"\u{E1D9}"}>
+        <Option value={NoteDuration.Sixteenth} displayAs={"\u{E1D9}"}>
           {"\u{E1D9}"}
         </Option>
-        <Option value={2} displayAs={"\u{E1DB}"}>
+        <Option value={NoteDuration.ThirtySecond} displayAs={"\u{E1DB}"}>
           {"\u{E1DB}"}
         </Option>
       </Select>

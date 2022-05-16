@@ -28,7 +28,6 @@ pub enum Position {
     StartRepeat,
     Accidentals, // only used when at begining of measure (there is no previous space to cut into)
     PreNoteSlot, // as above
-    NoteSlot,
     NoteSpacing,
     PaddingEnd,
 }
@@ -53,9 +52,8 @@ impl From<usize> for Position {
             6 => Position::StartRepeat,
             7 => Position::Accidentals,
             8 => Position::PreNoteSlot,
-            9 => Position::NoteSlot,
-            10 => Position::NoteSpacing,
-            11 => Position::PaddingEnd,
+            9 => Position::NoteSpacing,
+            10 => Position::PaddingEnd,
             _ => Position::PaddingStart,
         }
     }
@@ -196,7 +194,7 @@ pub fn measure_horizontal_spacing(
 
                 if let Some(entry) = notation.track.get(&tick) {
                     if tick == 0 && entry.has_pre_shunt(notehead_shunts) {
-                        widths[start + Position::NoteSlot] = entry.notehead_width();
+                        widths[start + Position::PreNoteSlot] = entry.notehead_width();
                     }
 
                     let accidentals = accidentals_by_track.get(track_key).unwrap();

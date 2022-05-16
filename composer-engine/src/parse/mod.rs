@@ -22,7 +22,7 @@ mod get_barlines;
 pub mod get_bars;
 pub mod get_beams;
 mod get_dots;
-mod get_note_positions;
+mod get_shunts;
 mod get_stem_directions;
 mod get_stem_lengths;
 mod get_tone_offsets;
@@ -36,6 +36,7 @@ mod measure_vertical_spacing;
 use crate::components::measurements::{CurvePoint, Point};
 use crate::components::units::{Converter, Space};
 use crate::score::engrave::LayoutType;
+use crate::utils::log;
 use crate::Engine;
 use draw_accidentals::draw_accidentals;
 use draw_barlines::draw_barlines;
@@ -61,7 +62,7 @@ use get_barlines::get_barlines;
 use get_bars::get_bars;
 use get_beams::get_beams;
 use get_dots::get_dots;
-use get_note_positions::get_note_shunts;
+use get_shunts::get_note_shunts;
 use get_stem_directions::get_stem_directions;
 use get_stem_lengths::get_stem_lengths;
 use get_tone_offsets::get_tone_offsets;
@@ -136,10 +137,12 @@ impl Engine {
 
         let beams = get_beams(&notations, &bars, &flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
-        let notehead_shunts = get_note_shunts(&notations, &tone_offsets, &stem_directions);
+        let shunts = get_note_shunts(&notations, &tone_offsets, &stem_directions);
         let dots = get_dots(flow, &notations, &tone_offsets);
         let accidentals =
             get_accidentals(flow, &self.score.tracks, &notations, &bars, &tone_offsets);
+
+        log(&format!("{:#?}", shunts));
 
         let horizontal_spacing = measure_horizontal_spacing(
             flow,
@@ -147,7 +150,7 @@ impl Engine {
             &self.score.tracks,
             &barlines,
             &notations,
-            &notehead_shunts,
+            &shunts,
             &beams,
             &stem_directions,
             &accidentals,
@@ -290,7 +293,7 @@ impl Engine {
             &horizontal_spacing,
             &vertical_spacing,
             &tone_offsets,
-            &notehead_shunts,
+            &shunts,
             &accidentals,
             &converter,
             &mut instructions,
@@ -303,7 +306,7 @@ impl Engine {
             &horizontal_spacing,
             &vertical_spacing,
             &tone_offsets,
-            &notehead_shunts,
+            &shunts,
             &converter,
             &mut instructions,
         );
@@ -316,7 +319,7 @@ impl Engine {
             &horizontal_spacing,
             &vertical_spacing,
             &tone_offsets,
-            &notehead_shunts,
+            &shunts,
             &converter,
             &mut instructions,
         );
@@ -328,7 +331,7 @@ impl Engine {
             &vertical_spacing,
             &horizontal_spacing,
             &dots,
-            &notehead_shunts,
+            &shunts,
             &converter,
             &mut instructions,
         );
@@ -372,7 +375,7 @@ impl Engine {
             &stem_directions,
             &vertical_spacing,
             &horizontal_spacing,
-            &notehead_shunts,
+            &shunts,
             &tone_offsets,
             &dots,
             &converter,

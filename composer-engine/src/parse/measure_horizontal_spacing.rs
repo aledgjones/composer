@@ -1,9 +1,8 @@
-use super::get_accidentals::AccidentalsByTrack;
 use super::get_barlines::Barlines;
 use super::get_beams::BeamsByTrack;
-use super::get_note_positions::NoteheadShunts;
 use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_written_durations::NotationByTrack;
+use super::{get_accidentals::AccidentalsByTrack, get_shunts::ShuntsByTrack};
 use crate::components::measurements::BoundingBox;
 use crate::components::misc::Tick;
 use crate::components::units::Space;
@@ -109,7 +108,7 @@ pub fn measure_horizontal_spacing(
     tracks: &FxHashMap<String, Track>,
     barlines: &Barlines,
     notations_by_track: &NotationByTrack,
-    notehead_shunts: &NoteheadShunts,
+    shunts_by_track: &ShuntsByTrack,
     beams_by_track: &BeamsByTrack,
     stem_directions_by_track: &StemDirectionsByTrack,
     accidentals_by_track: &AccidentalsByTrack,
@@ -191,9 +190,10 @@ pub fn measure_horizontal_spacing(
 
             for track_key in &stave.tracks {
                 let notation = notations_by_track.get(track_key).unwrap();
+                let shunts = shunts_by_track.get(track_key).unwrap();
 
                 if let Some(entry) = notation.track.get(&tick) {
-                    if tick == 0 && entry.has_pre_shunt(notehead_shunts) {
+                    if tick == 0 && entry.has_pre_shunt(shunts) {
                         widths[start + Position::PreNoteSlot] = entry.notehead_width();
                     }
 
@@ -203,13 +203,7 @@ pub fn measure_horizontal_spacing(
                     let stem_direction = stem_directions.get(&tick);
 
                     let mut spacing = entry
-                        .metrics(
-                            notehead_shunts,
-                            &flow.subdivisions,
-                            engrave,
-                            beams,
-                            &stem_direction,
-                        )
+                        .metrics(shunts, &flow.subdivisions, engrave, beams, &stem_direction)
                         .padding
                         .right;
 
@@ -227,14 +221,14 @@ pub fn measure_horizontal_spacing(
                             let stem_direction = stem_directions.get(&tick);
 
                             let min = entry.min_spacing(
-                                notehead_shunts,
+                                shunts,
                                 &flow.subdivisions,
                                 engrave,
                                 beams,
                                 &stem_direction,
                             );
 
-                            let pre_shunt = match next_entry.has_pre_shunt(notehead_shunts) {
+                            let pre_shunt = match next_entry.has_pre_shunt(shunts) {
                                 true => next_entry.notehead_width(),
                                 false => 0.0,
                             };

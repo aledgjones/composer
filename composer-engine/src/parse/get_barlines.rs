@@ -130,7 +130,7 @@ mod tests {
     ) -> Barlines {
         let mut master = Track::new();
         let mut flow = Flow::new(&master);
-        flow.length = 16 * 4 * 2;
+        flow.length = flow.subdivisions * 4 * 2;
 
         master.insert(Entry::TimeSignature(TimeSignature::new(
             0,

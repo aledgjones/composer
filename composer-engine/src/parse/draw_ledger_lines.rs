@@ -1,4 +1,4 @@
-use super::get_note_positions::{NoteheadShunts, Shunt};
+use super::get_shunts::{Shunt, Shunts, ShuntsByTrack};
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
@@ -17,7 +17,7 @@ fn draw_lines<T: Iterator<Item = i8>>(
     x: &f32,
     y: &f32,
     horizontal_spacing: &HorizontalSpacing,
-    tone_positions: &NoteheadShunts,
+    shunts: &Shunts,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -32,7 +32,7 @@ fn draw_lines<T: Iterator<Item = i8>>(
 
     for offset in range {
         // get the furthest start position
-        match tone_positions.by_offset.get(&(*tick, offset)) {
+        match shunts.by_offset.get(&(*tick, offset)) {
             Some(shunt) => match shunt {
                 Shunt::Pre => {
                     if position.x - notehead < start_x {
@@ -84,7 +84,7 @@ fn draw_ledger_line(
     entry: &Notation,
     horizontal_spacing: &HorizontalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    tone_positions: &NoteheadShunts,
+    shunts: &Shunts,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -101,7 +101,7 @@ fn draw_ledger_line(
         x,
         y,
         horizontal_spacing,
-        tone_positions,
+        shunts,
         converter,
         instructions,
     );
@@ -114,7 +114,7 @@ fn draw_ledger_line(
         x,
         y,
         horizontal_spacing,
-        tone_positions,
+        shunts,
         converter,
         instructions,
     );
@@ -128,7 +128,7 @@ pub fn draw_ledger_lines(
     horizontal_spacing: &HorizontalSpacing,
     vertical_spacing: &VerticalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    tone_positions: &NoteheadShunts,
+    shunts_by_track: &ShuntsByTrack,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -138,6 +138,7 @@ pub fn draw_ledger_lines(
 
         for track_key in &stave.tracks {
             let notation = notation_by_track.get(track_key).unwrap();
+            let shunts = shunts_by_track.get(track_key).unwrap();
 
             for (tick, entry) in &notation.track {
                 if !entry.is_rest() {
@@ -148,7 +149,7 @@ pub fn draw_ledger_lines(
                         entry,
                         horizontal_spacing,
                         tone_offsets,
-                        tone_positions,
+                        shunts,
                         converter,
                         instructions,
                     );

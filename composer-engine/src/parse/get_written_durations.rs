@@ -1,7 +1,7 @@
 use super::get_bars::Bars;
 use super::get_beams::Beams;
-use super::get_note_positions::NoteheadShunts;
-use super::get_note_positions::Shunt;
+use super::get_shunts::Shunt;
+use super::get_shunts::Shunts;
 use super::get_tone_offsets::get_tone_offset_info;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use crate::components::duration::is_writable;
@@ -151,13 +151,9 @@ impl Notation {
         false
     }
 
-    pub fn has_pre_shunt(&self, notehead_shunts: &NoteheadShunts) -> bool {
+    pub fn has_pre_shunt(&self, shunts: &Shunts) -> bool {
         for tone in &self.tones {
-            let shunt = notehead_shunts
-                .by_key
-                .get(&(self.tick, tone.key.clone()))
-                .unwrap();
-            if let Shunt::Pre = shunt {
+            if let Shunt::Pre = shunts.by_key.get(&(self.tick, tone.key.clone())).unwrap() {
                 return true;
             }
         }
@@ -165,13 +161,9 @@ impl Notation {
         false
     }
 
-    pub fn has_post_shunt(&self, notehead_shunts: &NoteheadShunts) -> bool {
+    pub fn has_post_shunt(&self, shunts: &Shunts) -> bool {
         for tone in &self.tones {
-            let shunt = notehead_shunts
-                .by_key
-                .get(&(self.tick, tone.key.clone()))
-                .unwrap();
-            if let Shunt::Post = shunt {
+            if let Shunt::Post = shunts.by_key.get(&(self.tick, tone.key.clone())).unwrap() {
                 return true;
             }
         }
@@ -201,14 +193,14 @@ impl Notation {
 
     pub fn min_spacing(
         &self,
-        tone_shunts: &NoteheadShunts,
+        shunts: &Shunts,
         subdivisions: &Ticks,
         engrave: &Engrave,
         beams: &Beams,
         stem_direction: &Option<&Direction>,
     ) -> Space {
         let mut min_space = self.notehead_width();
-        if self.has_post_shunt(tone_shunts) {
+        if self.has_post_shunt(shunts) {
             min_space *= 2.0;
         }
 
@@ -234,13 +226,13 @@ impl Notation {
 
     pub fn metrics(
         &self,
-        tone_shunts: &NoteheadShunts,
+        shunts: &Shunts,
         subdivisions: &Ticks,
         engrave: &Engrave,
         beams: &Beams,
         stem_direction: &Option<&Direction>,
     ) -> BoundingBox {
-        let min = self.min_spacing(tone_shunts, subdivisions, engrave, beams, stem_direction);
+        let min = self.min_spacing(shunts, subdivisions, engrave, beams, stem_direction);
         let spacing = match self.base_to_note_duration(subdivisions) {
             Some(base) => {
                 let space = engrave.base_note_space

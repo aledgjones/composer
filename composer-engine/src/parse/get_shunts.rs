@@ -11,22 +11,21 @@ pub enum Shunt {
     Post,
 }
 
-pub struct NoteheadShunts {
+#[derive(Debug)]
+pub struct Shunts {
     pub by_key: FxHashMap<(Tick, String), Shunt>,
     pub by_offset: FxHashMap<(Tick, i8), Shunt>,
 }
+
+pub type ShuntsByTrack = FxHashMap<String, Shunts>;
 
 pub fn note_shunts_in_chord(
     tick: &Tick,
     entry: &Notation,
     tone_offsets: &ToneVerticalOffsets,
     stem_direction: &Direction,
-) -> NoteheadShunts {
-    let mut shunts = NoteheadShunts {
-        by_key: FxHashMap::default(),
-        by_offset: FxHashMap::default(),
-    };
-
+    shunts: &mut Shunts,
+) {
     let clusters = entry.get_clusters(tone_offsets);
 
     for cluster in clusters {
@@ -57,49 +56,43 @@ pub fn note_shunts_in_chord(
             shunts.by_offset.insert((*tick, *offset), shunt.clone());
         }
     }
-
-    shunts
 }
 
 pub fn get_note_shunts(
     notation_by_track: &NotationByTrack,
     tone_offsets: &ToneVerticalOffsets,
     stem_directions_by_track: &StemDirectionsByTrack,
-) -> NoteheadShunts {
-    let mut shunts = NoteheadShunts {
-        by_key: FxHashMap::default(),
-        by_offset: FxHashMap::default(),
-    };
+) -> ShuntsByTrack {
+    let mut output: ShuntsByTrack = FxHashMap::default();
 
     for (track_key, notation) in notation_by_track {
+        let mut shunts = Shunts {
+            by_key: FxHashMap::default(),
+            by_offset: FxHashMap::default(),
+        };
         let stem_directions = stem_directions_by_track.get(track_key).unwrap();
         for (tick, entry) in &notation.track {
             if !entry.is_rest() {
                 let stem_direction = stem_directions.get(tick).unwrap();
-                let positions = note_shunts_in_chord(tick, entry, tone_offsets, stem_direction);
-                for (key, position) in positions.by_key {
-                    shunts.by_key.insert(key, position);
-                }
-                for (key, position) in positions.by_offset {
-                    shunts.by_offset.insert(key, position);
-                }
+                note_shunts_in_chord(tick, entry, tone_offsets, stem_direction, &mut shunts);
             }
         }
+        output.insert(track_key.clone(), shunts);
     }
 
-    shunts
+    output
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{note_shunts_in_chord, NoteheadShunts};
+    use super::{note_shunts_in_chord, Shunts};
     use crate::components::misc::Direction;
     use crate::entries::tone::Tone;
-    use crate::parse::get_note_positions::Shunt;
+    use crate::parse::get_shunts::Shunt;
     use crate::parse::get_written_durations::Notation;
     use rustc_hash::{FxHashMap, FxHashSet};
 
-    fn run(config: Vec<(&str, i8)>, stem_direction: &Direction) -> NoteheadShunts {
+    fn run(config: Vec<(&str, i8)>, stem_direction: &Direction) -> Shunts {
         let mut tone_offsets = FxHashMap::default();
         let mut notation = Notation {
             tick: 0,
@@ -113,7 +106,12 @@ mod tests {
             tone_offsets.insert(key.to_string(), offset);
         }
 
-        note_shunts_in_chord(&0, &notation, &tone_offsets, stem_direction)
+        let mut shunts = Shunts {
+            by_key: FxHashMap::default(),
+            by_offset: FxHashMap::default(),
+        };
+        note_shunts_in_chord(&0, &notation, &tone_offsets, stem_direction, &mut shunts);
+        shunts
     }
 
     #[test]

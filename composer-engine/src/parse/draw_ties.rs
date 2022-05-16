@@ -1,5 +1,5 @@
 use super::get_dots::{Dots, DotsByTrack};
-use super::get_note_positions::{NoteheadShunts, Shunt};
+use super::get_shunts::{Shunt, Shunts, ShuntsByTrack};
 use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
@@ -7,9 +7,9 @@ use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::measurements::CurvePoint;
-use crate::components::misc::{Direction, Ticks};
+use crate::components::misc::Direction;
 use crate::components::units::{Converter, Space};
-use crate::score::stave::Stave;
+use crate::score::stave::{Stave, STAVE_LINE_WIDTH};
 use rustc_hash::FxHashMap;
 
 type TieDirections = FxHashMap<String, Direction>;
@@ -87,7 +87,7 @@ fn tie_points_y(
 fn start_x(
     start: &Notation,
     horizontal_spacing: &HorizontalSpacing,
-    shunts: &NoteheadShunts,
+    shunts: &Shunts,
     dots: &Dots,
     tie_direction: &Direction,
     stem_direction: &Direction,
@@ -98,30 +98,30 @@ fn start_x(
         .unwrap()
         .x;
 
-    let after_pre = x + 0.2;
+    let after_pre = x + STAVE_LINE_WIDTH + 0.2;
     let after_note = x + start.notehead_width() + 0.2;
     let after_post = x + (start.notehead_width() * 2.0) + 0.2;
 
     let shunt = shunts.by_offset.get(&(start.tick, *offset)).unwrap();
+    let next_shunt = shunts
+        .by_offset
+        .get(&(start.tick, offset + tie_direction.to_modifier()));
 
-    if let Direction::Up = stem_direction {
-        if let Shunt::Post = shunt {
-            return after_post;
-        }
+    match stem_direction {
+        Direction::Up => {
+            if let Shunt::Post = shunt {
+                return after_post;
+            }
 
-        if let Some(Shunt::Post) = shunts
-            .by_offset
-            .get(&(start.tick, offset + tie_direction.to_modifier()))
-        {
-            return after_post;
+            if let Some(Shunt::Post) = next_shunt {
+                return after_post;
+            }
         }
-    } else if *shunt == Shunt::Pre
-        && shunts
-            .by_offset
-            .get(&(start.tick, offset + tie_direction.to_modifier()))
-            .is_none()
-    {
-        return after_pre;
+        Direction::Down => {
+            if shunt == &Shunt::Pre && next_shunt.is_none() {
+                return after_pre;
+            }
+        }
     };
 
     after_note
@@ -130,7 +130,7 @@ fn start_x(
 fn stop_x(
     stop: &Notation,
     horizontal_spacing: &HorizontalSpacing,
-    shunts: &NoteheadShunts,
+    shunts: &Shunts,
     tie_direction: &Direction,
     stem_direction: &Direction,
     offset: &i8,
@@ -140,19 +140,29 @@ fn stop_x(
         .unwrap()
         .x;
 
-    let before_note = x - 0.2;
     let before_pre = x - stop.notehead_width() - 0.2;
+    let before_note = x - 0.2;
+    let before_post = x + stop.notehead_width() - STAVE_LINE_WIDTH - 0.2;
 
-    if let Direction::Down = stem_direction {
-        if let Shunt::Pre = shunts.by_offset.get(&(stop.tick, *offset)).unwrap() {
-            return before_pre;
+    let shunt = shunts.by_offset.get(&(stop.tick, *offset)).unwrap();
+    let next_shunt = shunts
+        .by_offset
+        .get(&(stop.tick, offset + tie_direction.to_modifier()));
+
+    match stem_direction {
+        Direction::Down => {
+            if let Shunt::Pre = shunt {
+                return before_pre;
+            }
+
+            if let Some(Shunt::Pre) = next_shunt {
+                return before_pre;
+            }
         }
-
-        if let Some(Shunt::Pre) = shunts
-            .by_offset
-            .get(&(stop.tick, offset + tie_direction.to_modifier()))
-        {
-            return before_pre;
+        Direction::Up => {
+            if shunt == &Shunt::Post && next_shunt.is_none() {
+                return before_post;
+            }
         }
     };
 
@@ -164,7 +174,7 @@ fn tie_points_x(
     start: &Notation,
     stop: &Notation,
     horizontal_spacing: &HorizontalSpacing,
-    shunts: &NoteheadShunts,
+    shunts: &Shunts,
     dots: &Dots,
     tie_direction: &Direction,
     stem_direction: &Direction,
@@ -225,7 +235,7 @@ pub fn draw_tie(
     tie_direction: &Direction,
     stem_direction: &Direction,
     horizontal_spacing: &HorizontalSpacing,
-    shunts: &NoteheadShunts,
+    shunts: &Shunts,
     tone_offsets: &ToneVerticalOffsets,
     dots: &Dots,
     converter: &Converter,
@@ -277,7 +287,7 @@ pub fn draw_ties(
     stem_directions_by_track: &StemDirectionsByTrack,
     vertical_spacing: &VerticalSpacing,
     horizontal_spacing: &HorizontalSpacing,
-    shunts: &NoteheadShunts,
+    shunts_by_track: &ShuntsByTrack,
     tone_offsets: &ToneVerticalOffsets,
     dots_by_track: &DotsByTrack,
     converter: &Converter,
@@ -290,6 +300,7 @@ pub fn draw_ties(
             let notation = notation_by_track.get(track_key).unwrap();
             let dots = dots_by_track.get(track_key).unwrap();
             let stem_directions = stem_directions_by_track.get(track_key).unwrap();
+            let shunts = shunts_by_track.get(track_key).unwrap();
 
             for (tick, entry) in &notation.track {
                 if entry.has_tie() {

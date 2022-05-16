@@ -1,4 +1,4 @@
-use super::get_note_positions::{NoteheadShunts, Shunt};
+use super::get_shunts::{Shunt, Shunts, ShuntsByTrack};
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::{Notation, NotationByTrack};
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
@@ -20,7 +20,7 @@ fn draw_notehead(
     tone: &Tone,
     horizontal_spacing: &HorizontalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    notehead_shunts: &NoteheadShunts,
+    shunts: &Shunts,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -28,11 +28,7 @@ fn draw_notehead(
         .get(tick, &Position::NoteSpacing)
         .unwrap()
         .x;
-    match notehead_shunts
-        .by_key
-        .get(&(*tick, tone.key.clone()))
-        .unwrap()
-    {
+    match shunts.by_key.get(&(*tick, tone.key.clone())).unwrap() {
         Shunt::Pre => {
             left -= entry.notehead_width();
         }
@@ -67,7 +63,7 @@ pub fn draw_noteheads(
     horizontal_spacing: &HorizontalSpacing,
     vertical_spacing: &VerticalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    tone_positions: &NoteheadShunts,
+    shunts_by_track: &ShuntsByTrack,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -77,6 +73,7 @@ pub fn draw_noteheads(
 
         for track_key in &stave.tracks {
             let notation = notation_by_track.get(track_key).unwrap();
+            let shunts = shunts_by_track.get(track_key).unwrap();
 
             for (tick, entry) in &notation.track {
                 for tone in &entry.tones {
@@ -89,7 +86,7 @@ pub fn draw_noteheads(
                         tone,
                         horizontal_spacing,
                         tone_offsets,
-                        tone_positions,
+                        shunts,
                         converter,
                         instructions,
                     );

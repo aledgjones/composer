@@ -1,5 +1,5 @@
 use super::get_accidentals::{AccidentalNotation, AccidentalsByTrack};
-use super::get_note_positions::NoteheadShunts;
+use super::get_shunts::ShuntsByTrack;
 use super::get_tone_offsets::ToneVerticalOffsets;
 use super::get_written_durations::NotationByTrack;
 use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
@@ -44,7 +44,7 @@ pub fn draw_accidentals(
     horizontal_spacing: &HorizontalSpacing,
     vertical_spacing: &VerticalSpacing,
     tone_offsets: &ToneVerticalOffsets,
-    tone_shunts: &NoteheadShunts,
+    shunts_by_track: &ShuntsByTrack,
     accidentals_by_track: &AccidentalsByTrack,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
@@ -56,13 +56,14 @@ pub fn draw_accidentals(
         for track_key in &stave.tracks {
             let accidentals = accidentals_by_track.get(track_key).unwrap();
             let notation = notation_by_track.get(track_key).unwrap();
+            let shunts = shunts_by_track.get(track_key).unwrap();
 
             for (tick, entry) in &notation.track {
                 let mut left = horizontal_spacing
                     .get(tick, &Position::NoteSpacing)
                     .unwrap()
                     .x;
-                if entry.has_pre_shunt(tone_shunts) {
+                if entry.has_pre_shunt(shunts) {
                     left -= entry.notehead_width()
                 }
 

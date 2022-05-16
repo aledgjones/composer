@@ -1,20 +1,11 @@
 import { FC } from "react";
-import {
-  mdiCursorDefault,
-  mdiEraser,
-  mdiPen,
-  mdiBoxCutter,
-  mdiPlus,
-  mdiMinus,
-} from "@mdi/js";
+import { mdiCursorDefault, mdiEraser, mdiPen, mdiBoxCutter } from "@mdi/js";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Snap } from "../../components/snap";
 import { useTitle } from "../../ui/hooks/use-title";
 import { useRainbow } from "../../ui/hooks/use-rainbow";
 import { DragScroll } from "../../ui/components/drag-scroll";
 import { Icon } from "../../ui/components/icon";
-import { Select } from "../../ui/components/select";
-import { Option } from "../../ui/components/option";
 import { engine, store } from "../../data";
 import { Tool } from "../../data/defs";
 import { ControlsPlaceholder } from "./controls-placeholder";
@@ -24,6 +15,8 @@ import { Ticks } from "./ticks";
 import { PlayHead } from "./play-head";
 import { Track } from "./track";
 import { TrackPlaceholder } from "./track-placeholder";
+import { Zoom } from "../../components/zoom";
+import { BottomBar } from "../../components/bottom-bar";
 
 import "./styles.css";
 
@@ -154,61 +147,16 @@ const Play: FC = () => {
         </div>
       </DragScroll>
 
-      <div className="play__bottom-panel">
+      <BottomBar>
         <Snap />
         <div />
-        <div className="play__bottom-panel-section">
-          <Icon
-            className="play__bottom-panel-icon"
-            path={mdiMinus}
-            size={22}
-            onClick={actions.play.zoom.desc}
-          />
-          <Select
-            className="play__bottom-panel-select play__zoom-select"
-            direction="up"
-            value={zoom}
-            onChange={actions.play.zoom.set}
-          >
-            {/* This is a bit weired but we need a fake option to hold the current,
-                possibly abartrary, zoom level. It is hidden with CSS */}
-            <Option value={zoom} displayAs={`${zoom}%`} />
-            <Option value={25} displayAs="25%">
-              25%
-            </Option>
-            <Option value={50} displayAs="50%">
-              50%
-            </Option>
-            <Option value={75} displayAs="75%">
-              75%
-            </Option>
-            <Option value={100} displayAs="100%">
-              100%
-            </Option>
-            <Option value={150} displayAs="150%">
-              150%
-            </Option>
-            <Option value={200} displayAs="200%">
-              200%
-            </Option>
-            <Option value={300} displayAs="300%">
-              300%
-            </Option>
-            <Option value={400} displayAs="400%">
-              400%
-            </Option>
-            <Option value={500} displayAs="500%">
-              500%
-            </Option>
-          </Select>
-          <Icon
-            className="play__bottom-panel-icon"
-            path={mdiPlus}
-            size={22}
-            onClick={actions.play.zoom.inc}
-          />
-        </div>
-      </div>
+        <Zoom
+          zoom={zoom}
+          inc={actions.play.zoom.inc}
+          set={actions.play.zoom.set}
+          desc={actions.play.zoom.desc}
+        />
+      </BottomBar>
     </>
   );
 };

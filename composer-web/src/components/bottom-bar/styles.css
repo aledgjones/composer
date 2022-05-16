@@ -1,0 +1,8 @@
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  background-color: var(--background-200);
+  border-top: 1px solid var(--background-200);
+}

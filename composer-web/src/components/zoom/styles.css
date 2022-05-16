@@ -1,0 +1,47 @@
+.zoom {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--background-500);
+  border-left: 1px solid var(--background-200);
+}
+
+.zoom__select {
+  width: 80px;
+  font-size: 14px;
+  border-left: 1px solid var(--background-200);
+  border-right: 1px solid var(--background-200);
+}
+
+.zoom__select .ui-select__container {
+  min-height: 0;
+  height: 28px;
+  border: none;
+  background-color: transparent;
+}
+
+.zoom__select .ui-input__display {
+  min-height: 0;
+  padding: 0 12px;
+  justify-content: center;
+}
+
+.zoom__select .ui-select__item {
+  justify-content: center;
+}
+
+.zoom__select .ui-select__card--up {
+  bottom: calc(100% + 1px);
+}
+
+.zoom__select .ui-select__icon {
+  display: none;
+}
+
+.zoom__select .ui-select__item:first-child {
+  display: none;
+}
+
+.zoom__icon {
+  margin: 3px;
+}

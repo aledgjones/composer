@@ -1,8 +1,12 @@
 .setup {
-  display: flex;
   position: relative;
   height: 100%;
   width: 100%;
+}
+
+.setup__content {
+  display: flex;
+  height: calc(100% - 28px);
 }
 
 .setup__middle {

@@ -6,12 +6,14 @@ import { InstrumentPicker } from "../../dialogs/instrument-picker";
 import { PlayerTypePicker } from "../../dialogs/player-type-picker";
 import { engine } from "../../data";
 import { SelectionType } from "../../data/defs";
-
 import { useTitle } from "../../ui/hooks/use-title";
 import { FlowList } from "./flow-list";
 import { LayoutList } from "./layout-list";
 import { PlayerList } from "./player-list";
 import { actions } from "../../data/actions";
+import { BottomBar } from "../../components/bottom-bar";
+import { Snap } from "../../components/snap";
+import { Zoom } from "../../components/zoom";
 
 import "./setup.css";
 
@@ -48,26 +50,37 @@ const Setup: FC = () => {
   return (
     <>
       <div className="setup">
-        <PlayerList
-          onCreatePlayer={pickPlayerType}
-          onAddInstrument={onAddInstrument}
-          onSelect={actions.setup.selection.set}
-          onClear={actions.setup.selection.clear}
-        />
-
-        <div className="setup__middle">
-          <RenderRegion className="setup__view">
-            {engine.flows.map((flowKey: string) => (
-              <Renderer key={flowKey} flowKey={flowKey} />
-            ))}
-          </RenderRegion>
-          <FlowList
+        <div className="setup__content">
+          <PlayerList
+            onCreatePlayer={pickPlayerType}
+            onAddInstrument={onAddInstrument}
             onSelect={actions.setup.selection.set}
             onClear={actions.setup.selection.clear}
           />
-        </div>
 
-        <LayoutList />
+          <div className="setup__middle">
+            <RenderRegion className="setup__view">
+              {engine.flows.map((flowKey: string) => (
+                <Renderer key={flowKey} flowKey={flowKey} />
+              ))}
+            </RenderRegion>
+            <FlowList
+              onSelect={actions.setup.selection.set}
+              onClear={actions.setup.selection.clear}
+            />
+          </div>
+
+          <LayoutList />
+        </div>
+        <BottomBar>
+          <div />
+          <Zoom
+            zoom={100}
+            inc={actions.play.zoom.inc}
+            set={actions.play.zoom.set}
+            desc={actions.play.zoom.desc}
+          />
+        </BottomBar>
       </div>
 
       <PlayerTypePicker

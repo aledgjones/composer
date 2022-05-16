@@ -214,13 +214,6 @@ impl Notation {
             min_space += engrave.minimum_note_space;
         };
 
-        // TODO: work out why this is needed!
-        if let Some(Direction::Up) = stem_direction {
-            if !self.has_beam(beams) {
-                min_space += 1.0;
-            }
-        };
-
         min_space
     }
 

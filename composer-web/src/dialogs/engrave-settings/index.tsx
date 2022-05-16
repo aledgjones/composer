@@ -91,9 +91,10 @@ export const EngraveSettings = Dialog<Props>(({ onClose }) => {
           onChange={actions.setup.dialogs.engrave.config.set}
         >
           {configs.map((config) => {
+            const name = engine.engrave_name(config);
             return (
-              <Option key={config} value={config} displayAs={config}>
-                {config}
+              <Option key={config} value={config} displayAs={name}>
+                {name}
               </Option>
             );
           })}

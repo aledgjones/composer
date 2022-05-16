@@ -225,6 +225,11 @@ export class Engine {
   create_engrave(layout_type: number, name: string): void;
 /**
 * @param {string} key
+* @returns {string}
+*/
+  engrave_name(key: string): string;
+/**
+* @param {string} key
 * @returns {boolean}
 */
   get_systemic_barline_single_instrument_system(key: string): boolean;
@@ -616,6 +621,7 @@ export interface InitOutput {
   readonly engine_set_auto_count_style_section: (a: number, b: number) => void;
   readonly engine_create_engrave: (a: number, b: number, c: number, d: number) => void;
   readonly engine_engraves: (a: number) => number;
+  readonly engine_engrave_name: (a: number, b: number, c: number, d: number) => void;
   readonly engine_get_systemic_barline_single_instrument_system: (a: number, b: number, c: number) => number;
   readonly engine_set_systemic_barline_single_instrument_system: (a: number, b: number, c: number, d: number) => void;
   readonly engine_get_bracketing_approach: (a: number, b: number, c: number) => number;

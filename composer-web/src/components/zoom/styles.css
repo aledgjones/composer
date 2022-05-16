@@ -32,6 +32,7 @@
 
 .zoom__select .ui-select__card--up {
   bottom: calc(100% + 1px);
+  background-color: var(--background-200);
 }
 
 .zoom__select .ui-select__icon {

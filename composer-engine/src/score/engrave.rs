@@ -153,6 +153,11 @@ impl Engine {
         JsValue::from_serde(&self.score.engrave.order).unwrap()
     }
 
+    pub fn engrave_name(&self, key: &str) -> String {
+        let config = self.score.engrave.by_key.get(key).unwrap();
+        config.display_name.clone()
+    }
+
     pub fn get_systemic_barline_single_instrument_system(&self, key: &str) -> bool {
         let config = self.score.engrave.by_key.get(key).unwrap();
         config.systemic_barline_single_instrument_system

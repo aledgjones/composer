@@ -24,6 +24,7 @@ export function engine_auto_count_style_section(a: number): number;
 export function engine_set_auto_count_style_section(a: number, b: number): void;
 export function engine_create_engrave(a: number, b: number, c: number, d: number): void;
 export function engine_engraves(a: number): number;
+export function engine_engrave_name(a: number, b: number, c: number, d: number): void;
 export function engine_get_systemic_barline_single_instrument_system(a: number, b: number, c: number): number;
 export function engine_set_systemic_barline_single_instrument_system(a: number, b: number, c: number, d: number): void;
 export function engine_get_bracketing_approach(a: number, b: number, c: number): number;

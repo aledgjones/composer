@@ -197,7 +197,6 @@ impl Notation {
         subdivisions: &Ticks,
         engrave: &Engrave,
         beams: &Beams,
-        stem_direction: &Option<&Direction>,
     ) -> Space {
         let mut min_space = self.notehead_width();
         if self.has_post_shunt(shunts) {
@@ -225,7 +224,7 @@ impl Notation {
         beams: &Beams,
         stem_direction: &Option<&Direction>,
     ) -> BoundingBox {
-        let min = self.min_spacing(shunts, subdivisions, engrave, beams, stem_direction);
+        let min = self.min_spacing(shunts, subdivisions, engrave, beams);
         let spacing = match self.base_to_note_duration(subdivisions) {
             Some(base) => {
                 let space = engrave.base_note_space

@@ -218,15 +218,7 @@ pub fn measure_horizontal_spacing(
                     // extend spacing to accomodate accidentals + pre shunts (if needed)
                     if let Some((next_tick, next_entry)) = notation.get_next_notation(&tick) {
                         if !barlines.contains_key(&next_tick) {
-                            let stem_direction = stem_directions.get(&tick);
-
-                            let min = entry.min_spacing(
-                                shunts,
-                                &flow.subdivisions,
-                                engrave,
-                                beams,
-                                &stem_direction,
-                            );
+                            let min = entry.min_spacing(shunts, &flow.subdivisions, engrave, beams);
 
                             let pre_shunt = match next_entry.has_pre_shunt(shunts) {
                                 true => next_entry.notehead_width(),

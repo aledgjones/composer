@@ -48,6 +48,10 @@ const Setup: FC = () => {
     engine.assign_instrument_to_player(playerKey as string, instrumentKey);
   };
 
+  const onSelect = (x: number, y: number) => {
+    console.log(`${x},${y}`);
+  };
+
   return (
     <>
       <div className="setup">
@@ -62,7 +66,7 @@ const Setup: FC = () => {
           <div className="setup__middle">
             <RenderRegion className="setup__view">
               {engine.flows.map((flowKey: string) => (
-                <Renderer key={flowKey} flowKey={flowKey} />
+                <Renderer onSelect={onSelect} key={flowKey} flowKey={flowKey} />
               ))}
             </RenderRegion>
             <FlowList

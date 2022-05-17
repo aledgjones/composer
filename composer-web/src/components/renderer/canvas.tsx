@@ -1,4 +1,4 @@
-import { FC, useEffect, useLayoutEffect, useRef } from "react";
+import { FC, useLayoutEffect, useRef } from "react";
 import { drawBox } from "../../render/box";
 import { drawCircle } from "../../render/circle";
 import { drawCurve } from "../../render/curve";
@@ -13,9 +13,17 @@ interface Props {
   y: number;
   width: number;
   height: number;
+  onSelect?: (x: number, y: number) => void;
 }
 
-export const Canvas: FC<Props> = ({ instructions, x, y, width, height }) => {
+export const Canvas: FC<Props> = ({
+  instructions,
+  x,
+  y,
+  width,
+  height,
+  onSelect,
+}) => {
   const canvas = useRef<HTMLCanvasElement>(null);
 
   useLayoutEffect(() => {
@@ -65,5 +73,14 @@ export const Canvas: FC<Props> = ({ instructions, x, y, width, height }) => {
     }
   }, [instructions]);
 
-  return <canvas ref={canvas} />;
+  return (
+    <canvas
+      onClick={(e) => {
+        if (onSelect) {
+          onSelect(e.nativeEvent.offsetX + x, e.nativeEvent.offsetY + y);
+        }
+      }}
+      ref={canvas}
+    />
+  );
 };

@@ -10,9 +10,10 @@ import "./styles.css";
 interface Props {
   className?: string;
   flowKey: string;
+  onSelect?: (x: number, y: number) => void;
 }
 
-export const Renderer: FC<Props> = ({ className, flowKey }) => {
+export const Renderer: FC<Props> = ({ className, flowKey, onSelect }) => {
   const { width, height, tiles, instructions } = usePipeline(flowKey);
 
   return (
@@ -39,6 +40,7 @@ export const Renderer: FC<Props> = ({ className, flowKey }) => {
             }}
           >
             <Canvas
+              onSelect={onSelect}
               instructions={instructions}
               x={x}
               y={y}

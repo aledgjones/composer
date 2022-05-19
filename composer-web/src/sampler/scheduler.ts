@@ -152,11 +152,11 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
       }
     }
 
-    requestAnimationFrame(() => {
-      if (this._playing) {
+    if (this._playing) {
+      setTimeout(() => {
         this.loop.call(this);
-      }
-    });
+      }, 1000 / 60);
+    }
   }
 
   /**

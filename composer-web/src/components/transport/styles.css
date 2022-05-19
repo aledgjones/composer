@@ -1,0 +1,31 @@
+.transport {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.transport__timestamp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border: 1px solid var(--background-500);
+  margin: 0 20px;
+  width: 120px;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+}
+
+.transport__controls {
+  display: flex;
+  padding: 6px 0 6px 20px;
+}
+
+.transport__metronome {
+  display: flex;
+  margin-right: 20px;
+}
+
+.transport__icon {
+  margin-right: 12px;
+}

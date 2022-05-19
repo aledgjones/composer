@@ -91,7 +91,7 @@ export const ToneTrackEntry: FC<Props> = ({
 
     if (tool === Tool.Select && !selected) {
       actions.ui.selection.clear();
-      actions.ui.selection.select({ trackKey, key: tone.key });
+      actions.ui.selection.select({ trackKey, key: tone.key, tick: tone.tick });
       onAudition(tone.pitch.int);
     }
     if (tool === Tool.Erase) {

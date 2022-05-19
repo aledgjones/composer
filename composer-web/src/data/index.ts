@@ -3,9 +3,6 @@ import { Store } from "pullstate";
 import { EngravePage, PlayerPage, State, Tool, View } from "./defs";
 
 export const engine = new Engine();
-
-(window as any).engine = engine;
-
 export const store = new Store<State>({
   app: {},
   selection: [],

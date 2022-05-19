@@ -49,6 +49,7 @@ export function engine_create_flow(a: number, b: number): void;
 export function engine_remove_flow(a: number, b: number, c: number): void;
 export function engine_reorder_flow(a: number, b: number, c: number): void;
 export function engine_rename_flow(a: number, b: number, c: number, d: number, e: number): void;
+export function engine_get_flow_length(a: number, b: number, c: number): number;
 export function engine_set_flow_length(a: number, b: number, c: number, d: number): void;
 export function engine_assign_player_to_flow(a: number, b: number, c: number, d: number, e: number): void;
 export function engine_assign_instrument_to_flow(a: number, b: number, c: number, d: number, e: number): void;

@@ -9,6 +9,7 @@ import { Icon } from "../../ui/components/icon";
 import { Loading } from "../../components/loading";
 import { Tab } from "../../ui/components/tab";
 import { Tabs } from "../../ui/components/tabs";
+import { Transport } from "../../components/transport";
 import { actions } from "../../data/actions";
 
 import "./root.css";
@@ -34,7 +35,7 @@ export const Root: FC = () => {
           <Tab value={View.Play}>Sequence</Tab>
           <Tab value={View.Print}>Publish</Tab>
         </Tabs>
-        {/* <TransportComponent /> */}
+        <Transport />
         <div className="root__spacer" />
         <div className="root__history">
           <Icon

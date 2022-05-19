@@ -4,6 +4,11 @@ import { engine } from "./data";
 
 import "./fonts/fonts.css";
 import "./ui";
+import { player } from "./sampler";
+
+const sampler = player.createSampler("one");
+sampler.load(0, "/patches/piano/natural.json", () => true);
+(window as any).sampler = sampler;
 
 const container = document.querySelector("#app");
 if (container) {

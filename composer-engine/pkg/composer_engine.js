@@ -766,6 +766,16 @@ export class Engine {
     }
     /**
     * @param {string} flow_key
+    * @returns {number}
+    */
+    get_flow_length(flow_key) {
+        var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.engine_get_flow_length(this.ptr, ptr0, len0);
+        return ret >>> 0;
+    }
+    /**
+    * @param {string} flow_key
     * @param {number} length
     */
     set_flow_length(flow_key, length) {

@@ -173,6 +173,11 @@ impl Engine {
         self.emit();
     }
 
+    pub fn get_flow_length(&mut self, flow_key: &str) -> u32 {
+        let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
+        flow.length
+    }
+
     pub fn set_flow_length(&mut self, flow_key: &str, length: Ticks) {
         let flow = self.score.flows.by_key.get_mut(flow_key).unwrap();
         flow.length = length;

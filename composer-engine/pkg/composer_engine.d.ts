@@ -348,6 +348,11 @@ export class Engine {
   rename_flow(flow_key: string, name: string): void;
 /**
 * @param {string} flow_key
+* @returns {number}
+*/
+  get_flow_length(flow_key: string): number;
+/**
+* @param {string} flow_key
 * @param {number} length
 */
   set_flow_length(flow_key: string, length: number): void;
@@ -646,6 +651,7 @@ export interface InitOutput {
   readonly engine_remove_flow: (a: number, b: number, c: number) => void;
   readonly engine_reorder_flow: (a: number, b: number, c: number) => void;
   readonly engine_rename_flow: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly engine_get_flow_length: (a: number, b: number, c: number) => number;
   readonly engine_set_flow_length: (a: number, b: number, c: number, d: number) => void;
   readonly engine_assign_player_to_flow: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly engine_assign_instrument_to_flow: (a: number, b: number, c: number, d: number, e: number) => void;

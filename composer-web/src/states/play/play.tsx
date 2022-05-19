@@ -19,21 +19,12 @@ import { Zoom } from "../../components/zoom";
 import { BottomBar } from "../../components/bottom-bar";
 
 import "./styles.css";
+import { useFlowKey } from "../../data/utils";
 
 const Play: FC = () => {
   useTitle("Solo Composer | Sequence");
 
-  const flows: string[] = engine.flows;
-  const flowKey = store.useState(
-    (s) => {
-      if (s.flow && flows.includes(s.flow)) {
-        return s.flow;
-      } else {
-        return flows[0];
-      }
-    },
-    [flows]
-  );
+  const flowKey = useFlowKey();
 
   const players: string[] = engine.players;
   const tool = store.useState((s) => s.play.tool);

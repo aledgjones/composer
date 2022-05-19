@@ -42,7 +42,8 @@ export interface Tone {
 }
 
 export interface EntrySelection {
-  key: string;
+  key: string | null; // null for rests
+  tick: number;
   trackKey: string;
 }
 

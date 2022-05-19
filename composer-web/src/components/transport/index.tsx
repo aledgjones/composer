@@ -3,15 +3,20 @@ import { mdiPlay, mdiMetronome, mdiSkipPrevious, mdiPause } from "@mdi/js";
 import { Icon } from "../../ui/components/icon";
 import { noop } from "../../ui/utils/noop";
 import { player, transport } from "../../sampler";
-import { usePlayState, useSamplerSetup, useTimestamp } from "../../data/utils";
+import {
+  useFlowKey,
+  usePlayState,
+  useSamplerSetup,
+  useTimestamp,
+} from "../../data/utils";
 
 import "./styles.css";
 
 export const Transport: FC = () => {
-  useSamplerSetup();
-
-  const timestamp = useTimestamp();
+  const flowKey = useFlowKey();
+  const timestamp = useTimestamp(flowKey);
   const playing = usePlayState();
+  useSamplerSetup(flowKey);
 
   return (
     <div className="transport">

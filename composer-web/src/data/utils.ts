@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { engine, store } from ".";
 import { transport } from "../sampler";
 
@@ -16,21 +16,29 @@ export const useFlowKey = () => {
   );
 };
 
-export function useTimestamp() {
-  const [timestamp, setTimestamp] = useState(0);
+export function useTick() {
+  const [tick, setTick] = useState(transport.tick);
   useEffect(() => {
-    const cb = (tick: number) => setTimestamp(tick);
+    const cb = (tick: number) => {
+      setTick(tick);
+    };
     transport.on("tick", cb);
 
     return () => {
       transport.removeListener("tick", cb);
     };
   }, []);
-  return timestamp;
+  return tick;
 }
 
-export function useSamplerSetup() {
-  const flowKey = useFlowKey();
+export function useTimestamp(flowKey: string) {
+  const tick = useTick();
+  return useMemo(() => {
+    return engine.get_timestamp(flowKey, tick);
+  }, [tick]);
+}
+
+export function useSamplerSetup(flowKey: string) {
   const subdivisions = engine.get_flow_subdivisions(flowKey) || 48;
   const length = engine.get_flow_length(flowKey) || 48 * 4 * 4;
 

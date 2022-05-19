@@ -404,6 +404,12 @@ export class Engine {
 */
   get_flow_ticks(flow_key: string): any;
 /**
+* @param {string} flow_key
+* @param {number} at
+* @returns {string}
+*/
+  get_timestamp(flow_key: string, at: number): string;
+/**
 * Create an instrument
 * @param {string} id
 * @returns {string}
@@ -662,6 +668,7 @@ export interface InitOutput {
   readonly engine_get_flow_title: (a: number, b: number, c: number, d: number) => void;
   readonly engine_flow_contains_player: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly engine_get_flow_ticks: (a: number, b: number, c: number) => number;
+  readonly engine_get_timestamp: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly get_full_path_from_partial: (a: number) => number;
   readonly def_tree: (a: number) => number;
   readonly engine_create_instrument: (a: number, b: number, c: number, d: number) => void;

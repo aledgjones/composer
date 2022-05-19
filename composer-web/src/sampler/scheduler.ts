@@ -131,7 +131,7 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
       this.tick = tick;
     }
     if (tick === this.length) {
-      this.pause();
+      this.stop();
     }
     const lookaheadTime = this.ctx.currentTime - this._playStartTime + 0.2;
     for (let tick = this.tick; tick <= this._length; tick++) {

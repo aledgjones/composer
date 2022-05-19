@@ -7,4 +7,16 @@
   background-color: var(--primary-bg);
   z-index: 300;
   pointer-events: none;
+  transition: transform 100ms;
+}
+
+.play-head:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid var(--primary-bg);
+  transform: translateX(calc(-50% + 1px));
 }

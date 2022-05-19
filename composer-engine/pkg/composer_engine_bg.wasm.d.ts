@@ -60,6 +60,7 @@ export function engine_get_flow_subdivisions(a: number, b: number, c: number): n
 export function engine_get_flow_title(a: number, b: number, c: number, d: number): void;
 export function engine_flow_contains_player(a: number, b: number, c: number, d: number, e: number): number;
 export function engine_get_flow_ticks(a: number, b: number, c: number): number;
+export function engine_get_timestamp(a: number, b: number, c: number, d: number, e: number): void;
 export function get_full_path_from_partial(a: number): number;
 export function def_tree(a: number): number;
 export function engine_create_instrument(a: number, b: number, c: number, d: number): void;

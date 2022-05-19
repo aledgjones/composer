@@ -3,7 +3,7 @@ use super::instruments::Instrument;
 use super::stave::Stave;
 use super::tracks::Track;
 use crate::components::duration::NoteDuration;
-use crate::components::misc::Ticks;
+use crate::components::misc::{Tick, Ticks};
 use crate::entries::clef::Clef;
 use crate::entries::key_signature::{KeySignature, KeySignatureMode};
 use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
@@ -57,11 +57,11 @@ impl Flow {
     }
 }
 
-type Tick = (f32, f32, bool, bool, bool, bool);
+type TickListItem = (f32, f32, bool, bool, bool, bool);
 
 #[derive(Serialize)]
 struct TickList {
-    list: Vec<Tick>,
+    list: Vec<TickListItem>,
     width: f32,
 }
 
@@ -320,5 +320,35 @@ impl Engine {
         }
 
         JsValue::from_serde(&output).unwrap()
+    }
+
+    pub fn get_timestamp(&self, flow_key: &str, at: Tick) -> String {
+        let flow = self.score.flows.by_key.get(flow_key).unwrap();
+        let master = self.score.tracks.get(&flow.master).unwrap();
+
+        let mut time_signature = TimeSignature::default();
+        let mut bar: u32 = 0;
+
+        for tick in 0..flow.length {
+            if let Some(entry) = master.get_time_signature_at_tick(&tick) {
+                time_signature = entry;
+            }
+
+            let distance = time_signature.distance_from_barline(&tick, &flow.subdivisions) as f32;
+
+            if distance == 0.0 {
+                bar += 1;
+            };
+
+            if at == tick {
+                let ticks_per_beat = time_signature.beat_type.to_ticks(&flow.subdivisions) as f32;
+                let beats = (distance / ticks_per_beat).floor() + 1.0;
+                let half_beats = (distance % ticks_per_beat) / (ticks_per_beat / 2.0);
+
+                return format!("{}:{:.0}:{:.3}", bar, beats.floor(), half_beats);
+            };
+        }
+
+        String::from("1:1:0.000")
     }
 }

@@ -892,6 +892,25 @@ export class Engine {
         return takeObject(ret);
     }
     /**
+    * @param {string} flow_key
+    * @param {number} at
+    * @returns {string}
+    */
+    get_timestamp(flow_key, at) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(flow_key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm.engine_get_timestamp(retptr, this.ptr, ptr0, len0, at);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
     * Create an instrument
     * @param {string} id
     * @returns {string}

@@ -9,7 +9,7 @@ pub fn set_panic_hook() {
 
 pub fn shortid() -> String {
     let mut rng = rand::thread_rng();
-    let mut output: String = String::new();
+    let mut output: String = String::with_capacity(12);
     for _ in 0..12 {
         let i = rng.gen_range(0..63);
         let char = ALPHABET.chars().nth(i).unwrap();

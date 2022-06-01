@@ -9,22 +9,23 @@ use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
 use crate::components::text::{Align, Justify};
 use crate::components::units::Converter;
+use crate::components::units::Space;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 
 fn draw_rest(
-    x: &f32,
-    y: &f32,
-    tick: &Tick,
+    x: Space,
+    y: Space,
+    tick: Tick,
     entry: &Notation,
-    subdivisions: &Ticks,
+    subdivisions: Ticks,
     is_full_bar: bool,
     horizontal_spacing: &HorizontalSpacing,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
     let start = horizontal_spacing
-        .get(tick, &Position::NoteSpacing)
+        .get(&tick, &Position::NoteSpacing)
         .unwrap();
 
     if is_full_bar {
@@ -34,12 +35,12 @@ fn draw_rest(
         let left = (x + start.x + ((end.x - start.x) / 2.0)) - 1.0;
 
         instructions.push(Instruction::Text {
-            x: converter.spaces_to_px(&left),
-            y: converter.spaces_to_px(&(y - 1.0)),
+            x: converter.spaces_to_px(left),
+            y: converter.spaces_to_px(y - 1.0),
             value: String::from("\u{E4E3}"),
             color: String::from("#000"),
             font: String::from("Bravura"),
-            size: converter.spaces_to_px(&4.0),
+            size: converter.spaces_to_px(4.0),
             justify: Justify::Start.as_string(),
             align: Align::Middle.as_string(),
         });
@@ -49,16 +50,16 @@ fn draw_rest(
         let glyph = entry.glyph(subdivisions);
         let top = match base {
             Some(NoteDuration::Whole) => y - 1.0,
-            _ => *y,
+            _ => y,
         };
 
         instructions.push(Instruction::Text {
-            x: converter.spaces_to_px(&left),
-            y: converter.spaces_to_px(&top),
+            x: converter.spaces_to_px(left),
+            y: converter.spaces_to_px(top),
             value: glyph,
             color: String::from("#000"),
             font: String::from("Bravura"),
-            size: converter.spaces_to_px(&4.0),
+            size: converter.spaces_to_px(4.0),
             justify: Justify::Start.as_string(),
             align: Align::Middle.as_string(),
         });
@@ -66,8 +67,8 @@ fn draw_rest(
 }
 
 pub fn draw_rests(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     flow: &Flow,
     staves: &[&Stave],
     notation_by_track: &NotationByTrack,
@@ -92,10 +93,10 @@ pub fn draw_rests(
 
                     draw_rest(
                         x,
-                        &top,
-                        tick,
+                        top,
+                        *tick,
                         entry,
-                        &flow.subdivisions,
+                        flow.subdivisions,
                         is_full_bar,
                         horizontal_spacing,
                         converter,

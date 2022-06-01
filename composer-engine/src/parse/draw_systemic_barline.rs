@@ -8,8 +8,8 @@ use crate::score::stave::Stave;
 use crate::score::stave::STAVE_LINE_WIDTH;
 
 pub fn draw_systemic_barline(
-    x: &Space,
-    y: &Space,
+    x: Space,
+    y: Space,
     staves: &[&Stave],
     vertical_spacing: &VerticalSpacing,
     converter: &Converter,
@@ -20,16 +20,16 @@ pub fn draw_systemic_barline(
         let tweak_for_stave_line_width = STAVE_LINE_WIDTH / 2.0;
         instructions.push(Instruction::Line {
             color: String::from("#000"),
-            width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
+            width: converter.spaces_to_px(STAVE_LINE_WIDTH),
             points: vec![
                 Point {
                     x: converter.spaces_to_px(x),
-                    y: converter.spaces_to_px(&(y - tweak_for_stave_line_width)),
+                    y: converter.spaces_to_px(y - tweak_for_stave_line_width),
                 },
                 Point {
                     x: converter.spaces_to_px(x),
                     y: converter
-                        .spaces_to_px(&(y + vertical_spacing.height + tweak_for_stave_line_width)),
+                        .spaces_to_px(y + vertical_spacing.height + tweak_for_stave_line_width),
                 },
             ],
         });

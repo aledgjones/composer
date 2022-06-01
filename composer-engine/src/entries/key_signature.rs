@@ -186,8 +186,9 @@ impl Engine {
         let master = self.score.tracks.get_mut(&flow.master).unwrap();
 
         // remove old key signative if defined
-        if let Some(old) = master.get_key_signature_at_tick(&tick) {
-            master.remove(&old.key);
+        if let Some(key_signature) = master.get_key_signature_at_tick(&tick) {
+            let key = key_signature.key.clone();
+            master.remove(&key);
         };
 
         // insert the new key signature
@@ -199,7 +200,7 @@ impl Engine {
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_key_signature_at_tick(&self, at: &Tick) -> Option<KeySignature> {
+    pub fn get_key_signature_at_tick(&self, at: &Tick) -> Option<&KeySignature> {
         let entry_keys = match self.entries.by_tick.get(at) {
             Some(entries) => entries,
             None => return None,
@@ -207,14 +208,14 @@ impl Track {
 
         for key in entry_keys {
             if let Some(Entry::KeySignature(key_signature)) = self.entries.by_key.get(key) {
-                return Some(key_signature.clone());
+                return Some(key_signature);
             }
         }
 
         None
     }
 
-    pub fn get_key_signature_before_tick(&self, at: Tick) -> Option<KeySignature> {
+    pub fn get_key_signature_before_tick(&self, at: Tick) -> Option<&KeySignature> {
         for tick in (0..at).rev() {
             match self.get_key_signature_at_tick(&tick) {
                 Some(key_signature) => return Some(key_signature),

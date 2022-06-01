@@ -296,21 +296,21 @@ impl Engine {
 
         let tick_width = QUARTER_WIDTH / flow.subdivisions as f32;
 
-        let mut time_signature: TimeSignature = TimeSignature::default();
+        let mut time_signature = &TimeSignature::default();
 
         for tick in 0..flow.length {
             if let Some(entry) = master.get_time_signature_at_tick(&tick) {
                 time_signature = entry;
             }
 
-            let first = time_signature.is_on_first_beat(&tick, &flow.subdivisions);
-            let beat = time_signature.is_on_beat(&tick, &flow.subdivisions);
+            let first = time_signature.is_on_first_beat(tick, flow.subdivisions);
+            let beat = time_signature.is_on_beat(tick, flow.subdivisions);
             let sub = time_signature.is_on_beat_type(
-                &tick,
+                tick,
                 &time_signature.beat_type.half(),
-                &flow.subdivisions,
+                flow.subdivisions,
             );
-            let boundry = time_signature.is_on_grouping_boundry(&tick, &flow.subdivisions);
+            let boundry = time_signature.is_on_grouping_boundry(tick, flow.subdivisions);
 
             output
                 .list
@@ -326,7 +326,7 @@ impl Engine {
         let flow = self.score.flows.by_key.get(flow_key).unwrap();
         let master = self.score.tracks.get(&flow.master).unwrap();
 
-        let mut time_signature = TimeSignature::default();
+        let mut time_signature = &TimeSignature::default();
         let mut bar: u32 = 0;
 
         for tick in 0..flow.length {
@@ -334,14 +334,14 @@ impl Engine {
                 time_signature = entry;
             }
 
-            let distance = time_signature.distance_from_barline(&tick, &flow.subdivisions) as f32;
+            let distance = time_signature.distance_from_barline(tick, flow.subdivisions) as f32;
 
             if distance == 0.0 {
                 bar += 1;
             };
 
             if at == tick {
-                let ticks_per_beat = time_signature.beat_type.to_ticks(&flow.subdivisions) as f32;
+                let ticks_per_beat = time_signature.beat_type.to_ticks(flow.subdivisions) as f32;
                 let beats = (distance / ticks_per_beat).floor() + 1.0;
                 let half_beats = (distance % ticks_per_beat) / (ticks_per_beat / 2.0);
 

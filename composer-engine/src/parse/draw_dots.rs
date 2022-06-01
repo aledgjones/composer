@@ -5,12 +5,12 @@ use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::measurements::Point;
-use crate::components::units::Converter;
+use crate::components::units::{Converter, Space};
 use crate::score::stave::Stave;
 
 pub fn draw_dots(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     staves: &[&Stave],
     notations_by_track: &NotationByTrack,
     vertical_spacing: &VerticalSpacing,
@@ -42,10 +42,10 @@ pub fn draw_dots(
 
                 instructions.push(Instruction::Circle {
                     color: String::from("#000"),
-                    radius: converter.spaces_to_px(&0.2),
+                    radius: converter.spaces_to_px(0.2),
                     point: Point {
-                        x: converter.spaces_to_px(&(x + left + 0.5)),
-                        y: converter.spaces_to_px(&(top + (*offset as f32 / 2.0))),
+                        x: converter.spaces_to_px(x + left + 0.5),
+                        y: converter.spaces_to_px(top + (*offset as f32 / 2.0)),
                     },
                 });
             }

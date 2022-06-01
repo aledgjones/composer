@@ -50,7 +50,7 @@ pub struct Font {
 pub fn measure_text(
     measure: &Function,
     text: &str,
-    size: &Space,
+    size: Space,
     font: &str,
     converter: &Converter,
 ) -> Px {

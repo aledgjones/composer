@@ -48,7 +48,7 @@ impl Notation {
         self.tones.len() > 1
     }
 
-    pub fn longest_written_duration(&self, subdivisions: &Ticks) -> Ticks {
+    pub fn longest_written_duration(&self, subdivisions: Ticks) -> Ticks {
         for option in NOTE_DURATIONS {
             let ticks = option.to_ticks(subdivisions);
             if ticks < self.duration {
@@ -60,7 +60,7 @@ impl Notation {
     }
 
     // gets base duration from a possibly dotted duration
-    pub fn base_to_ticks(&self, subdivisions: &Ticks) -> Option<Ticks> {
+    pub fn base_to_ticks(&self, subdivisions: Ticks) -> Option<Ticks> {
         if is_writable(&self.duration, subdivisions) {
             // original duration is directly writable
             Some(self.duration)
@@ -75,14 +75,14 @@ impl Notation {
         }
     }
 
-    pub fn base_to_note_duration(&self, subdivisions: &Ticks) -> Option<NoteDuration> {
+    pub fn base_to_note_duration(&self, subdivisions: Ticks) -> Option<NoteDuration> {
         match self.base_to_ticks(subdivisions) {
-            Some(base) => NoteDuration::from_ticks(&base, subdivisions),
+            Some(base) => NoteDuration::from_ticks(base, subdivisions),
             None => None,
         }
     }
 
-    pub fn glyph(&self, subdivisions: &Ticks) -> String {
+    pub fn glyph(&self, subdivisions: Ticks) -> String {
         if self.is_rest() {
             match self.base_to_note_duration(subdivisions) {
                 Some(base) => match base {
@@ -114,11 +114,11 @@ impl Notation {
         }
     }
 
-    pub fn is_writable(&self, subdivisions: &Ticks) -> bool {
+    pub fn is_writable(&self, subdivisions: Ticks) -> bool {
         self.base_to_ticks(subdivisions).is_some()
     }
 
-    pub fn is_dotted(&self, subdivisions: &Ticks) -> bool {
+    pub fn is_dotted(&self, subdivisions: Ticks) -> bool {
         if is_writable(&self.duration, subdivisions) {
             false
         } else {
@@ -127,13 +127,13 @@ impl Notation {
         }
     }
 
-    pub fn is_flagged(&self, beams: &Beams, subdivisions: &Ticks) -> bool {
+    pub fn is_flagged(&self, beams: &Beams, subdivisions: Ticks) -> bool {
         !self.is_rest()
             && !self.has_beam(beams)
             && self.duration < NoteDuration::Quarter.to_ticks(subdivisions)
     }
 
-    pub fn flag_glyph(&self, stem_direction: &Direction, subdivisions: &Ticks) -> String {
+    pub fn flag_glyph(&self, stem_direction: &Direction, subdivisions: Ticks) -> String {
         let base = self.base_to_note_duration(subdivisions);
         match base {
             Some(duration) => String::from(duration.to_flag_glyph(stem_direction)),
@@ -194,7 +194,7 @@ impl Notation {
     pub fn min_spacing(
         &self,
         shunts: &Shunts,
-        subdivisions: &Ticks,
+        subdivisions: Ticks,
         engrave: &Engrave,
         beams: &Beams,
     ) -> Space {
@@ -219,10 +219,9 @@ impl Notation {
     pub fn metrics(
         &self,
         shunts: &Shunts,
-        subdivisions: &Ticks,
+        subdivisions: Ticks,
         engrave: &Engrave,
         beams: &Beams,
-        stem_direction: &Option<&Direction>,
     ) -> BoundingBox {
         let min = self.min_spacing(shunts, subdivisions, engrave, beams);
         let spacing = match self.base_to_note_duration(subdivisions) {
@@ -312,7 +311,7 @@ impl NotationTrack {
         Self { length, track }
     }
 
-    pub fn get_previous_notation(&self, at: &Tick) -> Option<(Tick, Notation)> {
+    pub fn get_previous_notation(&self, at: Tick) -> Option<(Tick, Notation)> {
         for tick in (0..at + 1).rev() {
             match self.track.get(&tick) {
                 Some(notation) => return Some((tick, notation.clone())),
@@ -334,8 +333,8 @@ impl NotationTrack {
         None
     }
 
-    pub fn insert(&mut self, tick: &Tick, notation: Notation) {
-        self.track.insert(*tick, notation);
+    pub fn insert(&mut self, tick: Tick, notation: Notation) {
+        self.track.insert(tick, notation);
     }
 
     pub fn add_tone(&mut self, tick: &Tick, tone: &Tone) {
@@ -343,14 +342,14 @@ impl NotationTrack {
         entry.tones.push(tone.clone());
     }
 
-    pub fn split(&mut self, split_at: &Tick) {
+    pub fn split(&mut self, split_at: Tick) {
         if let Some((event_at, notation)) = self.get_previous_notation(split_at) {
             // only split if:
             // 1. split index not already the start of an event.
             // 2. split index is not the end of an event (ie; end of flow);
-            if event_at != *split_at && *split_at != event_at + notation.duration {
+            if event_at != split_at && split_at != event_at + notation.duration {
                 self.insert(
-                    &event_at,
+                    event_at,
                     Notation {
                         tick: event_at,
                         tones: notation.tones.clone(),
@@ -362,7 +361,7 @@ impl NotationTrack {
                 self.insert(
                     split_at,
                     Notation {
-                        tick: *split_at,
+                        tick: split_at,
                         tones: notation.tones.clone(),
                         duration: event_at + notation.duration - split_at,
                         ties: notation.ties,
@@ -372,8 +371,8 @@ impl NotationTrack {
         }
     }
 
-    pub fn is_range_empty(&self, start: &Tick, stop: &Tick) -> bool {
-        for tick in start + 1..*stop {
+    pub fn is_range_empty(&self, start: Tick, stop: Tick) -> bool {
+        for tick in start + 1..stop {
             match self.track.get(&tick) {
                 Some(_) => return false,
                 None => continue,
@@ -383,8 +382,8 @@ impl NotationTrack {
         true
     }
 
-    pub fn is_tick_empty(&self, tick: &Tick) -> bool {
-        self.track.get(tick).is_none()
+    pub fn is_tick_empty(&self, tick: Tick) -> bool {
+        self.track.get(&tick).is_none()
     }
 
     pub fn is_tick_rest(&self, tick: &Tick) -> bool {
@@ -397,57 +396,57 @@ impl NotationTrack {
     // [qhq] patterns dont't split middle
     pub fn is_qhq_pattern(
         &self,
-        start: &Tick,
+        start: Tick,
         time_signature: &TimeSignature,
-        subdivisions: &Ticks,
+        subdivisions: Ticks,
     ) -> bool {
-        let beat_one = *start;
-        let beat_two = time_signature.get_tick_at_beat(start, &2, subdivisions);
-        let beat_four = time_signature.get_tick_at_beat(start, &4, subdivisions);
+        let beat_one = start;
+        let beat_two = time_signature.get_tick_at_beat(start, 2, subdivisions);
+        let beat_four = time_signature.get_tick_at_beat(start, 4, subdivisions);
 
-        !self.is_tick_empty(&beat_one)
-            && !self.is_tick_empty(&beat_two)
-            && !self.is_tick_empty(&beat_four)
+        !self.is_tick_empty(beat_one)
+            && !self.is_tick_empty(beat_two)
+            && !self.is_tick_empty(beat_four)
             && (!self.is_tick_rest(&beat_one) && !self.is_tick_rest(&beat_four))
             && !self.is_tick_rest(&beat_two)
-            && self.is_range_empty(&beat_one, &beat_two)
-            && self.is_range_empty(&beat_two, &beat_four)
+            && self.is_range_empty(beat_one, beat_two)
+            && self.is_range_empty(beat_two, beat_four)
     }
 
     /// [qm.] patterns don't split middle
     pub fn is_qmdot_pattern(
         &self,
-        start: &Tick,
+        start: Tick,
         time_signature: &TimeSignature,
-        subdivisions: &Ticks,
+        subdivisions: Ticks,
     ) -> bool {
-        let beat_one = *start;
-        let beat_two = time_signature.get_tick_at_beat(start, &2, subdivisions);
+        let beat_one = start;
+        let beat_two = time_signature.get_tick_at_beat(start, 2, subdivisions);
         let end = start + time_signature.ticks_per_bar(subdivisions);
 
-        !self.is_tick_empty(&beat_one)
-            && !self.is_tick_empty(&beat_two)
+        !self.is_tick_empty(beat_one)
+            && !self.is_tick_empty(beat_two)
             && !self.is_tick_rest(&beat_two)
-            && self.is_range_empty(&beat_one, &beat_two)
-            && self.is_range_empty(&beat_two, &end)
+            && self.is_range_empty(beat_one, beat_two)
+            && self.is_range_empty(beat_two, end)
     }
 
     /// [m.q] patterns don't split middle
     pub fn is_mdotq_pattern(
         &self,
-        start: &Tick,
+        start: Tick,
         time_signature: &TimeSignature,
         original_time_signature: &TimeSignature,
-        subdivisions: &Ticks,
+        subdivisions: Ticks,
     ) -> bool {
-        let beat_one = *start;
-        let beat_four = time_signature.get_tick_at_beat(start, &4, subdivisions);
+        let beat_one = start;
+        let beat_four = time_signature.get_tick_at_beat(start, 4, subdivisions);
 
         let middle = start + (time_signature.ticks_per_bar(subdivisions) / 2);
 
-        let is_pattern = !self.is_tick_empty(&beat_one)
-            && !self.is_tick_empty(&beat_four)
-            && self.is_range_empty(&beat_one, &beat_four);
+        let is_pattern = !self.is_tick_empty(beat_one)
+            && !self.is_tick_empty(beat_four)
+            && self.is_range_empty(beat_one, beat_four);
 
         let are_both_notes = !self.is_tick_rest(&beat_one) && !self.is_tick_rest(&beat_four);
 
@@ -462,7 +461,7 @@ impl NotationTrack {
                 None => false,
             };
 
-        let intersect_beat = original_time_signature.is_on_beat(&middle, subdivisions);
+        let intersect_beat = original_time_signature.is_on_beat(middle, subdivisions);
 
         is_pattern && (are_both_notes || is_allowed_with_rest || !intersect_beat)
     }
@@ -470,17 +469,15 @@ impl NotationTrack {
     // time_signature represents the unit as if it were a "measure"
     pub fn split_unit(
         &mut self,
-        start: &u32,
+        start: u32,
         time_signature: &TimeSignature,
         original_time_signature: &TimeSignature,
-        subdivisions: &Ticks,
+        subdivisions: Ticks,
     ) {
         let stop = start + time_signature.ticks_per_bar(subdivisions);
 
-        // self.debug(*start, stop);
-
         // we stop once there are no events in the range
-        if self.is_range_empty(start, &stop) {
+        if self.is_range_empty(start, stop) {
             return;
         }
 
@@ -503,8 +500,8 @@ impl NotationTrack {
         match time_signature.beats {
             3 => {
                 let beat_one = start;
-                let beat_two = &time_signature.get_tick_at_beat(start, &2, subdivisions);
-                let beat_three = &time_signature.get_tick_at_beat(start, &3, subdivisions);
+                let beat_two = time_signature.get_tick_at_beat(start, 2, subdivisions);
+                let beat_three = time_signature.get_tick_at_beat(start, 3, subdivisions);
 
                 // split all rests at beats
                 for beat in [beat_one, beat_two, beat_three] {
@@ -517,7 +514,7 @@ impl NotationTrack {
 
                 // make sure it doesn't look compound! (c. at end of bar)
                 let middle = start + (time_signature.ticks_per_bar(subdivisions) / 2);
-                if !self.is_tick_empty(&middle) && self.is_range_empty(&middle, &stop) {
+                if !self.is_tick_empty(middle) && self.is_range_empty(middle, stop) {
                     self.split(beat_three);
                 };
 
@@ -555,7 +552,7 @@ impl NotationTrack {
                         subdivisions,
                     )
                 {
-                    self.split(&middle);
+                    self.split(middle);
                 }
 
                 let next = TimeSignature::new(
@@ -567,21 +564,21 @@ impl NotationTrack {
                 );
 
                 self.split_unit(start, &next, original_time_signature, subdivisions);
-                self.split_unit(&middle, &next, original_time_signature, subdivisions);
+                self.split_unit(middle, &next, original_time_signature, subdivisions);
             }
             _ => (),
         }
     }
 
-    pub fn split_as_per_meter(&mut self, barlines: &Bars, subdivisions: &Ticks) {
+    pub fn split_as_per_meter(&mut self, barlines: &Bars, subdivisions: Ticks) {
         for (tick, time_signature) in barlines {
-            self.split_unit(tick, time_signature, time_signature, subdivisions);
+            self.split_unit(*tick, time_signature, time_signature, subdivisions);
         }
     }
 
     pub fn split_measures(&mut self, barlines: &Bars) {
         for tick in barlines.keys() {
-            self.split(tick);
+            self.split(*tick);
         }
     }
 
@@ -589,9 +586,9 @@ impl NotationTrack {
         for tick in 0..self.length {
             let tones = track.get_tones_at_tick(&tick);
             if !tones.is_empty() {
-                self.split(&tick);
+                self.split(tick);
                 for tone in tones {
-                    self.split(&(tick + tone.duration));
+                    self.split(tick + tone.duration);
                     for inner_tick in tick..tick + tone.duration {
                         if self.track.contains_key(&inner_tick) {
                             self.add_tone(&inner_tick, &tone);
@@ -602,13 +599,13 @@ impl NotationTrack {
         }
     }
 
-    pub fn split_unwritable(&mut self, barlines: &Bars, subdivisions: &Ticks) {
+    pub fn split_unwritable(&mut self, barlines: &Bars, subdivisions: Ticks) {
         for (i, time) in barlines {
             for tick in *i..*i + time.ticks_per_bar(subdivisions) {
                 if let Some(entry) = self.track.get(&tick) {
                     if !entry.is_rest() && !entry.is_writable(subdivisions) {
                         let longest = entry.longest_written_duration(subdivisions);
-                        self.split(&(tick + longest));
+                        self.split(tick + longest);
                     }
                 };
             }
@@ -666,7 +663,7 @@ pub fn get_written_durations(flow: &Flow, tracks: &[&Track], bars: &Bars) -> Not
     let mut entries = NotationByTrack::default();
 
     for track in tracks {
-        let notation = track.to_notation_track(&flow.length, bars, &flow.subdivisions);
+        let notation = track.to_notation_track(&flow.length, bars, flow.subdivisions);
         entries.insert(track.key.clone(), notation);
     }
 
@@ -678,7 +675,7 @@ impl Track {
         &self,
         flow_length: &Ticks,
         barlines: &Bars,
-        subdivisions: &Ticks,
+        subdivisions: Ticks,
     ) -> NotationTrack {
         let mut notation = NotationTrack::new(*flow_length);
         notation.split_at_tone_events(self);

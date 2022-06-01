@@ -2,27 +2,27 @@ use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::text::{Align, Justify};
-use crate::components::units::Converter;
+use crate::components::units::{Converter, Space};
 use crate::entries::clef::Clef;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 use crate::score::tracks::Tracks;
 
 fn draw_clef(
-    x: f32,
-    y: f32,
+    x: Space,
+    y: Space,
     clef: &Clef,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
     if let Some(glyph) = clef.glyph() {
         instructions.push(Instruction::Text {
-            x: converter.spaces_to_px(&x),
-            y: converter.spaces_to_px(&(y + (0.5 * clef.offset as f32))),
+            x: converter.spaces_to_px(x),
+            y: converter.spaces_to_px(y + (0.5 * clef.offset as f32)),
             value: glyph,
             color: String::from("#000"),
             font: String::from("Bravura"),
-            size: converter.spaces_to_px(&4.0),
+            size: converter.spaces_to_px(4.0),
             justify: Justify::Start.as_string(),
             align: Align::Middle.as_string(),
         })
@@ -30,8 +30,8 @@ fn draw_clef(
 }
 
 pub fn draw_clefs(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     flow: &Flow,
     staves: &Vec<&Stave>,
     tracks: &Tracks,

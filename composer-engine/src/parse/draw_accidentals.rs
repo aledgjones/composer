@@ -6,13 +6,13 @@ use super::measure_horizontal_spacing::{HorizontalSpacing, Position};
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::text::{Align, Justify};
-use crate::components::units::Converter;
+use crate::components::units::{Converter, Space};
 use crate::entries::tone::Tone;
 use crate::score::stave::Stave;
 
 fn draw_accidental(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     accidental: &AccidentalNotation,
     tone: &Tone,
     tone_offsets: &ToneVerticalOffsets,
@@ -25,20 +25,20 @@ fn draw_accidental(
     let top = y + (*offset as f32 / 2.0);
 
     instructions.push(Instruction::Text {
-        x: converter.spaces_to_px(&left),
-        y: converter.spaces_to_px(&top),
+        x: converter.spaces_to_px(left),
+        y: converter.spaces_to_px(top),
         value: glyph,
         color: String::from("#000"),
         font: String::from("Bravura"),
-        size: converter.spaces_to_px(&4.0),
+        size: converter.spaces_to_px(4.0),
         justify: Justify::End.as_string(),
         align: Align::Middle.as_string(),
     });
 }
 
 pub fn draw_accidentals(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     staves: &[&Stave],
     notation_by_track: &NotationByTrack,
     horizontal_spacing: &HorizontalSpacing,
@@ -70,8 +70,8 @@ pub fn draw_accidentals(
                 for tone in &entry.tones {
                     if let Some(accidental) = accidentals.by_key.get(&(*tick, tone.key.clone())) {
                         draw_accidental(
-                            &(x + left - 0.2),
-                            &top,
+                            x + left - 0.2,
+                            top,
                             accidental,
                             tone,
                             tone_offsets,

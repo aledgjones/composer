@@ -7,8 +7,8 @@ use crate::components::units::Space;
 use crate::score::stave::STAVE_LINE_WIDTH;
 
 pub fn draw_sub_brackets(
-    x: &Space,
-    y: &Space,
+    x: Space,
+    y: Space,
     vertical_spans: &VerticalSpans,
     vertical_spacing: &VerticalSpacing,
     converter: &Converter,
@@ -23,23 +23,23 @@ pub fn draw_sub_brackets(
 
         instructions.push(Instruction::Line {
             color: String::from("#000"),
-            width: converter.spaces_to_px(&STAVE_LINE_WIDTH),
+            width: converter.spaces_to_px(STAVE_LINE_WIDTH),
             points: vec![
                 Point {
                     x: converter.spaces_to_px(x),
-                    y: converter.spaces_to_px(&top),
+                    y: converter.spaces_to_px(top),
                 },
                 Point {
-                    x: converter.spaces_to_px(&(x - 1.5)),
-                    y: converter.spaces_to_px(&top),
+                    x: converter.spaces_to_px(x - 1.5),
+                    y: converter.spaces_to_px(top),
                 },
                 Point {
-                    x: converter.spaces_to_px(&(x - 1.5)),
-                    y: converter.spaces_to_px(&bottom),
+                    x: converter.spaces_to_px(x - 1.5),
+                    y: converter.spaces_to_px(bottom),
                 },
                 Point {
                     x: converter.spaces_to_px(x),
-                    y: converter.spaces_to_px(&bottom),
+                    y: converter.spaces_to_px(bottom),
                 },
             ],
         });

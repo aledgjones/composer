@@ -3,7 +3,7 @@ use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::pitch::Accidental;
 use crate::components::text::{Align, Justify};
-use crate::components::units::Converter;
+use crate::components::units::{Converter, Space};
 use crate::entries::clef::{Clef, ClefDrawType};
 use crate::entries::key_signature::KeySignature;
 use crate::score::flows::Flow;
@@ -11,8 +11,8 @@ use crate::score::stave::Stave;
 use crate::score::tracks::Tracks;
 
 fn draw_key_signature(
-    x: f32,
-    y: f32,
+    x: Space,
+    y: Space,
     clef: &Clef,
     key_signature: &KeySignature,
     converter: &Converter,
@@ -27,12 +27,12 @@ fn draw_key_signature(
     if let Some(pattern) = key_signature.pattern(clef) {
         for i in 0..key_signature.offset.abs() {
             instructions.push(Instruction::Text {
-                x: converter.spaces_to_px(&(x + (i as f32))),
-                y: converter.spaces_to_px(&(y + 0.5 * pattern[i as usize] as f32)),
+                x: converter.spaces_to_px(x + (i as f32)),
+                y: converter.spaces_to_px(y + 0.5 * pattern[i as usize] as f32),
                 value: glyph.clone(),
                 color: String::from("#000"),
                 font: String::from("Bravura"),
-                size: converter.spaces_to_px(&4.0),
+                size: converter.spaces_to_px(4.0),
                 justify: Justify::Start.as_string(),
                 align: Align::Middle.as_string(),
             })
@@ -41,8 +41,8 @@ fn draw_key_signature(
 }
 
 pub fn draw_key_signatures(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     flow: &Flow,
     staves: &Vec<&Stave>,
     tracks: &Tracks,
@@ -56,7 +56,7 @@ pub fn draw_key_signatures(
     for stave in staves {
         let stave_master = tracks.get(&stave.master).unwrap();
         let top = vertical_spacing.staves.get(&stave.key).unwrap();
-        let mut clef = Clef::new(0, 60, 0, ClefDrawType::C);
+        let mut clef = &Clef::new(0, 60, 0, ClefDrawType::C);
 
         for tick in 0..flow.length {
             if let Some(found) = stave_master.get_clef_at_tick(&tick) {

@@ -6,15 +6,15 @@ use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::misc::Tick;
 use crate::components::text::{Align, Justify};
-use crate::components::units::Converter;
+use crate::components::units::{Converter, Space};
 use crate::entries::tone::Tone;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 
 fn draw_notehead(
-    tick: &Tick,
-    x: &f32,
-    y: &f32,
+    tick: Tick,
+    x: Space,
+    y: Space,
     flow: &Flow,
     entry: &Notation,
     tone: &Tone,
@@ -25,10 +25,10 @@ fn draw_notehead(
     instructions: &mut Vec<Instruction>,
 ) {
     let mut left = x + horizontal_spacing
-        .get(tick, &Position::NoteSpacing)
+        .get(&tick, &Position::NoteSpacing)
         .unwrap()
         .x;
-    match shunts.by_key.get(&(*tick, tone.key.clone())).unwrap() {
+    match shunts.by_key.get(&(tick, tone.key.clone())).unwrap() {
         Shunt::Pre => {
             left -= entry.notehead_width();
         }
@@ -38,25 +38,25 @@ fn draw_notehead(
         }
     }
 
-    let glyph = entry.glyph(&flow.subdivisions);
+    let glyph = entry.glyph(flow.subdivisions);
     let offset = tone_offsets.get(&tone.key).unwrap();
     let top = y + (*offset as f32 / 2.0);
 
     instructions.push(Instruction::Text {
-        x: converter.spaces_to_px(&left),
-        y: converter.spaces_to_px(&top),
+        x: converter.spaces_to_px(left),
+        y: converter.spaces_to_px(top),
         value: glyph,
         color: String::from("#000"),
         font: String::from("Bravura"),
-        size: converter.spaces_to_px(&4.0),
+        size: converter.spaces_to_px(4.0),
         justify: Justify::Start.as_string(),
         align: Align::Middle.as_string(),
     });
 }
 
 pub fn draw_noteheads(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     flow: &Flow,
     staves: &[&Stave],
     notation_by_track: &NotationByTrack,
@@ -78,9 +78,9 @@ pub fn draw_noteheads(
             for (tick, entry) in &notation.track {
                 for tone in &entry.tones {
                     draw_notehead(
-                        tick,
+                        *tick,
                         x,
-                        &top,
+                        top,
                         flow,
                         entry,
                         tone,

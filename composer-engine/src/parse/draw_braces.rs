@@ -7,8 +7,8 @@ use crate::components::units::Converter;
 use crate::components::units::Space;
 
 pub fn draw_braces(
-    x: &Space,
-    y: &Space,
+    x: Space,
+    y: Space,
     vertical_spans: &VerticalSpans,
     vertical_spacing: &VerticalSpacing,
     converter: &Converter,
@@ -21,12 +21,12 @@ pub fn draw_braces(
         let top = y + (bottom.y + bottom.height / 2.0);
 
         instructions.push(Instruction::Text {
-            x: converter.spaces_to_px(&(x - 0.25)),
-            y: converter.spaces_to_px(&top),
+            x: converter.spaces_to_px(x - 0.25),
+            y: converter.spaces_to_px(top),
             value: String::from("\u{E000}"),
             color: String::from("#000"),
             font: String::from("Bravura"),
-            size: converter.spaces_to_px(&height),
+            size: converter.spaces_to_px(height),
             justify: Justify::End.as_string(),
             align: Align::Middle.as_string(),
         })

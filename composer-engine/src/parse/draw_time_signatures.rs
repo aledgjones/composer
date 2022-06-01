@@ -3,7 +3,7 @@ use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::duration::NoteDuration;
 use crate::components::text::{Align, Justify};
-use crate::components::units::Converter;
+use crate::components::units::{Converter, Space};
 use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
@@ -49,8 +49,8 @@ pub fn beat_type_to_glyph(input: NoteDuration) -> String {
 }
 
 fn draw_time_signature(
-    x: f32,
-    y: f32,
+    x: Space,
+    y: Space,
     time_signature: &TimeSignature,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
@@ -58,32 +58,32 @@ fn draw_time_signature(
     match time_signature.draw_type {
         TimeSignatureDrawType::Hidden => (),
         TimeSignatureDrawType::CommonTime => instructions.push(Instruction::Text {
-            x: converter.spaces_to_px(&x),
-            y: converter.spaces_to_px(&y),
+            x: converter.spaces_to_px(x),
+            y: converter.spaces_to_px(y),
             value: String::from("\u{E08A}"),
             color: String::from("#000"),
             font: String::from("Bravura"),
-            size: converter.spaces_to_px(&4.0),
+            size: converter.spaces_to_px(4.0),
             justify: Justify::Middle.as_string(),
             align: Align::Middle.as_string(),
         }),
         TimeSignatureDrawType::SplitCommonTime => instructions.push(Instruction::Text {
-            x: converter.spaces_to_px(&x),
-            y: converter.spaces_to_px(&y),
+            x: converter.spaces_to_px(x),
+            y: converter.spaces_to_px(y),
             value: String::from("\u{E08B}"),
             color: String::from("#000"),
             font: String::from("Bravura"),
-            size: converter.spaces_to_px(&4.0),
+            size: converter.spaces_to_px(4.0),
             justify: Justify::Middle.as_string(),
             align: Align::Middle.as_string(),
         }),
         TimeSignatureDrawType::Open => instructions.push(Instruction::Text {
-            x: converter.spaces_to_px(&x),
-            y: converter.spaces_to_px(&y),
+            x: converter.spaces_to_px(x),
+            y: converter.spaces_to_px(y),
             value: String::from("\u{E09C}"),
             color: String::from("#000"),
             font: String::from("Bravura"),
-            size: converter.spaces_to_px(&4.0),
+            size: converter.spaces_to_px(4.0),
             justify: Justify::Middle.as_string(),
             align: Align::Middle.as_string(),
         }),
@@ -91,22 +91,22 @@ fn draw_time_signature(
             let beats = number_to_glyph(time_signature.beats);
             let beat_type = beat_type_to_glyph(time_signature.beat_type);
             instructions.push(Instruction::Text {
-                x: converter.spaces_to_px(&x),
-                y: converter.spaces_to_px(&(y - 1.0)),
+                x: converter.spaces_to_px(x),
+                y: converter.spaces_to_px(y - 1.0),
                 value: beats,
                 color: String::from("#000"),
                 font: String::from("Bravura"),
-                size: converter.spaces_to_px(&4.0),
+                size: converter.spaces_to_px(4.0),
                 justify: Justify::Middle.as_string(),
                 align: Align::Middle.as_string(),
             });
             instructions.push(Instruction::Text {
-                x: converter.spaces_to_px(&x),
-                y: converter.spaces_to_px(&(y + 1.0)),
+                x: converter.spaces_to_px(x),
+                y: converter.spaces_to_px(y + 1.0),
                 value: beat_type,
                 color: String::from("#000"),
                 font: String::from("Bravura"),
-                size: converter.spaces_to_px(&4.0),
+                size: converter.spaces_to_px(4.0),
                 justify: Justify::Middle.as_string(),
                 align: Align::Middle.as_string(),
             });
@@ -115,8 +115,8 @@ fn draw_time_signature(
 }
 
 pub fn draw_time_signatures(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     flow: &Flow,
     staves: &Vec<&Stave>,
     tracks: &Tracks,
@@ -135,7 +135,7 @@ pub fn draw_time_signatures(
                 let left = horizontal_spacing
                     .get(&tick, &Position::TimeSignature)
                     .unwrap();
-                let offset = time_signature.metrics(&flow.subdivisions).width / 2.0;
+                let offset = time_signature.metrics(flow.subdivisions).width / 2.0;
 
                 draw_time_signature(
                     x + left.x + offset,

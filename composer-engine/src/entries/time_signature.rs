@@ -1,10 +1,10 @@
+use crate::Engine;
 use crate::components::duration::NoteDuration;
 use crate::components::measurements::{BoundingBox, PaddingSpaces};
 use crate::components::misc::{Tick, Ticks};
 use crate::entries::Entry;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
-use crate::Engine;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -108,17 +108,17 @@ impl TimeSignature {
     }
 
     /// Get the number of ticks per the time signatures bar
-    pub fn ticks_per_bar(&self, subdivisions: &Ticks) -> Ticks {
+    pub fn ticks_per_bar(&self, subdivisions: Ticks) -> Ticks {
         self.ticks_per_beat(subdivisions) * self.beats as u32
     }
 
     /// Get the number of ticks per the time signatures beat type
-    pub fn ticks_per_beat(&self, subdivisions: &Ticks) -> Ticks {
+    pub fn ticks_per_beat(&self, subdivisions: Ticks) -> Ticks {
         self.beat_type.to_ticks(subdivisions)
     }
 
     /// Returns how far away the tick is from the nearest barline
-    pub fn distance_from_barline(&self, tick: &Tick, subdivisions: &Ticks) -> Ticks {
+    pub fn distance_from_barline(&self, tick: Tick, subdivisions: Ticks) -> Ticks {
         match self.kind() {
             TimeSignatureType::Open => tick - self.tick,
             _ => (tick - self.tick) % self.ticks_per_bar(subdivisions),
@@ -126,37 +126,37 @@ impl TimeSignature {
     }
 
     // Returns true if the tick is on a beat
-    pub fn is_on_beat(&self, tick: &Tick, subdivisions: &Ticks) -> bool {
+    pub fn is_on_beat(&self, tick: Tick, subdivisions: Ticks) -> bool {
         self.is_on_beat_type(tick, &self.beat_type, subdivisions)
     }
 
     /// Return true if a tick is on an arbitrary beat type
     pub fn is_on_beat_type(
         &self,
-        tick: &Tick,
+        tick: Tick,
         beat_type: &NoteDuration,
-        subdivisions: &Ticks,
+        subdivisions: Ticks,
     ) -> bool {
         let ticks_per_beat = beat_type.to_ticks(subdivisions);
         ((tick - self.tick) % ticks_per_beat) == 0
     }
 
-    pub fn is_on_first_beat(&self, tick: &Tick, subdivisions: &Ticks) -> bool {
+    pub fn is_on_first_beat(&self, tick: Tick, subdivisions: Ticks) -> bool {
         self.distance_from_barline(tick, subdivisions) == 0
     }
 
-    pub fn get_tick_at_beat(&self, start: &Tick, beat: &u8, subdivisions: &Ticks) -> Tick {
+    pub fn get_tick_at_beat(&self, start: Tick, beat: u8, subdivisions: Ticks) -> Tick {
         start + (((beat - 1) as Tick) * self.ticks_per_beat(subdivisions))
     }
 
     // Returns true is the tick is on a beat group boundry
-    pub fn is_on_grouping_boundry(&self, tick: &Tick, subdivisions: &Ticks) -> bool {
+    pub fn is_on_grouping_boundry(&self, tick: Tick, subdivisions: Ticks) -> bool {
         match self.kind() {
             TimeSignatureType::Open => false,
             _ => {
                 let start = tick - self.distance_from_barline(tick, subdivisions);
-                for boundry in self.groupings_to_ticks(&start, subdivisions) {
-                    if boundry == *tick {
+                for boundry in self.groupings_to_ticks(start, subdivisions) {
+                    if boundry == tick {
                         return true;
                     } else {
                         continue;
@@ -167,10 +167,10 @@ impl TimeSignature {
         }
     }
 
-    pub fn groupings_to_ticks(&self, start: &Tick, subdivisions: &Ticks) -> Vec<Tick> {
-        let mut output = vec![*start];
+    pub fn groupings_to_ticks(&self, start: Tick, subdivisions: Ticks) -> Vec<Tick> {
+        let mut output = vec![start];
 
-        let mut acc = *start;
+        let mut acc = start;
         for group in &self.groupings {
             acc += *group as u32 * self.ticks_per_beat(subdivisions);
             output.push(acc);
@@ -179,7 +179,7 @@ impl TimeSignature {
         output
     }
 
-    pub fn metrics(&self, subdivisions: &Ticks) -> BoundingBox {
+    pub fn metrics(&self, subdivisions: Ticks) -> BoundingBox {
         if self.draw_type == TimeSignatureDrawType::Hidden {
             return BoundingBox {
                 width: 0.0,
@@ -221,13 +221,14 @@ impl Engine {
         let master = self.score.tracks.get_mut(&flow.master).unwrap();
 
         // remove old time signative if defined
-        if let Some(old) = master.get_time_signature_at_tick(&tick) {
-            master.remove(&old.key);
+        if let Some(time_signature) = master.get_time_signature_at_tick(&tick) {
+            let key = time_signature.key.clone();
+            master.remove(&key);
         };
-
+        
         // insert the new time signature
         let new = TimeSignature::new(tick, beats, beat_type, draw_type, groupings);
-        let ticks_per_bar = new.ticks_per_bar(&flow.subdivisions);
+        let ticks_per_bar = new.ticks_per_bar(flow.subdivisions);
         master.insert(Entry::TimeSignature(new));
 
         // calculate diff
@@ -241,11 +242,13 @@ impl Engine {
 
         if fill > 0 {
             flow.length += fill;
-
-            for i in tick + 1..flow.length {
-                if let Some(old) = master.get_time_signature_at_tick(&i) {
-                    master.shift(&old.key, old.tick + fill);
+            for tick in tick + 1..flow.length {
+                if let Some(time_signature) = master.get_time_signature_at_tick(&tick) {
+                    let key = time_signature.key.clone();
+                    let tick = time_signature.tick + fill;
+                    master.shift(&key, tick);
                 };
+                
             }
         }
 
@@ -255,7 +258,7 @@ impl Engine {
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_time_signature_at_tick(&self, at: &Tick) -> Option<TimeSignature> {
+    pub fn get_time_signature_at_tick(&self, at: &Tick) -> Option<&TimeSignature> {
         let entry_keys = match self.entries.by_tick.get(at) {
             Some(entries) => entries,
             None => return None,
@@ -263,7 +266,7 @@ impl Track {
 
         for key in entry_keys {
             if let Some(Entry::TimeSignature(time_signature)) = self.entries.by_key.get(key) {
-                return Some(time_signature.clone());
+                return Some(time_signature);
             }
         }
 
@@ -275,7 +278,7 @@ impl Track {
         &self,
         tick: Tick,
         length: Ticks,
-    ) -> Option<TimeSignature> {
+    ) -> Option<&TimeSignature> {
         for i in tick + 1..length {
             if let Some(time_signature) = self.get_time_signature_at_tick(&i) {
                 return Some(time_signature);

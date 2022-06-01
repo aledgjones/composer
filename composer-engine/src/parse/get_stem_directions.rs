@@ -202,7 +202,7 @@ mod tests {
         let mut track = NotationTrack::new(tones.len() as Ticks);
         for (tick, (key, offset)) in tones.iter().enumerate() {
             track.insert(
-                &(tick as Tick),
+                (tick as Tick),
                 Notation {
                     tick: 0,
                     tones: vec![Tone::new(

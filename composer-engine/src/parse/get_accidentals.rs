@@ -162,7 +162,7 @@ pub fn get_accidentals_in_track(
 ) -> Accidentals {
     let mut output = Accidentals::new();
 
-    let mut key_signature: KeySignature = KeySignature::new(0, KeySignatureMode::Major, 0);
+    let mut key_signature = &KeySignature::new(0, KeySignatureMode::Major, 0);
     let mut altered_pitches: FxHashSet<Pitch> = FxHashSet::default();
     let mut previous_tones: FxHashSet<String> = FxHashSet::default();
 

@@ -82,7 +82,8 @@ impl Engine {
 
         // remove old time signative if defined
         if let Some(old) = master.get_barline_at_tick(&tick) {
-            master.remove(&old.key);
+            let key = old.key.clone();
+            master.remove(&key);
         };
 
         // insert the new time signature
@@ -95,7 +96,7 @@ impl Engine {
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_barline_at_tick(&self, at: &Tick) -> Option<Barline> {
+    pub fn get_barline_at_tick(&self, at: &Tick) -> Option<&Barline> {
         let entry_keys = match self.entries.by_tick.get(at) {
             Some(entries) => entries,
             None => return None,
@@ -103,7 +104,7 @@ impl Track {
 
         for key in entry_keys {
             if let Some(Entry::Barline(barline)) = self.entries.by_key.get(key) {
-                return Some(barline.clone());
+                return Some(barline);
             }
         }
 

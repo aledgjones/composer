@@ -7,8 +7,8 @@ use crate::score::instruments::Instrument;
 
 pub fn draw_names(
     instruments: &[&Instrument],
-    x: &Space,
-    y: &Space,
+    x: Space,
+    y: Space,
     vertical_spacing: &VerticalSpacing,
     engrave: &Engrave,
     converter: &Converter,
@@ -20,11 +20,11 @@ pub fn draw_names(
 
         instructions.push(Instruction::Text {
             x: converter.spaces_to_px(x),
-            y: converter.spaces_to_px(&top),
+            y: converter.spaces_to_px(top),
             value: instrument.name(),
             color: String::from("#000"),
             font: engrave.instrument_name.font.clone(),
-            size: converter.spaces_to_px(&engrave.instrument_name.size),
+            size: converter.spaces_to_px(engrave.instrument_name.size),
             justify: engrave.instrument_name.justify.as_string(),
             align: engrave.instrument_name.align.as_string(),
         });

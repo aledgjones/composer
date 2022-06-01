@@ -1,4 +1,3 @@
-use super::get_dots::{Dots, DotsByTrack};
 use super::get_shunts::{Shunt, Shunts, ShuntsByTrack};
 use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_tone_offsets::ToneVerticalOffsets;
@@ -43,14 +42,14 @@ pub fn get_tie_directions(
 }
 
 fn tie_points_y(
-    y: &f32,
+    y: Space,
     start: &Notation,
     tie_direction: &Direction,
-    width: &Space,
-    offset: &i8,
+    width: Space,
+    offset: i8,
 ) -> [f32; 3] {
     let is_on_line = offset % 2 == 0;
-    let is_wide = *width > 10.0;
+    let is_wide = width > 10.0;
     let direction_modifier = tie_direction.to_modifier() as f32 * -1.0;
 
     let (ends_tweak, middle_tweak) = match start.is_chord() {
@@ -78,7 +77,7 @@ fn tie_points_y(
         }
     };
 
-    let ends = y + (*offset as f32 / 2.0) - ends_tweak;
+    let ends = y + (offset as f32 / 2.0) - ends_tweak;
     let middle = ends - middle_tweak;
 
     [ends, middle, ends]
@@ -88,10 +87,9 @@ fn start_x(
     start: &Notation,
     horizontal_spacing: &HorizontalSpacing,
     shunts: &Shunts,
-    dots: &Dots,
     tie_direction: &Direction,
     stem_direction: &Direction,
-    offset: &i8,
+    offset: i8,
 ) -> f32 {
     let x = horizontal_spacing
         .get(&start.tick, &Position::NoteSpacing)
@@ -102,7 +100,7 @@ fn start_x(
     let after_note = x + start.notehead_width() + 0.2;
     let after_post = x + (start.notehead_width() * 2.0) + 0.2;
 
-    let shunt = shunts.by_offset.get(&(start.tick, *offset)).unwrap();
+    let shunt = shunts.by_offset.get(&(start.tick, offset)).unwrap();
     let next_shunt = shunts
         .by_offset
         .get(&(start.tick, offset + tie_direction.to_modifier()));
@@ -133,7 +131,7 @@ fn stop_x(
     shunts: &Shunts,
     tie_direction: &Direction,
     stem_direction: &Direction,
-    offset: &i8,
+    offset: i8,
 ) -> f32 {
     let x = horizontal_spacing
         .get(&stop.tick, &Position::NoteSpacing)
@@ -144,7 +142,7 @@ fn stop_x(
     let before_note = x - 0.2;
     let before_post = x + stop.notehead_width() - STAVE_LINE_WIDTH - 0.2;
 
-    let shunt = shunts.by_offset.get(&(stop.tick, *offset)).unwrap();
+    let shunt = shunts.by_offset.get(&(stop.tick, offset)).unwrap();
     let next_shunt = shunts
         .by_offset
         .get(&(stop.tick, offset + tie_direction.to_modifier()));
@@ -170,15 +168,14 @@ fn stop_x(
 }
 
 fn tie_points_x(
-    x: &f32,
+    x: Space,
     start: &Notation,
     stop: &Notation,
     horizontal_spacing: &HorizontalSpacing,
     shunts: &Shunts,
-    dots: &Dots,
     tie_direction: &Direction,
     stem_direction: &Direction,
-    offset: &i8,
+    offset: i8,
 ) -> [f32; 3] {
     let (start_x, stop_x) = match start.is_chord() {
         true => (
@@ -186,7 +183,6 @@ fn tie_points_x(
                 start,
                 horizontal_spacing,
                 shunts,
-                dots,
                 tie_direction,
                 stem_direction,
                 offset,
@@ -227,8 +223,8 @@ fn tie_points_x(
 }
 
 pub fn draw_tie(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     tone_key: &String,
     start: &Notation,
     stop: &Notation,
@@ -237,11 +233,10 @@ pub fn draw_tie(
     horizontal_spacing: &HorizontalSpacing,
     shunts: &Shunts,
     tone_offsets: &ToneVerticalOffsets,
-    dots: &Dots,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
-    let offset = tone_offsets.get(tone_key).unwrap();
+    let offset = *tone_offsets.get(tone_key).unwrap();
 
     let [start_x, middle_x, stop_x] = tie_points_x(
         x,
@@ -249,39 +244,38 @@ pub fn draw_tie(
         stop,
         horizontal_spacing,
         shunts,
-        dots,
         tie_direction,
         stem_direction,
         offset,
     );
     let [start_y, middle_y, stop_y] =
-        tie_points_y(y, start, tie_direction, &(stop_x - start_x), offset);
+        tie_points_y(y, start, tie_direction, stop_x - start_x, offset);
 
     instructions.push(Instruction::Curve {
         color: String::from("#000"),
         points: [
             CurvePoint {
-                x: converter.spaces_to_px(&start_x),
-                y: converter.spaces_to_px(&start_y),
-                thickness: converter.spaces_to_px(&0.125),
+                x: converter.spaces_to_px(start_x),
+                y: converter.spaces_to_px(start_y),
+                thickness: converter.spaces_to_px(0.125),
             },
             CurvePoint {
-                x: converter.spaces_to_px(&middle_x),
-                y: converter.spaces_to_px(&middle_y),
-                thickness: converter.spaces_to_px(&0.2),
+                x: converter.spaces_to_px(middle_x),
+                y: converter.spaces_to_px(middle_y),
+                thickness: converter.spaces_to_px(0.2),
             },
             CurvePoint {
-                x: converter.spaces_to_px(&stop_x),
-                y: converter.spaces_to_px(&stop_y),
-                thickness: converter.spaces_to_px(&0.125),
+                x: converter.spaces_to_px(stop_x),
+                y: converter.spaces_to_px(stop_y),
+                thickness: converter.spaces_to_px(0.125),
             },
         ],
     })
 }
 
 pub fn draw_ties(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     staves: &[&Stave],
     notation_by_track: &NotationByTrack,
     stem_directions_by_track: &StemDirectionsByTrack,
@@ -289,7 +283,6 @@ pub fn draw_ties(
     horizontal_spacing: &HorizontalSpacing,
     shunts_by_track: &ShuntsByTrack,
     tone_offsets: &ToneVerticalOffsets,
-    dots_by_track: &DotsByTrack,
     converter: &Converter,
     instructions: &mut Vec<Instruction>,
 ) {
@@ -298,7 +291,6 @@ pub fn draw_ties(
 
         for track_key in &stave.tracks {
             let notation = notation_by_track.get(track_key).unwrap();
-            let dots = dots_by_track.get(track_key).unwrap();
             let stem_directions = stem_directions_by_track.get(track_key).unwrap();
             let shunts = shunts_by_track.get(track_key).unwrap();
 
@@ -310,16 +302,15 @@ pub fn draw_ties(
                     for (tone_key, tie_direction) in tie_directions {
                         draw_tie(
                             x,
-                            &top,
+                            top,
                             &tone_key,
                             entry,
                             notation.track.get(&(tick + entry.duration)).unwrap(),
                             &tie_direction,
-                            &stem_direction,
+                            stem_direction,
                             horizontal_spacing,
                             shunts,
                             tone_offsets,
-                            dots,
                             converter,
                             instructions,
                         )

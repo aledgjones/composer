@@ -33,7 +33,7 @@ pub fn get_barlines(flow: &Flow, tracks: &Tracks) -> Barlines {
     let mut output: Barlines = FxHashMap::default();
 
     let master = tracks.get(&flow.master).unwrap();
-    let mut time_signature = TimeSignature::default();
+    let mut time_signature = &TimeSignature::default();
 
     for tick in 0..flow.length {
         // these aren't context aware...
@@ -79,7 +79,7 @@ pub fn get_barlines(flow: &Flow, tracks: &Tracks) -> Barlines {
                     _ => {
                         output.insert(
                             tick,
-                            BarlineDrawDef::new(false, false, Some(barline.barline_type)),
+                            BarlineDrawDef::new(false, false, Some(barline.barline_type.clone())),
                         );
                     }
                 }
@@ -89,7 +89,7 @@ pub fn get_barlines(flow: &Flow, tracks: &Tracks) -> Barlines {
                     if key_signature.is_some() {
                         // key signatures take double barlines
                         def.draw_type = Some(BarlineDrawType::Double);
-                    } else if time_signature.is_on_first_beat(&tick, &flow.subdivisions) {
+                    } else if time_signature.is_on_first_beat(tick, flow.subdivisions) {
                         // this is just your standard barline
                         def.draw_type = Some(BarlineDrawType::Single);
                     }

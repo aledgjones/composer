@@ -5,13 +5,13 @@ use super::get_written_durations::NotationByTrack;
 use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::text::{Align, Justify};
-use crate::components::units::Converter;
+use crate::components::units::{Converter, Space};
 use crate::score::flows::Flow;
 use crate::score::stave::{Stave, STAVE_LINE_WIDTH};
 
 pub fn draw_flags(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     flow: &Flow,
     staves: &[&Stave],
     notation_by_track: &NotationByTrack,
@@ -33,9 +33,9 @@ pub fn draw_flags(
             let beams = beams_by_track.get(track_key).unwrap();
 
             for (tick, entry) in &notation.track {
-                if entry.is_flagged(beams, &flow.subdivisions) {
+                if entry.is_flagged(beams, flow.subdivisions) {
                     let stem_direction = stem_directions.get(tick).unwrap();
-                    let glyph = entry.flag_glyph(stem_direction, &flow.subdivisions);
+                    let glyph = entry.flag_glyph(stem_direction, flow.subdivisions);
 
                     // TODO extend stem by amount of 'beams'
                     // let stem_length_modifier = stem_direction.to_modifier();
@@ -45,12 +45,12 @@ pub fn draw_flags(
                     let top = top + tail.y;
 
                     instructions.push(Instruction::Text {
-                        x: converter.spaces_to_px(&left),
-                        y: converter.spaces_to_px(&top),
+                        x: converter.spaces_to_px(left),
+                        y: converter.spaces_to_px(top),
                         value: glyph,
                         color: String::from("#000"),
                         font: String::from("Bravura"),
-                        size: converter.spaces_to_px(&4.0),
+                        size: converter.spaces_to_px(4.0),
                         justify: Justify::Start.as_string(),
                         align: Align::Middle.as_string(),
                     })

@@ -6,7 +6,7 @@ use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::measurements::Point;
 use crate::components::misc::Tick;
-use crate::components::units::Converter;
+use crate::components::units::{Converter, Space};
 use crate::score::stave::Stave;
 use crate::score::stave::STAVE_LINE_WIDTH;
 
@@ -14,8 +14,8 @@ fn draw_lines<T: Iterator<Item = i8>>(
     entry: &Notation,
     range: T,
     tick: &Tick,
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     horizontal_spacing: &HorizontalSpacing,
     shunts: &Shunts,
     converter: &Converter,
@@ -61,15 +61,15 @@ fn draw_lines<T: Iterator<Item = i8>>(
 
             instructions.push(Instruction::Line {
                 color: String::from("#000"),
-                width: converter.spaces_to_px(&(STAVE_LINE_WIDTH * 1.5)),
+                width: converter.spaces_to_px(STAVE_LINE_WIDTH * 1.5),
                 points: vec![
                     Point {
-                        x: converter.spaces_to_px(&start),
-                        y: converter.spaces_to_px(&y),
+                        x: converter.spaces_to_px(start),
+                        y: converter.spaces_to_px(y),
                     },
                     Point {
-                        x: converter.spaces_to_px(&stop),
-                        y: converter.spaces_to_px(&y),
+                        x: converter.spaces_to_px(stop),
+                        y: converter.spaces_to_px(y),
                     },
                 ],
             });
@@ -79,8 +79,8 @@ fn draw_lines<T: Iterator<Item = i8>>(
 
 fn draw_ledger_line(
     tick: &Tick,
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     entry: &Notation,
     horizontal_spacing: &HorizontalSpacing,
     tone_offsets: &ToneVerticalOffsets,
@@ -121,8 +121,8 @@ fn draw_ledger_line(
 }
 
 pub fn draw_ledger_lines(
-    x: &f32,
-    y: &f32,
+    x: Space,
+    y: Space,
     staves: &[&Stave],
     notation_by_track: &NotationByTrack,
     horizontal_spacing: &HorizontalSpacing,
@@ -145,7 +145,7 @@ pub fn draw_ledger_lines(
                     draw_ledger_line(
                         tick,
                         x,
-                        &top,
+                        top,
                         entry,
                         horizontal_spacing,
                         tone_offsets,

@@ -1,6 +1,5 @@
 use super::get_barlines::Barlines;
 use super::get_beams::BeamsByTrack;
-use super::get_stem_directions::StemDirectionsByTrack;
 use super::get_written_durations::NotationByTrack;
 use super::{get_accidentals::AccidentalsByTrack, get_shunts::ShuntsByTrack};
 use crate::components::measurements::BoundingBox;
@@ -110,7 +109,6 @@ pub fn measure_horizontal_spacing(
     notations_by_track: &NotationByTrack,
     shunts_by_track: &ShuntsByTrack,
     beams_by_track: &BeamsByTrack,
-    stem_directions_by_track: &StemDirectionsByTrack,
     accidentals_by_track: &AccidentalsByTrack,
     engrave: &Engrave,
 ) -> HorizontalSpacing {
@@ -175,7 +173,7 @@ pub fn measure_horizontal_spacing(
 
         // TIME SIGNATURE
         if let Some(time) = flow_master.get_time_signature_at_tick(&tick) {
-            let metrics = time.metrics(&flow.subdivisions);
+            let metrics = time.metrics(flow.subdivisions);
             widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
         };
 
@@ -199,11 +197,9 @@ pub fn measure_horizontal_spacing(
 
                     let accidentals = accidentals_by_track.get(track_key).unwrap();
                     let beams = beams_by_track.get(track_key).unwrap();
-                    let stem_directions = stem_directions_by_track.get(track_key).unwrap();
-                    let stem_direction = stem_directions.get(&tick);
 
                     let mut spacing = entry
-                        .metrics(shunts, &flow.subdivisions, engrave, beams, &stem_direction)
+                        .metrics(shunts, flow.subdivisions, engrave, beams)
                         .padding
                         .right;
 
@@ -218,7 +214,7 @@ pub fn measure_horizontal_spacing(
                     // extend spacing to accomodate accidentals + pre shunts (if needed)
                     if let Some((next_tick, next_entry)) = notation.get_next_notation(&tick) {
                         if !barlines.contains_key(&next_tick) {
-                            let min = entry.min_spacing(shunts, &flow.subdivisions, engrave, beams);
+                            let min = entry.min_spacing(shunts, flow.subdivisions, engrave, beams);
 
                             let pre_shunt = match next_entry.has_pre_shunt(shunts) {
                                 true => next_entry.notehead_width(),

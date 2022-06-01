@@ -13,8 +13,8 @@ use crate::score::stave::STAVE_LINE_WIDTH;
 const TWEEK_FOR_WING: f32 = 0.3125;
 
 pub fn draw_brackets(
-    x: &Space,
-    y: &Space,
+    x: Space,
+    y: Space,
     vertical_spans: &VerticalSpans,
     vertical_spacing: &VerticalSpacing,
     engrave: &Engrave,
@@ -40,15 +40,15 @@ pub fn draw_brackets(
                 // thick line
                 instructions.push(Instruction::Line {
                     color: String::from("#000"),
-                    width: converter.spaces_to_px(&0.5),
+                    width: converter.spaces_to_px(0.5),
                     points: vec![
                         Point {
-                            x: converter.spaces_to_px(&(x - 0.75)),
-                            y: converter.spaces_to_px(&(top - tweek_for_stave_line)),
+                            x: converter.spaces_to_px(x - 0.75),
+                            y: converter.spaces_to_px(top - tweek_for_stave_line),
                         },
                         Point {
-                            x: converter.spaces_to_px(&(x - 0.75)),
-                            y: converter.spaces_to_px(&(bottom + tweek_for_stave_line)),
+                            x: converter.spaces_to_px(x - 0.75),
+                            y: converter.spaces_to_px(bottom + tweek_for_stave_line),
                         },
                     ],
                 });
@@ -57,44 +57,44 @@ pub fn draw_brackets(
                 // think line
                 instructions.push(Instruction::Line {
                     color: String::from("#000"),
-                    width: converter.spaces_to_px(&0.5),
+                    width: converter.spaces_to_px(0.5),
                     points: vec![
                         Point {
-                            x: converter.spaces_to_px(&(x - 0.75)),
-                            y: converter.spaces_to_px(&(top - tweek_for_stave_line)),
+                            x: converter.spaces_to_px(x - 0.75),
+                            y: converter.spaces_to_px(top - tweek_for_stave_line),
                         },
                         Point {
-                            x: converter.spaces_to_px(&(x - 0.75)),
-                            y: converter.spaces_to_px(&(bottom + tweek_for_stave_line)),
+                            x: converter.spaces_to_px(x - 0.75),
+                            y: converter.spaces_to_px(bottom + tweek_for_stave_line),
                         },
                     ],
                 });
                 // thin lines
                 instructions.push(Instruction::Line {
                     color: String::from("#000"),
-                    width: converter.spaces_to_px(&0.125),
+                    width: converter.spaces_to_px(0.125),
                     points: vec![
                         Point {
-                            x: converter.spaces_to_px(&(x - 1.0)),
-                            y: converter.spaces_to_px(&top),
+                            x: converter.spaces_to_px(x - 1.0),
+                            y: converter.spaces_to_px(top),
                         },
                         Point {
                             x: converter.spaces_to_px(x),
-                            y: converter.spaces_to_px(&top),
+                            y: converter.spaces_to_px(top),
                         },
                     ],
                 });
                 instructions.push(Instruction::Line {
                     color: String::from("#000"),
-                    width: converter.spaces_to_px(&0.125),
+                    width: converter.spaces_to_px(0.125),
                     points: vec![
                         Point {
-                            x: converter.spaces_to_px(&(x - 1.0)),
-                            y: converter.spaces_to_px(&bottom),
+                            x: converter.spaces_to_px(x - 1.0),
+                            y: converter.spaces_to_px(bottom),
                         },
                         Point {
                             x: converter.spaces_to_px(x),
-                            y: converter.spaces_to_px(&bottom),
+                            y: converter.spaces_to_px(bottom),
                         },
                     ],
                 });
@@ -103,36 +103,36 @@ pub fn draw_brackets(
                 // think line
                 instructions.push(Instruction::Line {
                     color: String::from("#000"),
-                    width: converter.spaces_to_px(&0.5),
+                    width: converter.spaces_to_px(0.5),
                     points: vec![
                         Point {
-                            x: converter.spaces_to_px(&(x - 0.75)),
-                            y: converter.spaces_to_px(&(top - TWEEK_FOR_WING)),
+                            x: converter.spaces_to_px(x - 0.75),
+                            y: converter.spaces_to_px(top - TWEEK_FOR_WING),
                         },
                         Point {
-                            x: converter.spaces_to_px(&(x - 0.75)),
-                            y: converter.spaces_to_px(&(bottom + TWEEK_FOR_WING)),
+                            x: converter.spaces_to_px(x - 0.75),
+                            y: converter.spaces_to_px(bottom + TWEEK_FOR_WING),
                         },
                     ],
                 });
                 // wings
                 instructions.push(Instruction::Text {
-                    x: converter.spaces_to_px(&(x - 1.0)),
-                    y: converter.spaces_to_px(&(top - TWEEK_FOR_WING)),
+                    x: converter.spaces_to_px(x - 1.0),
+                    y: converter.spaces_to_px(top - TWEEK_FOR_WING),
                     value: String::from("\u{E003}"),
                     color: String::from("#000"),
                     font: String::from("Bravura"),
-                    size: converter.spaces_to_px(&4.0),
+                    size: converter.spaces_to_px(4.0),
                     justify: Justify::Start.as_string(),
                     align: Align::Middle.as_string(),
                 });
                 instructions.push(Instruction::Text {
-                    x: converter.spaces_to_px(&(x - 1.0)),
-                    y: converter.spaces_to_px(&(bottom + TWEEK_FOR_WING)),
+                    x: converter.spaces_to_px(x - 1.0),
+                    y: converter.spaces_to_px(bottom + TWEEK_FOR_WING),
                     value: String::from("\u{E004}"),
                     color: String::from("#000"),
                     font: String::from("Bravura"),
-                    size: converter.spaces_to_px(&4.0),
+                    size: converter.spaces_to_px(4.0),
                     justify: Justify::Start.as_string(),
                     align: Align::Middle.as_string(),
                 });

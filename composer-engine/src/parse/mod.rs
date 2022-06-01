@@ -116,10 +116,10 @@ impl Engine {
         let engrave = self.get_engrave_by_type(LayoutType::Score).unwrap();
         let converter = Converter::new(px_per_mm as f32, engrave.space);
 
-        let padding_top: Space = converter.mm_to_spaces(&engrave.frame_padding.top);
-        let padding_bottom: Space = converter.mm_to_spaces(&engrave.frame_padding.bottom);
-        let padding_left: Space = converter.mm_to_spaces(&engrave.frame_padding.left);
-        let padding_right: Space = converter.mm_to_spaces(&engrave.frame_padding.right);
+        let padding_top: Space = converter.mm_to_spaces(engrave.frame_padding.top);
+        let padding_bottom: Space = converter.mm_to_spaces(engrave.frame_padding.bottom);
+        let padding_left: Space = converter.mm_to_spaces(engrave.frame_padding.left);
+        let padding_right: Space = converter.mm_to_spaces(engrave.frame_padding.right);
         let instrument_name_gap: Space = engrave.instrument_name.padding.right;
 
         let (flow, instruments, staves, tracks) = self.get_flow_instruments(flow_key);
@@ -134,7 +134,7 @@ impl Engine {
 
         let notations = get_written_durations(flow, &tracks, &bars);
 
-        let beams = get_beams(&notations, &bars, &flow.subdivisions);
+        let beams = get_beams(&notations, &bars, flow.subdivisions);
         let stem_directions = get_stem_directions(&notations, &tone_offsets, &beams);
         let shunts = get_note_shunts(&notations, &tone_offsets, &stem_directions);
         let dots = get_dots(flow, &notations, &tone_offsets);
@@ -149,7 +149,6 @@ impl Engine {
             &notations,
             &shunts,
             &beams,
-            &stem_directions,
             &accidentals,
             engrave,
         );
@@ -173,24 +172,24 @@ impl Engine {
 
         draw_names(
             &instruments,
-            &(padding_left + name_widths),
-            &padding_top,
+            padding_left + name_widths,
+            padding_top,
             &vertical_spacing,
             engrave,
             &converter,
             &mut instructions,
         );
         draw_braces(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &vertical_spans,
             &vertical_spacing,
             &converter,
             &mut instructions,
         );
         draw_brackets(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &vertical_spans,
             &vertical_spacing,
             engrave,
@@ -198,16 +197,16 @@ impl Engine {
             &mut instructions,
         );
         draw_sub_brackets(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &vertical_spans,
             &vertical_spacing,
             &converter,
             &mut instructions,
         );
         draw_systemic_barline(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &staves,
             &vertical_spacing,
             &converter,
@@ -216,16 +215,16 @@ impl Engine {
         );
         draw_staves(
             &staves,
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
-            &horizontal_spacing.width,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
+            horizontal_spacing.width,
             &vertical_spacing,
             &converter,
             &mut instructions,
         );
         draw_barlines(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &barlines,
             &staves,
             &vertical_spacing,
@@ -236,8 +235,8 @@ impl Engine {
         );
 
         draw_key_signatures(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             flow,
             &staves,
             &self.score.tracks,
@@ -247,8 +246,8 @@ impl Engine {
             &mut instructions,
         );
         draw_time_signatures(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             flow,
             &staves,
             &self.score.tracks,
@@ -258,8 +257,8 @@ impl Engine {
             &mut instructions,
         );
         draw_clefs(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             flow,
             &staves,
             &self.score.tracks,
@@ -270,8 +269,8 @@ impl Engine {
         );
 
         draw_rests(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             flow,
             &staves,
             &notations,
@@ -283,8 +282,8 @@ impl Engine {
         );
 
         draw_accidentals(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &staves,
             &notations,
             &horizontal_spacing,
@@ -296,8 +295,8 @@ impl Engine {
             &mut instructions,
         );
         draw_ledger_lines(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &staves,
             &notations,
             &horizontal_spacing,
@@ -308,8 +307,8 @@ impl Engine {
             &mut instructions,
         );
         draw_noteheads(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             flow,
             &staves,
             &notations,
@@ -321,8 +320,8 @@ impl Engine {
             &mut instructions,
         );
         draw_dots(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &staves,
             &notations,
             &vertical_spacing,
@@ -333,8 +332,8 @@ impl Engine {
             &mut instructions,
         );
         draw_stems(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &staves,
             &vertical_spacing,
             &stem_lengths,
@@ -342,8 +341,8 @@ impl Engine {
             &mut instructions,
         );
         draw_flags(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             flow,
             &staves,
             &notations,
@@ -355,8 +354,8 @@ impl Engine {
             &mut instructions,
         );
         draw_beams(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &staves,
             &vertical_spacing,
             &stem_lengths,
@@ -365,8 +364,8 @@ impl Engine {
             &mut instructions,
         );
         draw_ties(
-            &(padding_left + name_widths + instrument_name_gap + bracket_widths),
-            &padding_top,
+            padding_left + name_widths + instrument_name_gap + bracket_widths,
+            padding_top,
             &staves,
             &notations,
             &stem_directions,
@@ -374,13 +373,12 @@ impl Engine {
             &horizontal_spacing,
             &shunts,
             &tone_offsets,
-            &dots,
             &converter,
             &mut instructions,
         );
 
-        let width = converter.spaces_to_px(&width);
-        let height = converter.spaces_to_px(&height);
+        let width = converter.spaces_to_px(width);
+        let height = converter.spaces_to_px(height);
 
         JsValue::from_serde(&(width, height, instructions)).unwrap()
     }

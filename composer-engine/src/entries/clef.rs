@@ -66,7 +66,7 @@ impl Clef {
 
 impl Track {
     /// Returns the time signature entry at a given tick if it exists
-    pub fn get_clef_at_tick(&self, tick: &Tick) -> Option<Clef> {
+    pub fn get_clef_at_tick(&self, tick: &Tick) -> Option<&Clef> {
         let entry_keys = match self.entries.by_tick.get(tick) {
             Some(entries) => entries,
             None => return None,
@@ -74,24 +74,7 @@ impl Track {
 
         for key in entry_keys {
             if let Some(Entry::Clef(clef)) = self.entries.by_key.get(key) {
-                return Some(clef.clone());
-            }
-        }
-
-        None
-    }
-
-    pub fn get_previous_clef_from_tick(&self, from: &Tick) -> Option<Clef> {
-        for tick in (0..*from + 1).rev() {
-            let entry_keys = match self.entries.by_tick.get(&tick) {
-                Some(entries) => entries,
-                None => continue,
-            };
-
-            for key in entry_keys {
-                if let Some(Entry::Clef(clef)) = self.entries.by_key.get(key) {
-                    return Some(clef.clone());
-                }
+                return Some(clef);
             }
         }
 

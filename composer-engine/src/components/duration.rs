@@ -28,12 +28,12 @@ pub enum NoteDuration {
 
 impl NoteDuration {
     /// convert ticks to NoteDuration. this may fail so wrap in option
-    pub fn from_ticks(ticks: &Ticks, subdivisions: &Ticks) -> Option<NoteDuration> {
-        if *ticks == subdivisions * 4 {
+    pub fn from_ticks(ticks: Ticks, subdivisions: Ticks) -> Option<NoteDuration> {
+        if ticks == subdivisions * 4 {
             return Some(NoteDuration::Whole);
         }
 
-        if *ticks == subdivisions * 2 {
+        if ticks == subdivisions * 2 {
             return Some(NoteDuration::Half);
         }
 
@@ -41,34 +41,34 @@ impl NoteDuration {
             return Some(NoteDuration::Quarter);
         }
 
-        if *ticks == subdivisions / 2 {
+        if ticks == subdivisions / 2 {
             return Some(NoteDuration::Eighth);
         }
 
-        if *ticks == subdivisions / 4 {
+        if ticks == subdivisions / 4 {
             return Some(NoteDuration::Sixteenth);
         }
 
-        if *ticks == subdivisions / 8 {
+        if ticks == subdivisions / 8 {
             return Some(NoteDuration::ThirtySecond);
         }
 
-        if *ticks == subdivisions / 16 {
+        if ticks == subdivisions / 16 {
             return Some(NoteDuration::SixtyFourth);
         }
 
-        if *ticks == subdivisions / 32 {
+        if ticks == subdivisions / 32 {
             return Some(NoteDuration::HudredTwentyEighth);
         }
 
         None
     }
 
-    pub fn to_ticks(&self, subdivisions: &Ticks) -> Ticks {
+    pub fn to_ticks(&self, subdivisions: Ticks) -> Ticks {
         match self {
             NoteDuration::Whole => subdivisions * 4,
             NoteDuration::Half => subdivisions * 2,
-            NoteDuration::Quarter => *subdivisions,
+            NoteDuration::Quarter => subdivisions,
             NoteDuration::Eighth => subdivisions / 2,
             NoteDuration::Sixteenth => subdivisions / 4,
             NoteDuration::ThirtySecond => subdivisions / 8,
@@ -155,7 +155,7 @@ impl NoteDuration {
     }
 }
 
-pub fn is_writable(duration: &Ticks, subdivisions: &Ticks) -> bool {
+pub fn is_writable(duration: &Ticks, subdivisions: Ticks) -> bool {
     for option in NOTE_DURATIONS {
         if *duration == option.to_ticks(subdivisions) {
             return true;

@@ -37,8 +37,8 @@ enum EighthType {
 fn is_pattern(
     pattern: &[EighthType],
     notation: &NotationTrack,
-    start: &Tick,
-    subdivisions: &Ticks,
+    start: Tick,
+    subdivisions: Ticks,
 ) -> bool {
     let eighth = NoteDuration::Eighth.to_ticks(subdivisions);
 
@@ -66,9 +66,9 @@ fn is_pattern(
 fn grouping_is_beamable(
     beats: u8,
     notation: &NotationTrack,
-    start: &Tick,
-    stop: &Tick,
-    subdivisions: &Ticks,
+    start: Tick,
+    stop: Tick,
+    subdivisions: Ticks,
 ) -> bool {
     // beat specific patterns
     if let 4 = beats {
@@ -96,7 +96,7 @@ fn grouping_is_beamable(
     }
 
     let sixteenth = NoteDuration::Sixteenth.to_ticks(subdivisions);
-    for tick in *start..*stop {
+    for tick in start..stop {
         if let Some(entry) = notation.track.get(&tick) {
             // TODO: make this more sophisticated, -eee | eee- can be beamed -ee- cannot, for example
             // for now just bail out if there are rests
@@ -123,19 +123,19 @@ fn assign_span(spans: &mut Beams, span: Span) -> Span {
 pub fn get_beams_in_track(
     notation: &NotationTrack,
     barlines: &Bars,
-    subdivisions: &Ticks,
+    subdivisions: Ticks,
 ) -> Beams {
     let mut output: Beams = Vec::new();
 
     let mut current_span: Span = Vec::new();
     let mut time_signature = &TimeSignature::default();
-    let mut boundries = time_signature.groupings_to_ticks(&0, subdivisions);
+    let mut boundries = time_signature.groupings_to_ticks(0, subdivisions);
     let mut break_at_beats = false;
 
     for tick in 0..notation.length {
         if let Some(entry) = barlines.get(&tick) {
             time_signature = entry;
-            boundries = time_signature.groupings_to_ticks(&tick, subdivisions);
+            boundries = time_signature.groupings_to_ticks(tick, subdivisions);
         }
 
         if boundries.contains(&tick) {
@@ -145,7 +145,7 @@ pub fn get_beams_in_track(
                 NoteDuration::Quarter => {
                     let i = boundries.iter().position(|entry| entry == &tick).unwrap();
                     let stop = boundries.get(i + 1).unwrap();
-                    !grouping_is_beamable(time_signature.beats, notation, &tick, stop, subdivisions)
+                    !grouping_is_beamable(time_signature.beats, notation, tick, *stop, subdivisions)
                 }
                 // larger beats break, smaller don't
                 _ => {
@@ -155,7 +155,7 @@ pub fn get_beams_in_track(
             }
         }
 
-        if break_at_beats && time_signature.is_on_beat(&tick, subdivisions) {
+        if break_at_beats && time_signature.is_on_beat(tick, subdivisions) {
             current_span = assign_span(&mut output, current_span);
         }
 
@@ -173,7 +173,7 @@ pub fn get_beams_in_track(
     output
 }
 
-pub fn get_beams(tracks: &NotationByTrack, bars: &Bars, subdivisions: &Ticks) -> BeamsByTrack {
+pub fn get_beams(tracks: &NotationByTrack, bars: &Bars, subdivisions: Ticks) -> BeamsByTrack {
     let mut output: BeamsByTrack = FxHashMap::default();
 
     for (track_key, track) in tracks {
@@ -195,7 +195,7 @@ pub fn get_has_beam(tick: &Tick, beams: &Beams) -> bool {
 }
 
 impl Notation {
-    pub fn is_beamable(&self, subdivisions: &Ticks) -> bool {
+    pub fn is_beamable(&self, subdivisions:Ticks) -> bool {
         if self.is_rest() {
             false
         } else {

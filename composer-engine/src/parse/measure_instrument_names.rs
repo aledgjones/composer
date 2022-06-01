@@ -17,7 +17,7 @@ pub fn measure_instrument_names(
         let width = measure_text(
             measure,
             &text,
-            &engrave.instrument_name.size,
+            engrave.instrument_name.size,
             &engrave.instrument_name.font,
             converter,
         );
@@ -26,5 +26,5 @@ pub fn measure_instrument_names(
         }
     }
 
-    converter.px_to_spaces(&max)
+    converter.px_to_spaces(max)
 }

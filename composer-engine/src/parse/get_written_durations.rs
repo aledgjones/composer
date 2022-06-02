@@ -153,7 +153,7 @@ impl Notation {
 
     pub fn has_pre_shunt(&self, shunts: &Shunts) -> bool {
         for tone in &self.tones {
-            if let Shunt::Pre = shunts.by_key.get(&(self.tick, tone.key.clone())).unwrap() {
+            if let Shunt::Pre = shunts.by_key.get(&(self.tick, tone.key.to_string())).unwrap() {
                 return true;
             }
         }
@@ -322,10 +322,10 @@ impl NotationTrack {
         None
     }
 
-    pub fn get_next_notation(&self, from: &Tick) -> Option<(Tick, Notation)> {
+    pub fn get_next_notation(&self, from: &Tick) -> Option<(Tick, &Notation)> {
         for tick in from + 1..self.length {
             match self.track.get(&tick) {
-                Some(notation) => return Some((tick, notation.clone())),
+                Some(notation) => return Some((tick, notation)),
                 None => continue,
             }
         }
@@ -377,9 +377,9 @@ impl NotationTrack {
 
     pub fn is_range_empty(&self, start: Tick, stop: Tick) -> bool {
         for tick in start + 1..stop {
-            match self.track.get(&tick) {
-                Some(_) => return false,
-                None => continue,
+            match self.track.contains_key(&tick) {
+                true => return false,
+                false => continue,
             }
         }
 
@@ -595,7 +595,7 @@ impl NotationTrack {
                     self.split(tick + tone.duration);
                     for inner_tick in tick..tick + tone.duration {
                         if self.track.contains_key(&inner_tick) {
-                            self.add_tone(&inner_tick, &tone);
+                            self.add_tone(&inner_tick, tone);
                         }
                     }
                 }

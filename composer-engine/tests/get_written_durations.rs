@@ -45,7 +45,7 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
     tracks.insert(flow.master.clone(), master);
 
     let barlines = get_bars(&flow, &tracks);
-    track.to_notation_track(&length, &barlines, &flow.subdivisions)
+    track.to_notation_track(&length, &barlines, flow.subdivisions)
 }
 
 #[test]

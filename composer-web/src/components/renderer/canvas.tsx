@@ -27,50 +27,52 @@ export const Canvas: FC<Props> = ({
   const canvas = useRef<HTMLCanvasElement>(null);
 
   useLayoutEffect(() => {
-    if (canvas?.current) {
-      const ctx = canvas.current.getContext("2d");
-      const dpi = window.devicePixelRatio;
+    requestAnimationFrame(() => {
+      if (canvas?.current) {
+        const ctx = canvas.current.getContext("2d");
+        const dpi = window.devicePixelRatio;
 
-      if (ctx) {
-        // setup canvas
-        ctx.canvas.height = height * dpi;
-        ctx.canvas.width = width * dpi;
-        ctx.canvas.style.height = `${height}px`;
-        ctx.canvas.style.width = `${width}px`;
+        if (ctx) {
+          // setup canvas
+          ctx.canvas.height = height * dpi;
+          ctx.canvas.width = width * dpi;
+          ctx.canvas.style.height = `${height}px`;
+          ctx.canvas.style.width = `${width}px`;
 
-        ctx.setTransform(dpi, 0, 0, dpi, -x * dpi, -y * dpi);
+          ctx.setTransform(dpi, 0, 0, dpi, -x * dpi, -y * dpi);
 
-        // clear canvas
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          // clear canvas
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        // render instruction set
-        instructions.forEach((instruction: RenderInstruction<any>) => {
-          switch (instruction.type) {
-            case InstructionType.Line:
-              drawLine(ctx, instruction);
-              break;
-            case InstructionType.Text:
-              drawText(ctx, instruction);
-              break;
-            case InstructionType.Circle:
-              drawCircle(ctx, instruction);
-              break;
-            case InstructionType.Curve:
-              drawCurve(ctx, instruction);
-              break;
-            case InstructionType.Shape:
-              drawShape(ctx, instruction);
-              break;
-            case InstructionType.Box:
-              drawBox(ctx, instruction);
-              break;
-            default:
-              break;
-          }
-        });
+          // render instruction set
+          instructions.forEach((instruction: RenderInstruction<any>) => {
+            switch (instruction.type) {
+              case InstructionType.Line:
+                drawLine(ctx, instruction);
+                break;
+              case InstructionType.Text:
+                drawText(ctx, instruction);
+                break;
+              case InstructionType.Circle:
+                drawCircle(ctx, instruction);
+                break;
+              case InstructionType.Curve:
+                drawCurve(ctx, instruction);
+                break;
+              case InstructionType.Shape:
+                drawShape(ctx, instruction);
+                break;
+              case InstructionType.Box:
+                drawBox(ctx, instruction);
+                break;
+              default:
+                break;
+            }
+          });
+        }
       }
-    }
+    });
   }, [instructions]);
 
   return (

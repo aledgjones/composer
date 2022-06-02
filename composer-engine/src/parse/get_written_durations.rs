@@ -311,10 +311,10 @@ impl NotationTrack {
         Self { length, track }
     }
 
-    pub fn get_previous_notation(&self, at: Tick) -> Option<(Tick, Notation)> {
+    pub fn get_previous_notation(&self, at: Tick) -> Option<(Tick, &Notation)> {
         for tick in (0..at + 1).rev() {
             match self.track.get(&tick) {
-                Some(notation) => return Some((tick, notation.clone())),
+                Some(notation) => return Some((tick, notation)),
                 None => continue,
             }
         }
@@ -348,13 +348,17 @@ impl NotationTrack {
             // 1. split index not already the start of an event.
             // 2. split index is not the end of an event (ie; end of flow);
             if event_at != split_at && split_at != event_at + notation.duration {
+                let tones = notation.tones.clone();
+                let ties = notation.ties.clone();
+                let duration = notation.duration;
+
                 self.insert(
                     event_at,
                     Notation {
                         tick: event_at,
-                        tones: notation.tones.clone(),
+                        tones: tones.clone(),
                         duration: split_at - event_at,
-                        ties: notation.tones.iter().map(|tone| tone.key.clone()).collect(),
+                        ties: tones.iter().map(|tone| tone.key.clone()).collect(),
                     },
                 );
 
@@ -362,9 +366,9 @@ impl NotationTrack {
                     split_at,
                     Notation {
                         tick: split_at,
-                        tones: notation.tones.clone(),
-                        duration: event_at + notation.duration - split_at,
-                        ties: notation.ties,
+                        tones,
+                        duration: event_at + duration - split_at,
+                        ties,
                     },
                 );
             }

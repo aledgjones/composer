@@ -47,8 +47,8 @@ fn run(length: u32, time_signature: (u8, NoteDuration), tones: Vec<(u32, u32)>) 
     tracks.insert(flow.master.clone(), master);
 
     let barlines = get_bars(&flow, &tracks);
-    let notation = track.to_notation_track(&flow.length, &barlines, &flow.subdivisions);
-    get_beams_in_track(&notation, &barlines, &flow.subdivisions)
+    let notation = track.to_notation_track(&flow.length, &barlines, flow.subdivisions);
+    get_beams_in_track(&notation, &barlines, flow.subdivisions)
 }
 
 #[test]

@@ -31,7 +31,7 @@ pub type Clusters = Vec<Cluster>;
 pub type Cluster = Vec<Tone>;
 pub type NotationByTrack = FxHashMap<String, NotationTrack>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Notation {
     pub tick: Tick,
     pub tones: Vec<Tone>,

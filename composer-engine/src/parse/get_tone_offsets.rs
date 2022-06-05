@@ -24,8 +24,8 @@ pub fn get_tone_offsets(
                 clef = found;
             };
 
-            for stave_key in &stave.tracks {
-                let track = tracks.get(stave_key).unwrap();
+            for track_key in &stave.tracks {
+                let track = tracks.get(track_key).unwrap();
                 for tone in track.get_tones_at_tick(&tick) {
                     let offset = Pitch::steps_between(&tone.pitch, &clef.pitch) + clef.offset;
                     output.insert(tone.key.clone(), offset);

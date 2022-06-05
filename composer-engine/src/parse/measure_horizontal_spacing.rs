@@ -179,18 +179,25 @@ pub fn measure_horizontal_spacing(
 
         for stave in staves {
             let stave_master = tracks.get(&stave.master).unwrap();
-
+    
             // CLEF
             if let Some(clef) = stave_master.get_clef_at_tick(&tick) {
                 let metrics = clef.metrics();
                 widths[start + Position::Clef] = metrics.width + metrics.padding.right;
             }
+        }
+    }
 
-            for track_key in &stave.tracks {
-                let notation = notations_by_track.get(track_key).unwrap();
-                let shunts = shunts_by_track.get(track_key).unwrap();
+    
+    for stave in staves {
+        for track_key in &stave.tracks {
+            let notation = notations_by_track.get(track_key).unwrap();
 
+            for tick in 0..flow.length {
                 if let Some(entry) = notation.track.get(&tick) {
+                    let start = (tick * POSITION_COUNT) as usize;
+                    let shunts = shunts_by_track.get(track_key).unwrap();
+
                     if tick == 0 && entry.has_pre_shunt(shunts) {
                         widths[start + Position::PreNoteSlot] = entry.notehead_width();
                     }

@@ -192,7 +192,7 @@ pub fn get_accidentals_in_track(
             entry,
             &mut previous_tones,
             &mut altered_pitches,
-            &key_signature,
+            key_signature,
             tone_offsets,
         );
 

@@ -188,64 +188,59 @@ pub fn measure_horizontal_spacing(
         }
     }
 
-    
-    for stave in staves {
-        for track_key in &stave.tracks {
-            let notation = notations_by_track.get(track_key).unwrap();
+    for (track_key, notation) in notations_by_track {
+        for (tick, entry) in &notation.track {
+            let start = (tick * POSITION_COUNT) as usize;
+            let shunts = shunts_by_track.get(track_key).unwrap();
 
-            for (tick, entry) in &notation.track {
-                let start = (tick * POSITION_COUNT) as usize;
-                let shunts = shunts_by_track.get(track_key).unwrap();
+            if *tick == 0 && entry.has_pre_shunt(shunts) {
+                widths[start + Position::PreNoteSlot] = entry.notehead_width();
+            }
 
-                if *tick == 0 && entry.has_pre_shunt(shunts) {
-                    widths[start + Position::PreNoteSlot] = entry.notehead_width();
-                }
+            let accidentals = accidentals_by_track.get(track_key).unwrap();
+            let beams = beams_by_track.get(track_key).unwrap();
 
-                let accidentals = accidentals_by_track.get(track_key).unwrap();
-                let beams = beams_by_track.get(track_key).unwrap();
+            let mut spacing = entry
+                .metrics(shunts, flow.subdivisions, engrave, beams)
+                .padding
+                .right;
 
-                let mut spacing = entry
-                    .metrics(shunts, flow.subdivisions, engrave, beams)
-                    .padding
-                    .right;
-
-                // ACCIDENTALS
-                if *tick == 0 || barlines.contains_key(tick) {
-                    // start of bars has no previous spacing to extend so we use the accidentals slot
-                    if let Some(slots) = accidentals.slots_by_tick.get(tick) {
-                        widths[start + Position::Accidentals] = (*slots as f32) * 1.1;
-                    };
-                }
-
-                // extend spacing to accomodate accidentals + pre shunts (if needed)
-                if let Some((next_tick, next_entry)) = notation.get_next_notation(tick) {
-                    if !barlines.contains_key(&next_tick) {
-                        let min = entry.min_spacing(shunts, flow.subdivisions, engrave, beams);
-
-                        let pre_shunt = match next_entry.has_pre_shunt(shunts) {
-                            true => next_entry.notehead_width(),
-                            false => 0.0,
-                        };
-
-                        let accidentals = match accidentals.slots_by_tick.get(&next_tick) {
-                            Some(slots) => ((*slots as f32) * 1.1),
-                            None => 0.0,
-                        };
-
-                        let min = min + pre_shunt + accidentals;
-                        if min > spacing {
-                            spacing = min
-                        }
-                    }
+            // ACCIDENTALS
+            if *tick == 0 || barlines.contains_key(tick) {
+                // start of bars has no previous spacing to extend so we use the accidentals slot
+                if let Some(slots) = accidentals.slots_by_tick.get(tick) {
+                    widths[start + Position::Accidentals] = (*slots as f32) * 1.1;
                 };
+            }
 
-                let note_spacing_per_tick = spacing / entry.duration as f32;
-                let end = tick + entry.duration;
-                for i in *tick..end {
-                    let start = (i * POSITION_COUNT) as usize;
-                    if note_spacing_per_tick > widths[start + Position::NoteSpacing] {
-                        widths[start + Position::NoteSpacing] = note_spacing_per_tick;
+            // extend spacing to accomodate accidentals + pre shunts (if needed)
+            if let Some((next_tick, next_entry)) = notation.get_next_notation(tick) {
+                if !barlines.contains_key(&next_tick) {
+                    let min = entry.min_spacing(shunts, flow.subdivisions, engrave, beams);
+
+                    let pre_shunt = match next_entry.has_pre_shunt(shunts) {
+                        true => next_entry.notehead_width(),
+                        false => 0.0,
+                    };
+
+                    let accidentals = match accidentals.slots_by_tick.get(&next_tick) {
+                        Some(slots) => ((*slots as f32) * 1.1),
+                        None => 0.0,
+                    };
+
+                    let min = min + pre_shunt + accidentals;
+                    if min > spacing {
+                        spacing = min
                     }
+                }
+            };
+
+            let note_spacing_per_tick = spacing / entry.duration as f32;
+            let end = tick + entry.duration;
+            for i in *tick..end {
+                let start = (i * POSITION_COUNT) as usize;
+                if note_spacing_per_tick > widths[start + Position::NoteSpacing] {
+                    widths[start + Position::NoteSpacing] = note_spacing_per_tick;
                 }
             }
         }

@@ -259,7 +259,6 @@ impl Engine {
         draw_clefs(
             padding_left + name_widths + instrument_name_gap + bracket_widths,
             padding_top,
-            flow,
             &staves,
             &self.score.tracks,
             &vertical_spacing,

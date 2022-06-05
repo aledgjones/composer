@@ -4,6 +4,7 @@ use super::Instruction;
 use crate::components::duration::NoteDuration;
 use crate::components::text::{Align, Justify};
 use crate::components::units::{Converter, Space};
+use crate::entries::Entry;
 use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
@@ -130,17 +131,17 @@ pub fn draw_time_signatures(
     for stave in staves {
         let top = vertical_spacing.staves.get(&stave.key).unwrap();
 
-        for tick in 0..flow.length {
-            if let Some(time_signature) = flow_master.get_time_signature_at_tick(&tick) {
+        for entry in flow_master.entries.by_key.values() {
+            if let Entry::TimeSignature(time_signature) = entry {
                 let left = horizontal_spacing
-                    .get(&tick, &Position::TimeSignature)
+                    .get(&time_signature.tick, &Position::TimeSignature)
                     .unwrap();
                 let offset = time_signature.metrics(flow.subdivisions).width / 2.0;
 
                 draw_time_signature(
                     x + left.x + offset,
                     y + top.y,
-                    &time_signature,
+                    time_signature,
                     converter,
                     instructions,
                 )

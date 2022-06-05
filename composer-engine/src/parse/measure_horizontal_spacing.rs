@@ -5,6 +5,7 @@ use super::{get_accidentals::AccidentalsByTrack, get_shunts::ShuntsByTrack};
 use crate::components::measurements::BoundingBox;
 use crate::components::misc::Tick;
 use crate::components::units::Space;
+use crate::entries::Entry;
 use crate::entries::barline::BarlineDrawType;
 use crate::score::engrave::Engrave;
 use crate::score::flows::Flow;
@@ -115,73 +116,72 @@ pub fn measure_horizontal_spacing(
     let mut widths: Vec<f32> = vec![0.0; (flow.length * POSITION_COUNT) as usize];
     let flow_master = tracks.get(&flow.master).unwrap();
 
-    for tick in 0..flow.length {
-        let start = (tick * POSITION_COUNT) as usize;
+    widths[0 + Position::PaddingStart] = 1.0;
 
-        if tick == 0 {
-            widths[start + Position::PaddingStart] = 1.0;
+    for entry in flow_master.entries.by_key.values() {
+        match entry {
+            Entry::KeySignature(key_signature) => {
+                let start = (entry.tick() * POSITION_COUNT) as usize;
+                let metrics = if key_signature.offset == 0 {
+                    // find width needed to cancel the previous key signature
+                    match flow_master.get_key_signature_before_tick(key_signature.tick) {
+                        Some(previous) => previous.metrics(),
+                        None => BoundingBox::none(),
+                    }
+                } else {
+                    key_signature.metrics()
+                };
+                widths[start + Position::KeySignature] = metrics.width + metrics.padding.right;
+            },
+            Entry::TimeSignature(time_signature) => {
+                let start = (entry.tick() * POSITION_COUNT) as usize;
+                let metrics = time_signature.metrics(flow.subdivisions);
+                widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
+            },
+            _ => (),
+        }
+    }
+
+    for (tick, def) in barlines {
+        let start = (tick * POSITION_COUNT) as usize;
+        let time = flow_master.get_time_signature_at_tick(tick);
+        let key = flow_master.get_key_signature_at_tick(tick);
+
+        if def.end_repeat {
+            let metrics = BarlineDrawType::EndRepeat.metrics();
+            if time.is_some() || key.is_some() {
+                widths[start + Position::EndRepeat] =
+                    metrics.width + metrics.padding.right - 0.5;
+            } else {
+                widths[start + Position::EndRepeat] = metrics.width + metrics.padding.right;
+            }
         }
 
-        // BARLINES
-        if let Some(def) = barlines.get(&tick) {
-            let time = flow_master.get_time_signature_at_tick(&tick);
-            let key = flow_master.get_key_signature_at_tick(&tick);
-
-            if def.end_repeat {
-                let metrics = BarlineDrawType::EndRepeat.metrics();
-                if time.is_some() || key.is_some() {
-                    widths[start + Position::EndRepeat] =
-                        metrics.width + metrics.padding.right - 0.5;
-                } else {
-                    widths[start + Position::EndRepeat] = metrics.width + metrics.padding.right;
-                }
-            }
-
-            if let Some(draw_type) = &def.draw_type {
-                let metrics = draw_type.metrics();
-                if time.is_some() || key.is_some() {
-                    widths[start + Position::Barline] = metrics.width + metrics.padding.right - 0.5;
-                } else {
-                    widths[start + Position::Barline] = metrics.width + metrics.padding.right;
-                }
-            }
-
-            if def.start_repeat {
-                let metrics = BarlineDrawType::StartRepeat.metrics();
-                if time.is_some() {
-                    widths[start + Position::StartRepeat] =
-                        metrics.width + metrics.padding.right - 1.0;
-                } else {
-                    widths[start + Position::StartRepeat] = metrics.width + metrics.padding.right;
-                }
-            }
-        };
-
-        // KEY SIGNATURE
-        if let Some(key) = flow_master.get_key_signature_at_tick(&tick) {
-            let metrics = if key.offset == 0 {
-                // find width needed to cancel the previous key signature
-                match flow_master.get_key_signature_before_tick(tick) {
-                    Some(previous) => previous.metrics(),
-                    None => BoundingBox::none(),
-                }
+        if let Some(draw_type) = &def.draw_type {
+            let metrics = draw_type.metrics();
+            if time.is_some() || key.is_some() {
+                widths[start + Position::Barline] = metrics.width + metrics.padding.right - 0.5;
             } else {
-                key.metrics()
-            };
-            widths[start + Position::KeySignature] = metrics.width + metrics.padding.right;
-        };
+                widths[start + Position::Barline] = metrics.width + metrics.padding.right;
+            }
+        }
 
-        // TIME SIGNATURE
-        if let Some(time) = flow_master.get_time_signature_at_tick(&tick) {
-            let metrics = time.metrics(flow.subdivisions);
-            widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
-        };
+        if def.start_repeat {
+            let metrics = BarlineDrawType::StartRepeat.metrics();
+            if time.is_some() {
+                widths[start + Position::StartRepeat] =
+                    metrics.width + metrics.padding.right - 1.0;
+            } else {
+                widths[start + Position::StartRepeat] = metrics.width + metrics.padding.right;
+            }
+        }
+    }
 
-        for stave in staves {
-            let stave_master = tracks.get(&stave.master).unwrap();
-    
-            // CLEF
-            if let Some(clef) = stave_master.get_clef_at_tick(&tick) {
+    for stave in staves {
+        let stave_master = tracks.get(&stave.master).unwrap();
+        for entry in stave_master.entries.by_key.values() {
+            if let Entry::Clef(clef) = entry {
+                let start = (clef.tick * POSITION_COUNT) as usize;
                 let metrics = clef.metrics();
                 widths[start + Position::Clef] = metrics.width + metrics.padding.right;
             }
@@ -193,62 +193,60 @@ pub fn measure_horizontal_spacing(
         for track_key in &stave.tracks {
             let notation = notations_by_track.get(track_key).unwrap();
 
-            for tick in 0..flow.length {
-                if let Some(entry) = notation.track.get(&tick) {
-                    let start = (tick * POSITION_COUNT) as usize;
-                    let shunts = shunts_by_track.get(track_key).unwrap();
+            for (tick, entry) in &notation.track {
+                let start = (tick * POSITION_COUNT) as usize;
+                let shunts = shunts_by_track.get(track_key).unwrap();
 
-                    if tick == 0 && entry.has_pre_shunt(shunts) {
-                        widths[start + Position::PreNoteSlot] = entry.notehead_width();
-                    }
+                if *tick == 0 && entry.has_pre_shunt(shunts) {
+                    widths[start + Position::PreNoteSlot] = entry.notehead_width();
+                }
 
-                    let accidentals = accidentals_by_track.get(track_key).unwrap();
-                    let beams = beams_by_track.get(track_key).unwrap();
+                let accidentals = accidentals_by_track.get(track_key).unwrap();
+                let beams = beams_by_track.get(track_key).unwrap();
 
-                    let mut spacing = entry
-                        .metrics(shunts, flow.subdivisions, engrave, beams)
-                        .padding
-                        .right;
+                let mut spacing = entry
+                    .metrics(shunts, flow.subdivisions, engrave, beams)
+                    .padding
+                    .right;
 
-                    // ACCIDENTALS
-                    if tick == 0 || barlines.contains_key(&tick) {
-                        // start of bars has no previous spacing to extend so we use the accidentals slot
-                        if let Some(slots) = accidentals.slots_by_tick.get(&tick) {
-                            widths[start + Position::Accidentals] = (*slots as f32) * 1.1;
-                        };
-                    }
-
-                    // extend spacing to accomodate accidentals + pre shunts (if needed)
-                    if let Some((next_tick, next_entry)) = notation.get_next_notation(&tick) {
-                        if !barlines.contains_key(&next_tick) {
-                            let min = entry.min_spacing(shunts, flow.subdivisions, engrave, beams);
-
-                            let pre_shunt = match next_entry.has_pre_shunt(shunts) {
-                                true => next_entry.notehead_width(),
-                                false => 0.0,
-                            };
-
-                            let accidentals = match accidentals.slots_by_tick.get(&next_tick) {
-                                Some(slots) => ((*slots as f32) * 1.1),
-                                None => 0.0,
-                            };
-
-                            let min = min + pre_shunt + accidentals;
-                            if min > spacing {
-                                spacing = min
-                            }
-                        }
+                // ACCIDENTALS
+                if *tick == 0 || barlines.contains_key(tick) {
+                    // start of bars has no previous spacing to extend so we use the accidentals slot
+                    if let Some(slots) = accidentals.slots_by_tick.get(tick) {
+                        widths[start + Position::Accidentals] = (*slots as f32) * 1.1;
                     };
+                }
 
-                    let note_spacing_per_tick = spacing / entry.duration as f32;
-                    let end = tick + entry.duration;
-                    for i in tick..end {
-                        let start = (i * POSITION_COUNT) as usize;
-                        if note_spacing_per_tick > widths[start + Position::NoteSpacing] {
-                            widths[start + Position::NoteSpacing] = note_spacing_per_tick;
+                // extend spacing to accomodate accidentals + pre shunts (if needed)
+                if let Some((next_tick, next_entry)) = notation.get_next_notation(tick) {
+                    if !barlines.contains_key(&next_tick) {
+                        let min = entry.min_spacing(shunts, flow.subdivisions, engrave, beams);
+
+                        let pre_shunt = match next_entry.has_pre_shunt(shunts) {
+                            true => next_entry.notehead_width(),
+                            false => 0.0,
+                        };
+
+                        let accidentals = match accidentals.slots_by_tick.get(&next_tick) {
+                            Some(slots) => ((*slots as f32) * 1.1),
+                            None => 0.0,
+                        };
+
+                        let min = min + pre_shunt + accidentals;
+                        if min > spacing {
+                            spacing = min
                         }
                     }
                 };
+
+                let note_spacing_per_tick = spacing / entry.duration as f32;
+                let end = tick + entry.duration;
+                for i in *tick..end {
+                    let start = (i * POSITION_COUNT) as usize;
+                    if note_spacing_per_tick > widths[start + Position::NoteSpacing] {
+                        widths[start + Position::NoteSpacing] = note_spacing_per_tick;
+                    }
+                }
             }
         }
     }

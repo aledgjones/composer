@@ -3,8 +3,8 @@ use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::text::{Align, Justify};
 use crate::components::units::{Converter, Space};
+use crate::entries::Entry;
 use crate::entries::clef::Clef;
-use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 use crate::score::tracks::Tracks;
 
@@ -32,7 +32,6 @@ fn draw_clef(
 pub fn draw_clefs(
     x: Space,
     y: Space,
-    flow: &Flow,
     staves: &Vec<&Stave>,
     tracks: &Tracks,
     vertical_spacing: &VerticalSpacing,
@@ -44,10 +43,10 @@ pub fn draw_clefs(
         let stave_master = tracks.get(&stave.master).unwrap();
         let top = vertical_spacing.staves.get(&stave.key).unwrap();
 
-        for tick in 0..flow.length {
-            if let Some(clef) = stave_master.get_clef_at_tick(&tick) {
-                let left = horizontal_spacing.get(&tick, &Position::Clef).unwrap();
-                draw_clef(x + left.x, y + top.y, &clef, converter, instructions)
+        for entry in stave_master.entries.by_key.values() {
+            if let Entry::Clef(clef) = entry {
+                let left = horizontal_spacing.get(&clef.tick, &Position::Clef).unwrap();
+                draw_clef(x + left.x, y + top.y, clef, converter, instructions)
             }
         }
     }

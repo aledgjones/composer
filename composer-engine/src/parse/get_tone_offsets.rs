@@ -17,14 +17,14 @@ pub fn get_tone_offsets(
 
     for stave in staves {
         let master = tracks.get(&stave.master).unwrap();
-        let mut clef = &Clef::new(0, 60, 0, ClefDrawType::C);
+        for track_key in &stave.tracks {
+            let mut clef = &Clef::new(0, 60, 0, ClefDrawType::C);
 
-        for tick in 0..flow_length {
-            if let Some(found) = master.get_clef_at_tick(&tick) {
-                clef = found;
-            };
+            for tick in 0..flow_length {
+                if let Some(found) = master.get_clef_at_tick(&tick) {
+                    clef = found;
+                };
 
-            for track_key in &stave.tracks {
                 let track = tracks.get(track_key).unwrap();
                 for tone in track.get_tones_at_tick(&tick) {
                     let offset = Pitch::steps_between(&tone.pitch, &clef.pitch) + clef.offset;

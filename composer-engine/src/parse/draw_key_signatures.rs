@@ -75,12 +75,12 @@ pub fn draw_key_signatures(
                     Some(key_signature)
                 };
 
-                if let Some(time_signature) = key_signature {
+                if let Some(key_signature) = key_signature {
                     draw_key_signature(
                         x + left.x,
                         y + top.y,
-                        &clef,
-                        &time_signature,
+                        clef,
+                        key_signature,
                         converter,
                         instructions,
                         is_offset_zero,

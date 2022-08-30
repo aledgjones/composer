@@ -532,59 +532,45 @@ export class Engine {
 */
   import(state: any): void;
 /**
-* @returns {string}
 */
   application_version: string;
 /**
-* @returns {string}
 */
   arranger: string;
 /**
-* @returns {number}
 */
   auto_count_style_section: number;
 /**
-* @returns {number}
 */
   auto_count_style_solo: number;
 /**
-* @returns {string}
 */
   composer: string;
 /**
-* @returns {string}
 */
   copyright: string;
 /**
-* @returns {number}
 */
   created: number;
 /**
-* @returns {any}
 */
   readonly engraves: any;
 /**
-* @returns {any}
 */
   readonly flows: any;
 /**
-* @returns {string}
 */
   lyricist: string;
 /**
-* @returns {any}
 */
   readonly players: any;
 /**
-* @returns {string}
 */
   readonly state: string;
 /**
-* @returns {string}
 */
   subtitle: string;
 /**
-* @returns {string}
 */
   title: string;
 }
@@ -725,6 +711,15 @@ export interface InitOutput {
   readonly __wbindgen_exn_store: (a: number) => void;
   readonly __wbindgen_start: () => void;
 }
+
+/**
+* Synchronously compiles the given `bytes` and instantiates the WebAssembly module.
+*
+* @param {BufferSource} bytes
+*
+* @returns {InitOutput}
+*/
+export function initSync(bytes: BufferSource): InitOutput;
 
 /**
 * If `module_or_path` is {RequestInfo} or {URL}, makes a request and

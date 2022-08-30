@@ -5,8 +5,6 @@ import { Dialog } from "../../ui/components/dialog";
 import { Icon } from "../../ui/components/icon";
 import { Label } from "../../ui/components/label";
 import { Subheader } from "../../ui/components/subheader";
-
-import logo from "../../assets/icon-192x192-maskable.png";
 import pkg from "../../../package.json";
 
 import "./styles.css";
@@ -22,7 +20,11 @@ export const About = Dialog<Props>(({ onClose }) => {
         <Icon path={mdiClose} size={24} onClick={onClose} />
       </div>
       <div className="about__logo">
-        <img className="about__logo-img" alt="Solo Composer Logo" src={logo} />
+        <img
+          className="about__logo-img"
+          alt="Solo Composer Logo"
+          src="/icon-192x192-maskable.png"
+        />
         <Label className="about__logo-text">
           <p>Solo Composer</p>
           <p>Music notation everywhere</p>

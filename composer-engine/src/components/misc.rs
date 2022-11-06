@@ -11,7 +11,7 @@ pub const ALPHABET_UPPERCASE: [char; 26] = [
     'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 ];
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Direction {
     Up,
     Down,

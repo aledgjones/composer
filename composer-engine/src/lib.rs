@@ -60,6 +60,12 @@ impl Engine {
     }
 }
 
+impl Default for Engine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Engine {
     fn emit(&self) {
         match &self.listener {

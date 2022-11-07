@@ -56,6 +56,7 @@ impl Tone {
 #[wasm_bindgen]
 impl Engine {
     /// Create a tone
+    #[allow(clippy::too_many_arguments)]
     pub fn create_tone(
         &mut self,
         track_key: &str,

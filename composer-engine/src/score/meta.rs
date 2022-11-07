@@ -30,6 +30,12 @@ impl Meta {
     }
 }
 
+impl Default for Meta {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[wasm_bindgen]
 impl Engine {
     #[wasm_bindgen(getter)]

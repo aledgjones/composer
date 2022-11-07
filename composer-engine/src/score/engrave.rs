@@ -24,7 +24,7 @@ pub enum BracketStyle {
     Line,
 }
 
-#[derive(PartialEq, Debug, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum LayoutType {
     Score,
@@ -44,6 +44,12 @@ impl Engraves {
             order: Vec::new(),
             by_key: FxHashMap::default(),
         }
+    }
+}
+
+impl Default for Engraves {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

@@ -5,8 +5,8 @@ use super::{get_accidentals::AccidentalsByTrack, get_shunts::ShuntsByTrack};
 use crate::components::measurements::BoundingBox;
 use crate::components::misc::Tick;
 use crate::components::units::Space;
-use crate::entries::Entry;
 use crate::entries::barline::BarlineDrawType;
+use crate::entries::Entry;
 use crate::score::engrave::Engrave;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
@@ -102,6 +102,7 @@ impl Default for HorizontalSpacing {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn measure_horizontal_spacing(
     flow: &Flow,
     staves: &[&Stave],
@@ -132,12 +133,12 @@ pub fn measure_horizontal_spacing(
                     key_signature.metrics()
                 };
                 widths[start + Position::KeySignature] = metrics.width + metrics.padding.right;
-            },
+            }
             Entry::TimeSignature(time_signature) => {
                 let start = (entry.tick() * POSITION_COUNT) as usize;
                 let metrics = time_signature.metrics(flow.subdivisions);
                 widths[start + Position::TimeSignature] = metrics.width + metrics.padding.right;
-            },
+            }
             _ => (),
         }
     }
@@ -150,8 +151,7 @@ pub fn measure_horizontal_spacing(
         if def.end_repeat {
             let metrics = BarlineDrawType::EndRepeat.metrics();
             if time.is_some() || key.is_some() {
-                widths[start + Position::EndRepeat] =
-                    metrics.width + metrics.padding.right - 0.5;
+                widths[start + Position::EndRepeat] = metrics.width + metrics.padding.right - 0.5;
             } else {
                 widths[start + Position::EndRepeat] = metrics.width + metrics.padding.right;
             }
@@ -169,8 +169,7 @@ pub fn measure_horizontal_spacing(
         if def.start_repeat {
             let metrics = BarlineDrawType::StartRepeat.metrics();
             if time.is_some() {
-                widths[start + Position::StartRepeat] =
-                    metrics.width + metrics.padding.right - 1.0;
+                widths[start + Position::StartRepeat] = metrics.width + metrics.padding.right - 1.0;
             } else {
                 widths[start + Position::StartRepeat] = metrics.width + metrics.padding.right;
             }
@@ -224,7 +223,7 @@ pub fn measure_horizontal_spacing(
                     };
 
                     let accidentals = match accidentals.slots_by_tick.get(&next_tick) {
-                        Some(slots) => ((*slots as f32) * 1.1),
+                        Some(slots) => (*slots as f32) * 1.1,
                         None => 0.0,
                     };
 

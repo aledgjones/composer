@@ -7,7 +7,7 @@ use rustc_hash::FxHashMap;
 
 /// context can mean barlines need to be split over positions
 /// esspecially repeat marks, this def allows info about when this happens
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct BarlineDrawDef {
     /// seperate end repeat
     pub end_repeat: bool,

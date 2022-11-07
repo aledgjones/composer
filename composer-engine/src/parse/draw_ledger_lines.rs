@@ -10,6 +10,7 @@ use crate::components::units::{Converter, Space};
 use crate::score::stave::Stave;
 use crate::score::stave::STAVE_LINE_WIDTH;
 
+#[allow(clippy::too_many_arguments)]
 fn draw_lines<T: Iterator<Item = i8>>(
     entry: &Notation,
     range: T,
@@ -32,8 +33,8 @@ fn draw_lines<T: Iterator<Item = i8>>(
 
     for offset in range {
         // get the furthest start position
-        match shunts.by_offset.get(&(*tick, offset)) {
-            Some(shunt) => match shunt {
+        if let Some(shunt) = shunts.by_offset.get(&(*tick, offset)) {
+            match shunt {
                 Shunt::Pre => {
                     if position.x - notehead < start_x {
                         start_x = position.x - notehead;
@@ -49,8 +50,7 @@ fn draw_lines<T: Iterator<Item = i8>>(
                         stop_x = position.x + (notehead * 2.0);
                     }
                 }
-            },
-            None => (),
+            }
         };
 
         if offset % 2 == 0 {
@@ -77,6 +77,7 @@ fn draw_lines<T: Iterator<Item = i8>>(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn draw_ledger_line(
     tick: &Tick,
     x: Space,
@@ -120,6 +121,7 @@ fn draw_ledger_line(
     );
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_ledger_lines(
     x: Space,
     y: Space,

@@ -40,6 +40,7 @@ fn draw_key_signature(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_key_signatures(
     x: Space,
     y: Space,

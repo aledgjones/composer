@@ -43,3 +43,9 @@ impl Score {
         }
     }
 }
+
+impl Default for Score {
+    fn default() -> Self {
+        Self::new()
+    }
+}

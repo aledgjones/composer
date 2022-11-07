@@ -30,6 +30,12 @@ impl Flows {
     }
 }
 
+impl Default for Flows {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Flow {
     pub key: String,

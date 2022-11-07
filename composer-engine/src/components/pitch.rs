@@ -68,11 +68,11 @@ impl Pitch {
     fn base(&self) -> u8 {
         let int = self.int;
         match self.accidental {
-            Accidental::DoubleSharp => (int - 2),
-            Accidental::Sharp => (int - 1),
+            Accidental::DoubleSharp => int - 2,
+            Accidental::Sharp => int - 1,
             Accidental::Natural => int,
-            Accidental::Flat => (int + 1),
-            Accidental::DoubleFlat => (int + 2),
+            Accidental::Flat => int + 1,
+            Accidental::DoubleFlat => int + 2,
         }
     }
 

@@ -153,7 +153,11 @@ impl Notation {
 
     pub fn has_pre_shunt(&self, shunts: &Shunts) -> bool {
         for tone in &self.tones {
-            if let Shunt::Pre = shunts.by_key.get(&(self.tick, tone.key.to_string())).unwrap() {
+            if let Shunt::Pre = shunts
+                .by_key
+                .get(&(self.tick, tone.key.to_string()))
+                .unwrap()
+            {
                 return true;
             }
         }
@@ -642,19 +646,19 @@ impl Debug for NotationTrack {
             let start = *tick as usize;
             let stop = (tick + notation.duration) as usize;
 
-            for i in start..stop {
+            for (i, char) in output.iter_mut().enumerate().take(stop).skip(start) {
                 if i == start {
                     if is_rest {
-                        output[i] = 'r';
+                        *char = 'r';
                     } else {
-                        output[i] = 'o';
+                        *char = 'o';
                     }
                 } else if i == stop - 1 && !has_tie {
-                    output[i] = ':';
+                    *char = ':';
                 } else if has_tie {
-                    output[i] = '_';
+                    *char = '_';
                 } else {
-                    output[i] = '-';
+                    *char = '-';
                 }
             }
         }

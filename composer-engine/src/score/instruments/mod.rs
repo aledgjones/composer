@@ -202,13 +202,13 @@ impl Engine {
                     PlayerType::Solo => {
                         let entry = instruments_solo
                             .entry(instrument.long_name.clone())
-                            .or_insert(vec![]);
+                            .or_default();
                         entry.push((player_key.clone(), instrument.key.clone()));
                     }
                     PlayerType::Section => {
                         let entry = instruments_section
                             .entry(instrument.long_name.clone())
-                            .or_insert(vec![]);
+                            .or_default();
                         entry.push((player_key.clone(), instrument.key.clone()));
                     }
                 }

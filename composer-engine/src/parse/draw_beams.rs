@@ -39,6 +39,7 @@ fn draw_beam(
     });
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_beams(
     x: Space,
     y: Space,

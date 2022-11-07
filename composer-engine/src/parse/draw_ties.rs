@@ -167,6 +167,7 @@ fn stop_x(
     before_note
 }
 
+#[allow(clippy::too_many_arguments)]
 fn tie_points_x(
     x: Space,
     start: &Notation,
@@ -222,6 +223,7 @@ fn tie_points_x(
     [start_x, middle_x, stop_x]
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_tie(
     x: Space,
     y: Space,
@@ -273,6 +275,7 @@ pub fn draw_tie(
     })
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_ties(
     x: Space,
     y: Space,

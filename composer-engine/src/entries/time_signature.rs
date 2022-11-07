@@ -1,10 +1,10 @@
-use crate::Engine;
 use crate::components::duration::NoteDuration;
 use crate::components::measurements::{BoundingBox, PaddingSpaces};
 use crate::components::misc::{Tick, Ticks};
 use crate::entries::Entry;
 use crate::score::tracks::Track;
 use crate::utils::shortid;
+use crate::Engine;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -16,7 +16,7 @@ pub enum TimeSignatureType {
 }
 
 #[wasm_bindgen]
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TimeSignatureDrawType {
     Hidden,          // always hidden
     Regular,         // 4/4 etc
@@ -225,7 +225,7 @@ impl Engine {
             let key = time_signature.key.clone();
             master.remove(&key);
         };
-        
+
         // insert the new time signature
         let new = TimeSignature::new(tick, beats, beat_type, draw_type, groupings);
         let ticks_per_bar = new.ticks_per_bar(flow.subdivisions);
@@ -248,7 +248,6 @@ impl Engine {
                     let tick = time_signature.tick + fill;
                     master.shift(&key, tick);
                 };
-                
             }
         }
 

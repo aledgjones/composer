@@ -3,8 +3,8 @@ use super::measure_vertical_spacing::VerticalSpacing;
 use super::Instruction;
 use crate::components::text::{Align, Justify};
 use crate::components::units::{Converter, Space};
-use crate::entries::Entry;
 use crate::entries::clef::Clef;
+use crate::entries::Entry;
 use crate::score::stave::Stave;
 use crate::score::tracks::Tracks;
 
@@ -29,6 +29,7 @@ fn draw_clef(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_clefs(
     x: Space,
     y: Space,

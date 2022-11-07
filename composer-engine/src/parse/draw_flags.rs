@@ -9,6 +9,7 @@ use crate::components::units::{Converter, Space};
 use crate::score::flows::Flow;
 use crate::score::stave::{Stave, STAVE_LINE_WIDTH};
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_flags(
     x: Space,
     y: Space,

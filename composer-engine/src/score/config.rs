@@ -24,6 +24,12 @@ impl AutoCount {
     }
 }
 
+impl Default for AutoCount {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub auto_count: AutoCount,
@@ -34,6 +40,12 @@ impl Config {
         Config {
             auto_count: AutoCount::new(),
         }
+    }
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

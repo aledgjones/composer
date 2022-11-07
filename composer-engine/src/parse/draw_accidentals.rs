@@ -36,6 +36,7 @@ fn draw_accidental(
     });
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_accidentals(
     x: Space,
     y: Space,

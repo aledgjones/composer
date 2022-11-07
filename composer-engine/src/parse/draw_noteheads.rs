@@ -11,6 +11,7 @@ use crate::entries::tone::Tone;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 
+#[allow(clippy::too_many_arguments)]
 fn draw_notehead(
     tick: Tick,
     x: Space,
@@ -54,6 +55,7 @@ fn draw_notehead(
     });
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_noteheads(
     x: Space,
     y: Space,

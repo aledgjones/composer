@@ -40,6 +40,7 @@ fn draw_barline_dots(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn draw_barline(
     x: Space,
     y: Space,
@@ -286,11 +287,12 @@ fn draw_barline(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_barlines(
     x: f32,
     y: f32,
     barlines: &Barlines,
-    staves: &Vec<&Stave>,
+    staves: &[&Stave],
     vertical_spacing: &VerticalSpacing,
     vertical_spans: &VerticalSpans,
     spacing: &HorizontalSpacing,

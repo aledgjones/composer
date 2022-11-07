@@ -44,6 +44,12 @@ impl Players {
     }
 }
 
+impl Default for Players {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[wasm_bindgen]
 impl Engine {
     pub fn create_player(&mut self, player_type: PlayerType) -> String {

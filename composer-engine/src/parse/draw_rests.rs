@@ -13,6 +13,7 @@ use crate::components::units::Space;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 
+#[allow(clippy::too_many_arguments)]
 fn draw_rest(
     x: Space,
     y: Space,
@@ -66,6 +67,7 @@ fn draw_rest(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_rests(
     x: Space,
     y: Space,

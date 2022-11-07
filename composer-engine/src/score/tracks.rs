@@ -33,11 +33,7 @@ impl Track {
 
     /// Insert and entry into the track
     pub fn insert(&mut self, entry: Entry) {
-        let tick = self
-            .entries
-            .by_tick
-            .entry(entry.tick())
-            .or_insert(Vec::new());
+        let tick = self.entries.by_tick.entry(entry.tick()).or_default();
         tick.push(entry.key());
         self.entries.by_key.insert(entry.key(), entry);
     }
@@ -58,7 +54,7 @@ impl Track {
             if let Some(keys) = self.entries.by_tick.get_mut(&old_tick) {
                 keys.retain(|item| item != key);
             };
-            let tick = self.entries.by_tick.entry(new_tick).or_insert(Vec::new());
+            let tick = self.entries.by_tick.entry(new_tick).or_default();
             tick.push(String::from(key));
         }
     }
@@ -75,5 +71,11 @@ impl Track {
         };
 
         self.entries.by_key.remove(key)
+    }
+}
+
+impl Default for Track {
+    fn default() -> Self {
+        Self::new()
     }
 }

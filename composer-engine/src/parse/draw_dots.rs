@@ -8,6 +8,7 @@ use crate::components::measurements::Point;
 use crate::components::units::{Converter, Space};
 use crate::score::stave::Stave;
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_dots(
     x: Space,
     y: Space,

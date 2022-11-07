@@ -4,8 +4,8 @@ use super::Instruction;
 use crate::components::duration::NoteDuration;
 use crate::components::text::{Align, Justify};
 use crate::components::units::{Converter, Space};
-use crate::entries::Entry;
 use crate::entries::time_signature::{TimeSignature, TimeSignatureDrawType};
+use crate::entries::Entry;
 use crate::score::flows::Flow;
 use crate::score::stave::Stave;
 use crate::score::tracks::Tracks;
@@ -115,6 +115,7 @@ fn draw_time_signature(
     };
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn draw_time_signatures(
     x: Space,
     y: Space,

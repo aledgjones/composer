@@ -83,9 +83,17 @@ pub enum Instruction {
         radius: f32,
         point: Point,
     },
+    Curve {
+        color: String,
+        points: [CurvePoint; 3],
+    },
     Line {
         color: String,
         width: f32,
+        points: Vec<Point>,
+    },
+    Shape {
+        color: String,
         points: Vec<Point>,
     },
     Text {
@@ -97,14 +105,6 @@ pub enum Instruction {
         size: f32,
         justify: String,
         align: String,
-    },
-    Shape {
-        color: String,
-        points: Vec<Point>,
-    },
-    Curve {
-        color: String,
-        points: [CurvePoint; 3],
     },
 }
 

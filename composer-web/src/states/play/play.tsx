@@ -17,9 +17,9 @@ import { Track } from "./track";
 import { TrackPlaceholder } from "./track-placeholder";
 import { Zoom } from "../../components/zoom";
 import { BottomBar } from "../../components/bottom-bar";
+import { useFlowKey } from "../../data/utils";
 
 import "./styles.css";
-import { useFlowKey } from "../../data/utils";
 
 const Play: FC = () => {
   useTitle("Solo Composer | Sequence");

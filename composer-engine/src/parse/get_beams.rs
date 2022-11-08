@@ -120,11 +120,7 @@ fn assign_span(spans: &mut Beams, span: Span) -> Span {
     Vec::new()
 }
 
-pub fn get_beams_in_track(
-    notation: &NotationTrack,
-    barlines: &Bars,
-    subdivisions: Ticks,
-) -> Beams {
+pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Bars, subdivisions: Ticks) -> Beams {
     let mut output: Beams = Vec::new();
 
     let mut current_span: Span = Vec::new();
@@ -195,7 +191,7 @@ pub fn get_has_beam(tick: &Tick, beams: &Beams) -> bool {
 }
 
 impl Notation {
-    pub fn is_beamable(&self, subdivisions:Ticks) -> bool {
+    pub fn is_beamable(&self, subdivisions: Ticks) -> bool {
         if self.is_rest() {
             false
         } else {

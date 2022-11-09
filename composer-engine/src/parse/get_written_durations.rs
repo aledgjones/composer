@@ -143,7 +143,7 @@ impl Notation {
 
     pub fn has_beam(&self, beams: &Beams) -> bool {
         for beam in beams {
-            if beam.ticks.contains(&self.tick) {
+            if beam.ticks.contains_key(&self.tick) {
                 return true;
             }
         }

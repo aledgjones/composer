@@ -42,7 +42,7 @@ fn adjust_to_beam(
     // join inner stems to the angles beam
     let mut adjustment = 0.0;
     let tan_angle = (low_y - high.tail.y) / (low.tail.x - high.tail.x);
-    for tick in &beam.ticks {
+    for (tick, _) in &beam.ticks {
         let original = output.get_mut(tick).unwrap();
 
         let opp = tan_angle * (low.tail.x - original.tail.x);
@@ -59,7 +59,7 @@ fn adjust_to_beam(
     }
 
     // make sure stems aren't squashed less than natural lengths
-    for tick in &beam.ticks {
+    for (tick, _) in &beam.ticks {
         let original = output.get_mut(tick).unwrap();
         original.tail.y += adjustment;
     }
@@ -82,7 +82,7 @@ fn get_beam_slant(
     }
 
     // check the melodic shape, we flatten in certain conditions
-    for tick in &beam.ticks {
+    for (tick, _) in &beam.ticks {
         if tick == &beam.start || tick == &beam.stop {
             continue;
         }
@@ -113,7 +113,7 @@ fn get_beam_slant(
 
 fn get_furthest_tail(beam: &Beam, stem_lengths: &StemLengths, stem_direction: &Direction) -> f32 {
     let mut furthest = 0.0;
-    for tick in &beam.ticks {
+    for (tick, _) in &beam.ticks {
         let def = stem_lengths.get(tick).unwrap();
         match stem_direction {
             Direction::Up => {
@@ -223,7 +223,7 @@ pub fn get_stem_lengths_in_track(
             },
             BeamSlant::None => {
                 let furthest = get_furthest_tail(beam, &output, stem_direction);
-                for tick in &beam.ticks {
+                for (tick, _) in &beam.ticks {
                     let original = output.get_mut(tick).unwrap();
                     original.tail.y = furthest;
                 }

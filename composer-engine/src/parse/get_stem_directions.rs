@@ -24,7 +24,7 @@ pub fn get_span_stem_direction(
     let mut down_count = 0;
     let mut tones: Vec<Tone> = Vec::new();
 
-    for tick in &span.ticks {
+    for (tick, _) in &span.ticks {
         let entry = notation.track.get(tick).unwrap();
 
         let direction = entry.get_stem_direction(tone_offsets);
@@ -71,7 +71,7 @@ pub fn get_stem_directions_in_track(
     // stem spans
     for span in beams {
         let direction = get_span_stem_direction(span, notation, tone_offsets);
-        for tick in &span.ticks {
+        for (tick, _) in &span.ticks {
             output.insert(*tick, direction.clone());
         }
     }
@@ -194,7 +194,7 @@ mod tests {
     fn run_get_span_stem_direction_test(tones: Vec<(&str, i8)>) -> Direction {
         let mut tone_offsets: ToneVerticalOffsets = FxHashMap::default();
         let mut beam: Beam = Beam {
-            ticks: FxHashSet::default(),
+            ticks: FxHashMap::default(),
             start: 0,
             stop: tones.len() as Tick - 1,
         };
@@ -219,7 +219,7 @@ mod tests {
             );
 
             tone_offsets.insert(key.to_string(), *offset);
-            beam.ticks.insert(tick as Tick);
+            beam.ticks.insert(tick as Tick, 1);
         }
 
         get_span_stem_direction(&beam, &track, &tone_offsets)

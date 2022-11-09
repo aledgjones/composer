@@ -3,21 +3,39 @@ use super::get_written_durations::{Notation, NotationByTrack, NotationTrack};
 use crate::components::duration::NoteDuration;
 use crate::components::misc::{Tick, Ticks};
 use crate::entries::time_signature::TimeSignature;
-use rustc_hash::{FxHashMap, FxHashSet};
+use rustc_hash::FxHashMap;
 use std::fmt::{Debug, Formatter, Result};
-use std::iter::FromIterator;
 
+pub type BeamTicks = FxHashMap<Tick, u8>;
+
+#[derive(Clone)]
 pub struct Beam {
-    pub ticks: FxHashSet<Tick>,
+    pub ticks: BeamTicks,
     pub start: Tick,
     pub stop: Tick,
+}
+
+impl Beam {
+    pub fn new() -> Self {
+        Self {
+            ticks: FxHashMap::default(),
+            start: 0,
+            stop: 0,
+        }
+    }
+}
+
+impl Default for Beam {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Debug for Beam {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let mut output = Vec::new();
         for tick in &self.ticks {
-            output.push(tick);
+            output.push((self.start, tick));
         }
 
         write!(f, "{:?}", output)
@@ -26,7 +44,6 @@ impl Debug for Beam {
 
 pub type Beams = Vec<Beam>;
 pub type BeamsByTrack = FxHashMap<String, Beams>;
-pub type Span = Vec<Tick>;
 
 enum EighthType {
     Rest,
@@ -109,21 +126,45 @@ fn grouping_is_beamable(
     true
 }
 
-fn assign_span(spans: &mut Beams, span: Span) -> Span {
-    if span.len() > 1 {
-        let start = *span.first().unwrap();
-        let stop = *span.last().unwrap();
-        let ticks = FxHashSet::from_iter(span);
-        spans.push(Beam { ticks, start, stop });
+fn assign_beam(beams: &mut Beams, ticks: BeamTicks) -> BeamTicks {
+    if ticks.len() > 1 {
+        let mut min: Option<Tick> = None;
+        let mut max: Option<Tick> = None;
+
+        for tick in ticks.keys() {
+            match min {
+                None => min = Some(*tick),
+                Some(val) => {
+                    if tick < &val {
+                        min = Some(*tick)
+                    }
+                }
+            }
+
+            match max {
+                None => max = Some(*tick),
+                Some(val) => {
+                    if tick > &val {
+                        max = Some(*tick)
+                    }
+                }
+            }
+        }
+
+        beams.push(Beam {
+            ticks,
+            start: min.unwrap(),
+            stop: max.unwrap(),
+        });
     }
 
-    Vec::new()
+    FxHashMap::default()
 }
 
 pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Bars, subdivisions: Ticks) -> Beams {
     let mut output: Beams = Vec::new();
 
-    let mut current_span: Span = Vec::new();
+    let mut ticks: BeamTicks = FxHashMap::default();
     let mut time_signature = &TimeSignature::default();
     let mut boundries = time_signature.groupings_to_ticks(0, subdivisions);
     let mut break_at_beats = false;
@@ -135,7 +176,8 @@ pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Bars, subdivision
         }
 
         if boundries.contains(&tick) {
-            current_span = assign_span(&mut output, current_span);
+            ticks = assign_beam(&mut output, ticks);
+
             break_at_beats = match time_signature.beat_type {
                 // quarters break if rhythm has durations < sixteenth
                 NoteDuration::Quarter => {
@@ -152,19 +194,20 @@ pub fn get_beams_in_track(notation: &NotationTrack, barlines: &Bars, subdivision
         }
 
         if break_at_beats && time_signature.is_on_beat(tick, subdivisions) {
-            current_span = assign_span(&mut output, current_span);
+            ticks = assign_beam(&mut output, ticks);
         }
 
         if let Some(entry) = notation.track.get(&tick) {
-            if entry.is_beamable(subdivisions) {
-                current_span.push(tick);
+            let count = entry.get_beam_count(subdivisions);
+            if count > 0 {
+                ticks.insert(tick, count);
             } else {
-                current_span = assign_span(&mut output, current_span);
+                ticks = assign_beam(&mut output, ticks);
             }
         }
     }
 
-    assign_span(&mut output, current_span);
+    assign_beam(&mut output, ticks);
 
     output
 }
@@ -180,24 +223,14 @@ pub fn get_beams(tracks: &NotationByTrack, bars: &Bars, subdivisions: Ticks) -> 
     output
 }
 
-pub fn get_has_beam(tick: &Tick, beams: &Beams) -> bool {
-    for beam in beams {
-        if beam.ticks.contains(tick) {
-            return true;
-        }
-    }
-
-    false
-}
-
 impl Notation {
-    pub fn is_beamable(&self, subdivisions: Ticks) -> bool {
+    pub fn get_beam_count(&self, subdivisions: Ticks) -> u8 {
         if self.is_rest() {
-            false
+            0
         } else {
             match self.base_to_ticks(subdivisions) {
-                Some(base) => base <= NoteDuration::Eighth.to_ticks(subdivisions),
-                None => false,
+                Some(base) => (NoteDuration::Eighth.to_ticks(subdivisions) / base) as u8,
+                None => 0,
             }
         }
     }

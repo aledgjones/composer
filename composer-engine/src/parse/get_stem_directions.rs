@@ -24,7 +24,7 @@ pub fn get_span_stem_direction(
     let mut down_count = 0;
     let mut tones: Vec<Tone> = Vec::new();
 
-    for (tick, _) in &span.ticks {
+    for tick in span.ticks.keys() {
         let entry = notation.track.get(tick).unwrap();
 
         let direction = entry.get_stem_direction(tone_offsets);
@@ -71,7 +71,7 @@ pub fn get_stem_directions_in_track(
     // stem spans
     for span in beams {
         let direction = get_span_stem_direction(span, notation, tone_offsets);
-        for (tick, _) in &span.ticks {
+        for tick in span.ticks.keys() {
             output.insert(*tick, direction.clone());
         }
     }

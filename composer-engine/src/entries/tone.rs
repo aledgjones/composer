@@ -162,7 +162,7 @@ impl Engine {
             }
         }
 
-        JsValue::from_serde(&output).unwrap()
+        serde_wasm_bindgen::to_value(&output).unwrap()
     }
 
     pub fn get_all_tones(&self, flow_key: &str, instrument_key: &str) -> JsValue {
@@ -184,7 +184,7 @@ impl Engine {
 
         output.sort_unstable_by_key(|a| a.tick);
 
-        JsValue::from_serde(&output).unwrap()
+        serde_wasm_bindgen::to_value(&output).unwrap()
     }
 }
 

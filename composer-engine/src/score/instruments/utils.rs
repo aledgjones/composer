@@ -11,8 +11,8 @@ struct FullPathReturn<'a> {
 
 /// Get a full path to def from partial path
 #[wasm_bindgen]
-pub fn get_full_path_from_partial(selection: &JsValue) -> JsValue {
-    let selection: Vec<String> = selection.into_serde().unwrap();
+pub fn get_full_path_from_partial(selection: JsValue) -> JsValue {
+    let selection: Vec<String> = serde_wasm_bindgen::from_value(selection).unwrap();
 
     let def = INSTRUMENT_DEFS.iter().find(|&def| {
         for (i, step) in selection.iter().enumerate() {
@@ -24,7 +24,7 @@ pub fn get_full_path_from_partial(selection: &JsValue) -> JsValue {
     });
 
     match def {
-        Some(def) => JsValue::from_serde(&FullPathReturn {
+        Some(def) => serde_wasm_bindgen::to_value(&FullPathReturn {
             path: &def.path,
             id: def.id,
         })
@@ -35,8 +35,8 @@ pub fn get_full_path_from_partial(selection: &JsValue) -> JsValue {
 
 /// Get a tree of instruments from a (possibly incomplete) path
 #[wasm_bindgen]
-pub fn def_tree(selection: &JsValue) -> JsValue {
-    let selection: Vec<String> = selection.into_serde().unwrap();
+pub fn def_tree(selection: JsValue) -> JsValue {
+    let selection: Vec<String> = serde_wasm_bindgen::from_value(selection).unwrap();
 
     let mut ignore: FxHashSet<&str> = FxHashSet::default();
     let mut tree: [Vec<&str>; 3] = [Vec::new(), Vec::new(), Vec::new()];
@@ -53,5 +53,5 @@ pub fn def_tree(selection: &JsValue) -> JsValue {
         }
     }
 
-    JsValue::from_serde(&tree).unwrap()
+    serde_wasm_bindgen::to_value(&tree).unwrap()
 }

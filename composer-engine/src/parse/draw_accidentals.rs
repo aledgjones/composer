@@ -71,7 +71,7 @@ pub fn draw_accidentals(
                 for tone in &entry.tones {
                     if let Some(accidental) = accidentals.by_key.get(&(*tick, tone.key.clone())) {
                         draw_accidental(
-                            x + left - 0.2,
+                            x + left - 0.5, // TODO: add extra for ledger line
                             top,
                             accidental,
                             tone,

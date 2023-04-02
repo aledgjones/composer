@@ -18,115 +18,115 @@ export function run(): void;
 /**
 */
 export enum Articulation {
-  None,
-  Staccato,
-  Staccatissimo,
-  Tenuto,
-  StaccatoTenuto,
+  None = 0,
+  Staccato = 1,
+  Staccatissimo = 2,
+  Tenuto = 3,
+  StaccatoTenuto = 4,
 }
 /**
 */
 export enum NoteDuration {
-  Whole,
-  Half,
-  Quarter,
-  Eighth,
-  Sixteenth,
-  ThirtySecond,
-  SixtyFourth,
-  HudredTwentyEighth,
+  Whole = 0,
+  Half = 1,
+  Quarter = 2,
+  Eighth = 3,
+  Sixteenth = 4,
+  ThirtySecond = 5,
+  SixtyFourth = 6,
+  HudredTwentyEighth = 7,
 }
 /**
 */
 export enum Accidental {
-  DoubleSharp,
-  Sharp,
-  Natural,
-  Flat,
-  DoubleFlat,
+  DoubleSharp = 0,
+  Sharp = 1,
+  Natural = 2,
+  Flat = 3,
+  DoubleFlat = 4,
 }
 /**
 */
 export enum BarlineDrawType {
-  Single,
-  Double,
-  EndRepeat,
-  EndStartRepeat,
-  StartRepeat,
-  Final,
+  Single = 0,
+  Double = 1,
+  EndRepeat = 2,
+  EndStartRepeat = 3,
+  StartRepeat = 4,
+  Final = 5,
 }
 /**
 */
 export enum ClefDrawType {
-  Hidden,
-  G,
-  F,
-  C,
-  Percussion,
+  Hidden = 0,
+  G = 1,
+  F = 2,
+  C = 3,
+  Percussion = 4,
 }
 /**
 */
 export enum KeySignatureMode {
-  Major,
-  Minor,
+  Major = 0,
+  Minor = 1,
 }
 /**
 */
 export enum TimeSignatureDrawType {
-  Hidden,
-  Regular,
-  CommonTime,
-  SplitCommonTime,
-  Open,
+  Hidden = 0,
+  Regular = 1,
+  CommonTime = 2,
+  SplitCommonTime = 3,
+  Open = 4,
 }
 /**
 */
 export enum AutoCountStyle {
-  Arabic,
-  Roman,
+  Arabic = 0,
+  Roman = 1,
 }
 /**
 */
 export enum BracketingApproach {
-  None,
-  Orchestral,
-  SmallEnsemble,
+  None = 0,
+  Orchestral = 1,
+  SmallEnsemble = 2,
 }
 /**
 */
 export enum BracketStyle {
-  None,
-  Wing,
-  Line,
+  None = 0,
+  Wing = 1,
+  Line = 2,
 }
 /**
 */
 export enum LayoutType {
-  Score,
-  Part,
-  Custom,
+  Score = 0,
+  Part = 1,
+  Custom = 2,
 }
 /**
 */
 export enum Expression {
-  Natural,
-  Pizzicato,
-  Spiccato,
-  Staccato,
-  Tremolo,
-  Mute,
+  Natural = 0,
+  Pizzicato = 1,
+  Spiccato = 2,
+  Staccato = 3,
+  Tremolo = 4,
+  Mute = 5,
 }
 /**
 */
 export enum InstrumentType {
-  Melodic,
-  Percussive,
+  Melodic = 0,
+  Percussive = 1,
 }
 /**
 */
 export enum PlayerType {
-  Solo,
-  Section,
+  Solo = 0,
+  Section = 1,
 }
 /**
 */
@@ -712,14 +712,16 @@ export interface InitOutput {
   readonly __wbindgen_start: () => void;
 }
 
+export type SyncInitInput = BufferSource | WebAssembly.Module;
 /**
-* Synchronously compiles the given `bytes` and instantiates the WebAssembly module.
+* Instantiates the given `module`, which can either be bytes or
+* a precompiled `WebAssembly.Module`.
 *
-* @param {BufferSource} bytes
+* @param {SyncInitInput} module
 *
 * @returns {InitOutput}
 */
-export function initSync(bytes: BufferSource): InitOutput;
+export function initSync(module: SyncInitInput): InitOutput;
 
 /**
 * If `module_or_path` is {RequestInfo} or {URL}, makes a request and

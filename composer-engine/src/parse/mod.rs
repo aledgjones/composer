@@ -379,6 +379,6 @@ impl Engine {
         let width = converter.spaces_to_px(width);
         let height = converter.spaces_to_px(height);
 
-        JsValue::from_serde(&(width, height, instructions)).unwrap()
+        serde_wasm_bindgen::to_value(&(width, height, instructions)).unwrap()
     }
 }

@@ -158,7 +158,7 @@ impl Engine {
 
     pub fn get_instrument_staves(&self, instrument_key: &str) -> JsValue {
         let instrument = self.score.instruments.get(instrument_key).unwrap();
-        JsValue::from_serde(&instrument.staves).unwrap()
+        serde_wasm_bindgen::to_value(&instrument.staves).unwrap()
     }
 
     pub fn get_instrument_tracks(&self, flow_key: &str, instrument_key: &str) -> JsValue {
@@ -181,7 +181,7 @@ impl Engine {
             }
         }
 
-        JsValue::from_serde(&output).unwrap()
+        serde_wasm_bindgen::to_value(&output).unwrap()
     }
 
     pub fn calculate_counts(&mut self) {

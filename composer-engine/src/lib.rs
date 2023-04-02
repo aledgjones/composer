@@ -46,11 +46,11 @@ impl Engine {
     }
 
     pub fn export(&self) -> JsValue {
-        JsValue::from_serde(&self.score).unwrap()
+        serde_wasm_bindgen::to_value(&self.score).unwrap()
     }
 
     pub fn import(&mut self, state: JsValue) {
-        self.score = state.into_serde().unwrap();
+        self.score = serde_wasm_bindgen::from_value(state).unwrap();
         self.emit();
     }
 

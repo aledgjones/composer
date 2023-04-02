@@ -156,7 +156,7 @@ impl Engine {
 
     #[wasm_bindgen(getter)]
     pub fn engraves(&self) -> JsValue {
-        JsValue::from_serde(&self.score.engrave.order).unwrap()
+        serde_wasm_bindgen::to_value(&self.score.engrave.order).unwrap()
     }
 
     pub fn engrave_name(&self, key: &str) -> String {

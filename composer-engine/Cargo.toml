@@ -1,5 +1,6 @@
 [package]
 name = "composer-engine"
+description = "Solo Composer rust engine"
 version = "1.0.0"
 authors = ["Aled Jones <aledjones.viola@gmail.com>"]
 edition = "2018"
@@ -11,11 +12,12 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-serde = { version = "1.0.144", features = ["derive"] }
-wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
+serde = { version = "1.0.159", features = ["derive"] }
+wasm-bindgen = { version = "0.2.84" }
+serde-wasm-bindgen = "0.5.0"
 rand = "0.8.5"
-getrandom = { version = "0.2.7", features = ["js"] }
-js-sys = "0.3.59"
+getrandom = { version = "0.2.8", features = ["js"] }
+js-sys = "0.3.61"
 maplit = "1.0.2"
 lazy_static = "1.4.0"
 roman = "0.1.6"
@@ -28,7 +30,7 @@ rustc-hash = "1.1.0"
 console_error_panic_hook = { version = "0.1.7", optional = true }
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.32"
+wasm-bindgen-test = "0.3.34"
 
 [profile.release]
 # less code to include into binary

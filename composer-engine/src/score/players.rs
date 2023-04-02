@@ -141,7 +141,7 @@ impl Engine {
 
     #[wasm_bindgen(getter)]
     pub fn players(&self) -> JsValue {
-        JsValue::from_serde(&self.score.players.order).unwrap()
+        serde_wasm_bindgen::to_value(&self.score.players.order).unwrap()
     }
 
     pub fn get_player_type(&self, player_key: &str) -> PlayerType {
@@ -177,6 +177,6 @@ impl Engine {
 
     pub fn get_player_instruments(&self, player_key: &str) -> JsValue {
         let player = self.score.players.by_key.get(player_key).unwrap();
-        JsValue::from_serde(&player.instruments).unwrap()
+        serde_wasm_bindgen::to_value(&player.instruments).unwrap()
     }
 }

@@ -1,8 +1,30 @@
 import { engine, store } from ".";
 import { wait } from "../ui/utils/wait";
 
+//** convert maps into JSON objects */
+function replacer(key: string, value: any) {
+  if (value instanceof Map) {
+    return {
+      dataType: "Map",
+      value: Array.from(value.entries()), // or with spread: value: [...value]
+    };
+  } else {
+    return value;
+  }
+}
+
+//** convert stored map objects back to maps */
+function reviver(key: string, value: any) {
+  if (typeof value === "object" && value !== null) {
+    if (value.dataType === "Map") {
+      return new Map(value.value);
+    }
+  }
+  return value;
+}
+
 const writeToFile = async (state: any, fileHandle: FileSystemFileHandle) => {
-  const content = JSON.stringify(state);
+  const content = JSON.stringify(state, replacer, 2);
   const writableStream = await fileHandle.createWritable();
   await writableStream.write(content);
   await writableStream.close();
@@ -28,7 +50,7 @@ export const appActions = {
     const [fileHandle] = await window.showOpenFilePicker(pickerOpts);
     const file = await fileHandle.getFile();
     const content = await file.text();
-    engine.import(JSON.parse(content));
+    engine.import(JSON.parse(content, reviver));
     progress(1, 2);
     store.update((s) => {
       s.app.file = fileHandle;
@@ -40,7 +62,8 @@ export const appActions = {
     try {
       const state = store.getRawState();
       if (state.app.file) {
-        await writeToFile(engine.export(), state.app.file);
+        const score = engine.export();
+        await writeToFile(score, state.app.file);
       } else {
         throw "no file";
       }
@@ -62,7 +85,8 @@ export const appActions = {
         ],
         excludeAcceptAllOption: true,
       });
-      await writeToFile(engine.export(), newHandle);
+      const score = engine.export();
+      await writeToFile(score, newHandle);
       store.update((s) => {
         s.app.file = newHandle;
       });

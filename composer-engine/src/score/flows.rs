@@ -271,7 +271,7 @@ impl Engine {
 
     #[wasm_bindgen(getter)]
     pub fn flows(&self) -> JsValue {
-        JsValue::from_serde(&self.score.flows.order).unwrap()
+        serde_wasm_bindgen::to_value(&self.score.flows.order).unwrap()
     }
 
     pub fn get_flow_subdivisions(&self, flow_key: &str) -> u32 {
@@ -325,7 +325,7 @@ impl Engine {
             output.width += tick_width;
         }
 
-        JsValue::from_serde(&output).unwrap()
+        serde_wasm_bindgen::to_value(&output).unwrap()
     }
 
     pub fn get_timestamp(&self, flow_key: &str, at: Tick) -> String {

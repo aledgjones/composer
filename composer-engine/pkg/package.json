@@ -3,6 +3,7 @@
   "collaborators": [
     "Aled Jones <aledjones.viola@gmail.com>"
   ],
+  "description": "Solo Composer rust engine",
   "version": "1.0.0",
   "files": [
     "composer_engine_bg.wasm",

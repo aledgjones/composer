@@ -208,7 +208,11 @@ pub fn measure_horizontal_spacing(
             if *tick == 0 || barlines.contains_key(tick) {
                 // start of bars has no previous spacing to extend so we use the accidentals slot
                 if let Some(slots) = accidentals.slots_by_tick.get(tick) {
-                    widths[start + Position::Accidentals] = (*slots as f32) * 1.1;
+                    let current = widths[start + Position::Accidentals];
+                    let width = (*slots as f32) * 1.1; // TODO: width of accidental
+                    if width > current {
+                        widths[start + Position::Accidentals] = width;
+                    }
                 };
             }
 
